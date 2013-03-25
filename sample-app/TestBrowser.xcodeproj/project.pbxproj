@@ -1,0 +1,469 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FAC9B25E16F27BF800E37710 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B25D16F27BF800E37710 /* UIKit.framework */; };
+		FAC9B26016F27BF800E37710 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B25F16F27BF800E37710 /* Foundation.framework */; };
+		FAC9B26216F27BF800E37710 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B26116F27BF800E37710 /* CoreGraphics.framework */; };
+		FAC9B26816F27BF800E37710 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B26616F27BF800E37710 /* InfoPlist.strings */; };
+		FAC9B26A16F27BF800E37710 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC9B26916F27BF800E37710 /* main.m */; };
+		FAC9B26E16F27BF800E37710 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC9B26D16F27BF800E37710 /* AppDelegate.m */; };
+		FAC9B27016F27BF800E37710 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B26F16F27BF800E37710 /* Default.png */; };
+		FAC9B27216F27BF800E37710 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B27116F27BF800E37710 /* Default@2x.png */; };
+		FAC9B27416F27BF800E37710 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B27316F27BF800E37710 /* Default-568h@2x.png */; };
+		FAC9B27716F27BF800E37710 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC9B27616F27BF800E37710 /* ViewController.m */; };
+		FAC9B3B116F3863500E37710 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B3B016F3863500E37710 /* libxml2.2.dylib */; };
+		FAC9B3B516F38C6500E37710 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B3B416F38C6500E37710 /* CoreData.framework */; };
+		FAC9B3B916F38D3700E37710 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B3B816F38D3700E37710 /* SystemConfiguration.framework */; };
+		FAC9B43216F392EA00E37710 /* BookmarkFolderFormController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC9B40716F392E900E37710 /* BookmarkFolderFormController.m */; };
+		FAC9B43316F392EA00E37710 /* BookmarkImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC9B40916F392E900E37710 /* BookmarkImporter.m */; };
+		FAC9B43416F392EA00E37710 /* BookmarkItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC9B40B16F392E900E37710 /* BookmarkItem.m */; };
+		FAC9B43516F392EA00E37710 /* BookmarksController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC9B40D16F392E900E37710 /* BookmarksController.m */; };
+		FAC9B43616F392EA00E37710 /* BookmarksFormController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC9B40F16F392E900E37710 /* BookmarksFormController.m */; };
+		FAC9B43716F392EA00E37710 /* BrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC9B41116F392E900E37710 /* BrowserViewController.m */; };
+		FAC9B43916F392EA00E37710 /* Tab.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC9B41516F392E900E37710 /* Tab.m */; };
+		FAC9B43C16F392EA00E37710 /* .MainWindow-iPad.xib.swo in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B41C16F392EA00E37710 /* .MainWindow-iPad.xib.swo */; };
+		FAC9B43D16F392EA00E37710 /* .MainWindow-iPad.xib.swp in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B41D16F392EA00E37710 /* .MainWindow-iPad.xib.swp */; };
+		FAC9B43E16F392EA00E37710 /* BookmarkFoldersForm.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B41E16F392EA00E37710 /* BookmarkFoldersForm.xib */; };
+		FAC9B43F16F392EA00E37710 /* BookmarkItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B41F16F392EA00E37710 /* BookmarkItem.xib */; };
+		FAC9B44016F392EA00E37710 /* Bookmarks.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B42016F392EA00E37710 /* Bookmarks.xib */; };
+		FAC9B44116F392EA00E37710 /* BookmarksForm.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B42116F392EA00E37710 /* BookmarksForm.xib */; };
+		FAC9B44216F392EA00E37710 /* BrowserModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FAC9B42216F392EA00E37710 /* BrowserModel.xcdatamodeld */; };
+		FAC9B44316F392EA00E37710 /* arrow-left.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B42516F392EA00E37710 /* arrow-left.png */; };
+		FAC9B44416F392EA00E37710 /* arrow-right.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B42616F392EA00E37710 /* arrow-right.png */; };
+		FAC9B44516F392EA00E37710 /* bookmark.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B42716F392EA00E37710 /* bookmark.png */; };
+		FAC9B44616F392EA00E37710 /* cell_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B42816F392EA00E37710 /* cell_arrow.png */; };
+		FAC9B44716F392EA00E37710 /* delete_circle.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B42916F392EA00E37710 /* delete_circle.png */; };
+		FAC9B44816F392EA00E37710 /* folder.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B42A16F392EA00E37710 /* folder.png */; };
+		FAC9B44916F392EA00E37710 /* iphone_delete_button.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B42B16F392EA00E37710 /* iphone_delete_button.png */; };
+		FAC9B44A16F392EA00E37710 /* refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B42C16F392EA00E37710 /* refresh.png */; };
+		FAC9B44B16F392EA00E37710 /* tabs.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B42D16F392EA00E37710 /* tabs.png */; };
+		FAC9B44C16F392EA00E37710 /* import_bookmark_howto.html in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B42E16F392EA00E37710 /* import_bookmark_howto.html */; };
+		FAC9B44D16F392EA00E37710 /* launch.html in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B42F16F392EA00E37710 /* launch.html */; };
+		FAC9B44E16F392EA00E37710 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B43016F392EA00E37710 /* MainWindow-iPad.xib */; };
+		FAC9B44F16F392EA00E37710 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B43116F392EA00E37710 /* MainWindow.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		FAC9B25A16F27BF800E37710 /* TestBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAC9B25D16F27BF800E37710 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		FAC9B25F16F27BF800E37710 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		FAC9B26116F27BF800E37710 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		FAC9B26516F27BF800E37710 /* TestBrowser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TestBrowser-Info.plist"; sourceTree = "<group>"; };
+		FAC9B26716F27BF800E37710 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FAC9B26916F27BF800E37710 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		FAC9B26B16F27BF800E37710 /* TestBrowser-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestBrowser-Prefix.pch"; sourceTree = "<group>"; };
+		FAC9B26C16F27BF800E37710 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		FAC9B26D16F27BF800E37710 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		FAC9B26F16F27BF800E37710 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		FAC9B27116F27BF800E37710 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		FAC9B27316F27BF800E37710 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		FAC9B27516F27BF800E37710 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		FAC9B27616F27BF800E37710 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		FAC9B3B016F3863500E37710 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
+		FAC9B3B416F38C6500E37710 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		FAC9B3B816F38D3700E37710 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		FAC9B40616F392E900E37710 /* BookmarkFolderFormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkFolderFormController.h; sourceTree = "<group>"; };
+		FAC9B40716F392E900E37710 /* BookmarkFolderFormController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkFolderFormController.m; sourceTree = "<group>"; };
+		FAC9B40816F392E900E37710 /* BookmarkImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkImporter.h; sourceTree = "<group>"; };
+		FAC9B40916F392E900E37710 /* BookmarkImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkImporter.m; sourceTree = "<group>"; };
+		FAC9B40A16F392E900E37710 /* BookmarkItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkItem.h; sourceTree = "<group>"; };
+		FAC9B40B16F392E900E37710 /* BookmarkItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkItem.m; sourceTree = "<group>"; };
+		FAC9B40C16F392E900E37710 /* BookmarksController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarksController.h; sourceTree = "<group>"; };
+		FAC9B40D16F392E900E37710 /* BookmarksController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarksController.m; sourceTree = "<group>"; };
+		FAC9B40E16F392E900E37710 /* BookmarksFormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarksFormController.h; sourceTree = "<group>"; };
+		FAC9B40F16F392E900E37710 /* BookmarksFormController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarksFormController.m; sourceTree = "<group>"; };
+		FAC9B41016F392E900E37710 /* BrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserViewController.h; sourceTree = "<group>"; };
+		FAC9B41116F392E900E37710 /* BrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowserViewController.m; sourceTree = "<group>"; };
+		FAC9B41416F392E900E37710 /* Tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tab.h; sourceTree = "<group>"; };
+		FAC9B41516F392E900E37710 /* Tab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tab.m; sourceTree = "<group>"; };
+		FAC9B41C16F392EA00E37710 /* .MainWindow-iPad.xib.swo */ = {isa = PBXFileReference; lastKnownFileType = file; path = ".MainWindow-iPad.xib.swo"; sourceTree = "<group>"; };
+		FAC9B41D16F392EA00E37710 /* .MainWindow-iPad.xib.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = ".MainWindow-iPad.xib.swp"; sourceTree = "<group>"; };
+		FAC9B41E16F392EA00E37710 /* BookmarkFoldersForm.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BookmarkFoldersForm.xib; sourceTree = "<group>"; };
+		FAC9B41F16F392EA00E37710 /* BookmarkItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BookmarkItem.xib; sourceTree = "<group>"; };
+		FAC9B42016F392EA00E37710 /* Bookmarks.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Bookmarks.xib; sourceTree = "<group>"; };
+		FAC9B42116F392EA00E37710 /* BookmarksForm.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BookmarksForm.xib; sourceTree = "<group>"; };
+		FAC9B42316F392EA00E37710 /* BrowserModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BrowserModel.xcdatamodel; sourceTree = "<group>"; };
+		FAC9B42516F392EA00E37710 /* arrow-left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "arrow-left.png"; sourceTree = "<group>"; };
+		FAC9B42616F392EA00E37710 /* arrow-right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "arrow-right.png"; sourceTree = "<group>"; };
+		FAC9B42716F392EA00E37710 /* bookmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bookmark.png; sourceTree = "<group>"; };
+		FAC9B42816F392EA00E37710 /* cell_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cell_arrow.png; sourceTree = "<group>"; };
+		FAC9B42916F392EA00E37710 /* delete_circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = delete_circle.png; sourceTree = "<group>"; };
+		FAC9B42A16F392EA00E37710 /* folder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = folder.png; sourceTree = "<group>"; };
+		FAC9B42B16F392EA00E37710 /* iphone_delete_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iphone_delete_button.png; sourceTree = "<group>"; };
+		FAC9B42C16F392EA00E37710 /* refresh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = refresh.png; sourceTree = "<group>"; };
+		FAC9B42D16F392EA00E37710 /* tabs.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabs.png; sourceTree = "<group>"; };
+		FAC9B42E16F392EA00E37710 /* import_bookmark_howto.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = import_bookmark_howto.html; sourceTree = "<group>"; };
+		FAC9B42F16F392EA00E37710 /* launch.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = launch.html; sourceTree = "<group>"; };
+		FAC9B43016F392EA00E37710 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "MainWindow-iPad.xib"; sourceTree = "<group>"; };
+		FAC9B43116F392EA00E37710 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FAC9B25716F27BF800E37710 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAC9B3B916F38D3700E37710 /* SystemConfiguration.framework in Frameworks */,
+				FAC9B3B516F38C6500E37710 /* CoreData.framework in Frameworks */,
+				FAC9B3B116F3863500E37710 /* libxml2.2.dylib in Frameworks */,
+				FAC9B25E16F27BF800E37710 /* UIKit.framework in Frameworks */,
+				FAC9B26016F27BF800E37710 /* Foundation.framework in Frameworks */,
+				FAC9B26216F27BF800E37710 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FAC9B25116F27BF800E37710 = {
+			isa = PBXGroup;
+			children = (
+				FAC9B40516F392E900E37710 /* Browser */,
+				FAC9B41B16F392E900E37710 /* Browser Resources */,
+				FAC9B3B816F38D3700E37710 /* SystemConfiguration.framework */,
+				FAC9B3B416F38C6500E37710 /* CoreData.framework */,
+				FAC9B3B016F3863500E37710 /* libxml2.2.dylib */,
+				FAC9B26316F27BF800E37710 /* TestBrowser */,
+				FAC9B25C16F27BF800E37710 /* Frameworks */,
+				FAC9B25B16F27BF800E37710 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FAC9B25B16F27BF800E37710 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FAC9B25A16F27BF800E37710 /* TestBrowser.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FAC9B25C16F27BF800E37710 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FAC9B25D16F27BF800E37710 /* UIKit.framework */,
+				FAC9B25F16F27BF800E37710 /* Foundation.framework */,
+				FAC9B26116F27BF800E37710 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FAC9B26316F27BF800E37710 /* TestBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				FAC9B26C16F27BF800E37710 /* AppDelegate.h */,
+				FAC9B26D16F27BF800E37710 /* AppDelegate.m */,
+				FAC9B27516F27BF800E37710 /* ViewController.h */,
+				FAC9B27616F27BF800E37710 /* ViewController.m */,
+				FAC9B26416F27BF800E37710 /* Supporting Files */,
+			);
+			path = TestBrowser;
+			sourceTree = "<group>";
+		};
+		FAC9B26416F27BF800E37710 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FAC9B26516F27BF800E37710 /* TestBrowser-Info.plist */,
+				FAC9B26616F27BF800E37710 /* InfoPlist.strings */,
+				FAC9B26916F27BF800E37710 /* main.m */,
+				FAC9B26B16F27BF800E37710 /* TestBrowser-Prefix.pch */,
+				FAC9B26F16F27BF800E37710 /* Default.png */,
+				FAC9B27116F27BF800E37710 /* Default@2x.png */,
+				FAC9B27316F27BF800E37710 /* Default-568h@2x.png */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FAC9B40516F392E900E37710 /* Browser */ = {
+			isa = PBXGroup;
+			children = (
+				FAC9B40616F392E900E37710 /* BookmarkFolderFormController.h */,
+				FAC9B40716F392E900E37710 /* BookmarkFolderFormController.m */,
+				FAC9B40816F392E900E37710 /* BookmarkImporter.h */,
+				FAC9B40916F392E900E37710 /* BookmarkImporter.m */,
+				FAC9B40A16F392E900E37710 /* BookmarkItem.h */,
+				FAC9B40B16F392E900E37710 /* BookmarkItem.m */,
+				FAC9B40C16F392E900E37710 /* BookmarksController.h */,
+				FAC9B40D16F392E900E37710 /* BookmarksController.m */,
+				FAC9B40E16F392E900E37710 /* BookmarksFormController.h */,
+				FAC9B40F16F392E900E37710 /* BookmarksFormController.m */,
+				FAC9B41016F392E900E37710 /* BrowserViewController.h */,
+				FAC9B41116F392E900E37710 /* BrowserViewController.m */,
+				FAC9B41416F392E900E37710 /* Tab.h */,
+				FAC9B41516F392E900E37710 /* Tab.m */,
+			);
+			path = Browser;
+			sourceTree = "<group>";
+		};
+		FAC9B41B16F392E900E37710 /* Browser Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FAC9B41C16F392EA00E37710 /* .MainWindow-iPad.xib.swo */,
+				FAC9B41D16F392EA00E37710 /* .MainWindow-iPad.xib.swp */,
+				FAC9B41E16F392EA00E37710 /* BookmarkFoldersForm.xib */,
+				FAC9B41F16F392EA00E37710 /* BookmarkItem.xib */,
+				FAC9B42016F392EA00E37710 /* Bookmarks.xib */,
+				FAC9B42116F392EA00E37710 /* BookmarksForm.xib */,
+				FAC9B42216F392EA00E37710 /* BrowserModel.xcdatamodeld */,
+				FAC9B42416F392EA00E37710 /* Images */,
+				FAC9B42E16F392EA00E37710 /* import_bookmark_howto.html */,
+				FAC9B42F16F392EA00E37710 /* launch.html */,
+				FAC9B43016F392EA00E37710 /* MainWindow-iPad.xib */,
+				FAC9B43116F392EA00E37710 /* MainWindow.xib */,
+			);
+			path = "Browser Resources";
+			sourceTree = "<group>";
+		};
+		FAC9B42416F392EA00E37710 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				FAC9B42516F392EA00E37710 /* arrow-left.png */,
+				FAC9B42616F392EA00E37710 /* arrow-right.png */,
+				FAC9B42716F392EA00E37710 /* bookmark.png */,
+				FAC9B42816F392EA00E37710 /* cell_arrow.png */,
+				FAC9B42916F392EA00E37710 /* delete_circle.png */,
+				FAC9B42A16F392EA00E37710 /* folder.png */,
+				FAC9B42B16F392EA00E37710 /* iphone_delete_button.png */,
+				FAC9B42C16F392EA00E37710 /* refresh.png */,
+				FAC9B42D16F392EA00E37710 /* tabs.png */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FAC9B25916F27BF800E37710 /* TestBrowser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FAC9B28016F27BF800E37710 /* Build configuration list for PBXNativeTarget "TestBrowser" */;
+			buildPhases = (
+				FAC9B25616F27BF800E37710 /* Sources */,
+				FAC9B25716F27BF800E37710 /* Frameworks */,
+				FAC9B25816F27BF800E37710 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestBrowser;
+			productName = TestBrowser;
+			productReference = FAC9B25A16F27BF800E37710 /* TestBrowser.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FAC9B25216F27BF800E37710 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = "Alexandru Catighera";
+			};
+			buildConfigurationList = FAC9B25516F27BF800E37710 /* Build configuration list for PBXProject "TestBrowser" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = FAC9B25116F27BF800E37710;
+			productRefGroup = FAC9B25B16F27BF800E37710 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FAC9B25916F27BF800E37710 /* TestBrowser */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FAC9B25816F27BF800E37710 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAC9B26816F27BF800E37710 /* InfoPlist.strings in Resources */,
+				FAC9B27016F27BF800E37710 /* Default.png in Resources */,
+				FAC9B27216F27BF800E37710 /* Default@2x.png in Resources */,
+				FAC9B27416F27BF800E37710 /* Default-568h@2x.png in Resources */,
+				FAC9B43C16F392EA00E37710 /* .MainWindow-iPad.xib.swo in Resources */,
+				FAC9B43D16F392EA00E37710 /* .MainWindow-iPad.xib.swp in Resources */,
+				FAC9B43E16F392EA00E37710 /* BookmarkFoldersForm.xib in Resources */,
+				FAC9B43F16F392EA00E37710 /* BookmarkItem.xib in Resources */,
+				FAC9B44016F392EA00E37710 /* Bookmarks.xib in Resources */,
+				FAC9B44116F392EA00E37710 /* BookmarksForm.xib in Resources */,
+				FAC9B44316F392EA00E37710 /* arrow-left.png in Resources */,
+				FAC9B44416F392EA00E37710 /* arrow-right.png in Resources */,
+				FAC9B44516F392EA00E37710 /* bookmark.png in Resources */,
+				FAC9B44616F392EA00E37710 /* cell_arrow.png in Resources */,
+				FAC9B44716F392EA00E37710 /* delete_circle.png in Resources */,
+				FAC9B44816F392EA00E37710 /* folder.png in Resources */,
+				FAC9B44916F392EA00E37710 /* iphone_delete_button.png in Resources */,
+				FAC9B44A16F392EA00E37710 /* refresh.png in Resources */,
+				FAC9B44B16F392EA00E37710 /* tabs.png in Resources */,
+				FAC9B44C16F392EA00E37710 /* import_bookmark_howto.html in Resources */,
+				FAC9B44D16F392EA00E37710 /* launch.html in Resources */,
+				FAC9B44E16F392EA00E37710 /* MainWindow-iPad.xib in Resources */,
+				FAC9B44F16F392EA00E37710 /* MainWindow.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FAC9B25616F27BF800E37710 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAC9B26A16F27BF800E37710 /* main.m in Sources */,
+				FAC9B26E16F27BF800E37710 /* AppDelegate.m in Sources */,
+				FAC9B27716F27BF800E37710 /* ViewController.m in Sources */,
+				FAC9B43216F392EA00E37710 /* BookmarkFolderFormController.m in Sources */,
+				FAC9B43316F392EA00E37710 /* BookmarkImporter.m in Sources */,
+				FAC9B43416F392EA00E37710 /* BookmarkItem.m in Sources */,
+				FAC9B43516F392EA00E37710 /* BookmarksController.m in Sources */,
+				FAC9B43616F392EA00E37710 /* BookmarksFormController.m in Sources */,
+				FAC9B43716F392EA00E37710 /* BrowserViewController.m in Sources */,
+				FAC9B43916F392EA00E37710 /* Tab.m in Sources */,
+				FAC9B44216F392EA00E37710 /* BrowserModel.xcdatamodeld in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		FAC9B26616F27BF800E37710 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FAC9B26716F27BF800E37710 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		FAC9B27E16F27BF800E37710 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		FAC9B27F16F27BF800E37710 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FAC9B28116F27BF800E37710 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TestBrowser/TestBrowser-Prefix.pch";
+				INFOPLIST_FILE = "TestBrowser/TestBrowser-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		FAC9B28216F27BF800E37710 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TestBrowser/TestBrowser-Prefix.pch";
+				INFOPLIST_FILE = "TestBrowser/TestBrowser-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FAC9B25516F27BF800E37710 /* Build configuration list for PBXProject "TestBrowser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAC9B27E16F27BF800E37710 /* Debug */,
+				FAC9B27F16F27BF800E37710 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FAC9B28016F27BF800E37710 /* Build configuration list for PBXNativeTarget "TestBrowser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAC9B28116F27BF800E37710 /* Debug */,
+				FAC9B28216F27BF800E37710 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		FAC9B42216F392EA00E37710 /* BrowserModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				FAC9B42316F392EA00E37710 /* BrowserModel.xcdatamodel */,
+			);
+			currentVersion = FAC9B42316F392EA00E37710 /* BrowserModel.xcdatamodel */;
+			path = BrowserModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = FAC9B25216F27BF800E37710 /* Project object */;
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2057" systemVersion="12C60" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Bookmark" representedClassName="NSManagedObject" syncable="YES">
+        <attribute name="name" attributeType="String" minValueString="1" maxValueString="255" defaultValueString="folder" syncable="YES">
+            <userInfo/>
+        </attribute>
+        <attribute name="url" optional="YES" attributeType="String" minValueString="0" maxValueString="2083" regularExpressionString="(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;amp;:/~\+#]*[\w\-\@?^=%&amp;amp;/~\+#])?" syncable="YES">
+            <userInfo/>
+        </attribute>
+        <relationship name="Folder" optional="YES" minCount="1" maxCount="1" deletionRule="No Action" destinationEntity="Folder" indexed="YES" syncable="YES">
+            <userInfo/>
+        </relationship>
+        <userInfo/>
+    </entity>
+    <entity name="Folder" representedClassName="NSManagedObject" syncable="YES">
+        <attribute name="name" attributeType="String" minValueString="1" maxValueString="255" defaultValueString="folder" syncable="YES">
+            <userInfo/>
+        </attribute>
+        <relationship name="Bookmarks" optional="YES" toMany="YES" deletionRule="No Action" destinationEntity="Bookmark" indexed="YES" syncable="YES">
+            <userInfo/>
+        </relationship>
+        <relationship name="Parent" optional="YES" minCount="1" maxCount="1" deletionRule="No Action" destinationEntity="Folder" indexed="YES" syncable="YES">
+            <userInfo/>
+        </relationship>
+        <userInfo/>
+    </entity>
+    <elements>
+        <element name="Bookmark" positionX="1978" positionY="-279" width="128" height="88"/>
+        <element name="Folder" positionX="2203" positionY="-430" width="128" height="88"/>
+    </elements>
+</model>
