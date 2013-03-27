@@ -1,6 +1,5 @@
 //
 //  BookmarkImporter.h
-//  Ghostery
 //
 //  Created by Alexandru Catighera on 10/11/12.
 //

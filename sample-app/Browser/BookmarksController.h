@@ -1,6 +1,5 @@
 //
 //  BookmarksController.h
-//  Ghostery
 //
 //  Created by Alexandru Catighera on 6/14/11.
 //  Copyright 2011 Evidon. All rights reserved.
@@ -15,7 +14,7 @@
 @class BookmarkItem;
 
 @interface BookmarksController : UIViewController {
-	BrowserViewController *ghosteryController;
+	BrowserViewController *browserController;
 	BookmarksFormController *formController;
 	BookmarkFolderFormController *folderController;
 	
@@ -33,7 +32,7 @@
 	IBOutlet UIToolbar *editToolbar;
 }
 
-@property(nonatomic, strong) BrowserViewController *ghosteryController;
+@property(nonatomic, strong) BrowserViewController *browserController;
 @property(nonatomic, strong) BookmarksFormController *formController;
 @property(nonatomic, strong) BookmarkFolderFormController *folderController;
 

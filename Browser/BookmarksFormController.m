@@ -1,6 +1,5 @@
     //
 //  BookmarksFormController.m
-//  Ghostery
 //
 //  Created by Alexandru Catighera on 6/14/11.
 //  Copyright 2011 Evidon. All rights reserved.
@@ -54,7 +53,7 @@
 - (void) viewWillAppear:(BOOL)animated {
 	NSArray *vControllers = [self.navigationController viewControllers];
 	BookmarksController *bookmarksController = [vControllers objectAtIndex:([vControllers count] - 2)];
-	BrowserViewController *ghosteryController = [bookmarksController ghosteryController];
+	BrowserViewController *browserController = [bookmarksController browserController];
 
 	if (mode == 'E') {
 		// adjust nav
@@ -80,8 +79,8 @@
 		[self.navigationItem setRightBarButtonItem:doneButton];
 		[self.navigationItem setLeftBarButtonItem:cancelButton];
 		
-		NSString *name = [[ghosteryController webView] stringByEvaluatingJavaScriptFromString:@"document.title"];
-		NSString *url = [[ghosteryController webView] stringByEvaluatingJavaScriptFromString:@"window.location.href"];
+		NSString *name = [[browserController webView] stringByEvaluatingJavaScriptFromString:@"document.title"];
+		NSString *url = [[browserController webView] stringByEvaluatingJavaScriptFromString:@"window.location.href"];
 		if (![url isEqualToString:@"about:blank"]) {
 			[urlField setText:url];
 			[nameField setText:name];

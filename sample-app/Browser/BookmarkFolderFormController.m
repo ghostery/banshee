@@ -1,6 +1,5 @@
-    //
+//
 //  BookmarkFolderFormController.m
-//  Ghostery
 //
 //  Created by Alexandru Catighera on 8/10/11.
 //  Copyright 2011 Evidon. All rights reserved.

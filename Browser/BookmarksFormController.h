@@ -1,6 +1,5 @@
 //
 //  BookmarksFormController.h
-//  Ghostery
 //
 //  Created by Alexandru Catighera on 6/14/11.
 //  Copyright 2011 Evidon. All rights reserved.

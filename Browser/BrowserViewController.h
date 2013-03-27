@@ -1,6 +1,5 @@
 //
 //  BrowserViewController.h
-//  Ghostery
 //
 //  Created by Alexandru Catighera on 3/5/13.
 //

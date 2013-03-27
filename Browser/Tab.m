@@ -1,6 +1,5 @@
 //
 //  Tab.m
-//  Ghostery
 //
 //  Created by Alexandru Catighera on 4/28/11.
 //  Copyright 2011 Evidon. All rights reserved.

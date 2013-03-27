@@ -1,6 +1,5 @@
 //
 //  BookmarkItem.m
-//  Ghostery
 //
 //  Created by Alexandru Catighera on 6/17/11.
 //  Copyright 2011 Evidon. All rights reserved.

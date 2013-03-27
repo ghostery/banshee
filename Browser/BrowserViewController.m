@@ -1,6 +1,5 @@
 //
 //  BrowserViewController.m
-//  Ghostery
 //
 //  Created by Alexandru Catighera on 3/5/13.
 //
@@ -50,7 +49,7 @@
 	UINavigationController *bookmarksNavController = [[UINavigationController alloc] initWithRootViewController:bookmarksController];
 	
 	[self setBookmarksFormController:bookmarksFormController];
-	[bookmarksController setGhosteryController:self];
+	[bookmarksController setBrowserController:self];
 	[bookmarkFolderFormController setBookmarksController:bookmarksController];
 	[bookmarksController setFolderController:bookmarkFolderFormController];
 	[self setBookmarksController:bookmarksNavController];

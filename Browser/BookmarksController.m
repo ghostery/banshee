@@ -1,6 +1,5 @@
 //
 //  BookmarksController.m
-//  Ghostery
 //
 //  Created by Alexandru Catighera on 6/14/11.
 //  Copyright 2011 Evidon. All rights reserved.
@@ -15,7 +14,7 @@
 
 @implementation BookmarksController
 
-@synthesize ghosteryController, formController, folderController, managedObjectContext, mode, bookmarks, folderImage, bookmarkImage, toolbar, editToolbar, tableView, currentFolder;
+@synthesize browserController, formController, folderController, managedObjectContext, mode, bookmarks, folderImage, bookmarkImage, toolbar, editToolbar, tableView, currentFolder;
 
 // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 /*
@@ -42,7 +41,7 @@
 		self.mode = 'V';
 	}
 	
-	formController = [ghosteryController bookmarksFormController];
+	formController = [browserController bookmarksFormController];
 	
 	self.contentSizeForViewInPopover = CGSizeMake(320.0, 480.0);
     [super viewDidLoad];
@@ -119,11 +118,11 @@
 		[self finishEditMode:sender];
 	}
 	
-	if ([ghosteryController isPad]) {
-		[[ghosteryController padPopover] dismissPopoverAnimated:YES];
+	if ([browserController isPad]) {
+		[[browserController padPopover] dismissPopoverAnimated:YES];
 	} else {
 		[UIView transitionFromView:[self.navigationController view]
-							toView: [ghosteryController view]
+							toView: [browserController view]
 						  duration:1.0
 						   options:(UIViewAnimationOptionTransitionCurlUp)
 						completion:^(BOOL finished) {}];
@@ -134,8 +133,8 @@
 }
 
 -(void) openBookmark:(NSIndexPath *) indexPath{	
-	[[ghosteryController addressBar] setText:[[bookmarks objectAtIndex:[indexPath row]] valueForKey:@"url"]];
-	[ghosteryController gotoAddress:nil];
+	[[browserController addressBar] setText:[[bookmarks objectAtIndex:[indexPath row]] valueForKey:@"url"]];
+	[browserController gotoAddress:nil];
 	[self switchToBrowser:nil];
 }
 
@@ -309,7 +308,7 @@
 			[nextBookmarkController setMode:[self mode]];
 			[nextBookmarkController setCurrentFolder:item];
 			[nextBookmarkController setManagedObjectContext:managedObjectContext];
-			[nextBookmarkController setGhosteryController:ghosteryController];
+			[nextBookmarkController setBrowserController:browserController];
             [nextBookmarkController setFolderController:[self folderController]];
 			[self.navigationController pushViewController:nextBookmarkController animated:YES];
 		} else {
