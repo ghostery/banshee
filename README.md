@@ -1,4 +1,4 @@
-![Alt text](http://images3.wikia.nocookie.net/__cb20120130000708/finalfantasy/images/6/6a/FFLIII_Ghost_Monster.gif)banshee![Alt text](http://images3.wikia.nocookie.net/__cb20120130000708/finalfantasy/images/6/6a/FFLIII_Ghost_Monster.gif)
+banshee
 =======
 
 An iOS browser built on top of UIWebView
