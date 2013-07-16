@@ -586,6 +586,13 @@
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    if ([pageData length] == 0) {
+        [[[self selectedTab] history] removeObjectAtIndex:[[[self selectedTab] history] count] - 1];
+        self.currentURLString = [[[[[self selectedTab] history] lastObject] URL] absoluteString];
+        [addressBar setText:self.currentURLString];
+        [progressBar setHidden:YES];
+        return;
+    }
     if ([[response MIMEType] isEqualToString:@"text/html"] || [[response MIMEType] isEqualToString:@"application/xhtml+xml"] || [[response MIMEType] isEqualToString:@"text/vnd.wap.wml"]) {
         NSStringEncoding *enc;
         if ([response textEncodingName] != nil) {
