@@ -15,7 +15,7 @@
 
 @implementation BookmarksFormController
 
-@synthesize parentField, nameField, urlField, cancelButton, doneButton, managedObjectContext, mode, selectedFolder;
+@synthesize parentField, nameField, urlField, cancelButton, doneButton, managedObjectContext, mode, selectedFolder, defaultUrlFieldText;
 
 // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 /*
@@ -79,12 +79,18 @@
 		[self.navigationItem setRightBarButtonItem:doneButton];
 		[self.navigationItem setLeftBarButtonItem:cancelButton];
 		
-		NSString *name = [[browserController webView] stringByEvaluatingJavaScriptFromString:@"document.title"];
-		NSString *url = [[browserController webView] stringByEvaluatingJavaScriptFromString:@"window.location.href"];
-		if (![url isEqualToString:@"about:blank"]) {
-			[urlField setText:url];
-			[nameField setText:name];
-		}
+        if (defaultUrlFieldText != nil) {
+            [urlField setText:defaultUrlFieldText];
+            [nameField setText:@"Untitled"];
+            [self setDefaultUrlFieldText:nil];
+        } else {
+            NSString *name = [[browserController webView] stringByEvaluatingJavaScriptFromString:@"document.title"];
+            NSString *url = [[browserController webView] stringByEvaluatingJavaScriptFromString:@"window.location.href"];
+            if (![url isEqualToString:@"about:blank"]) {
+                [urlField setText:url];
+                [nameField setText:name];
+            }
+        }
 		
 	}
 	if (selectedFolder != nil && ![selectedFolder isEqual:@"Bookmarks"]) {

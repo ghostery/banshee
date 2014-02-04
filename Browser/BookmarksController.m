@@ -123,8 +123,8 @@
 	} else {
 		[UIView transitionFromView:[self.navigationController view]
 							toView: [browserController view]
-						  duration:1.0
-						   options:(UIViewAnimationOptionTransitionCurlUp)
+						  duration:0.5
+						   options:(UIViewAnimationOptionTransitionCrossDissolve)
 						completion:^(BOOL finished) {}];
 	}
 	

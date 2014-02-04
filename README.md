@@ -3,7 +3,7 @@ banshee
 
 An iOS browser built on top of UIWebView
 
-This projects implements tabs, bookmarks, address bar, search bar, loading indicators, and much more for UIWebView. Currently it only supports iOS 5.0 and greater with ARC-only.  
+This projects implements tabs, bookmarks, address bar, search bar, loading indicators, and much more for UIWebView. Currently it only supports iOS 7.0 and greater with ARC-only. See branches for older versions.
 
 ## Installation
 
@@ -15,6 +15,9 @@ This projects implements tabs, bookmarks, address bar, search bar, loading indic
 * CoreData.framework
 * SystemConfiguration.framework
 * libxml2.2.dylib
+* [Reachability.h](https://developer.apple.com/Library/ios/samplecode/Reachability/Listings/Reachability_Reachability_h.html#//apple_ref/doc/uid/DTS40007324-Reachability_Reachability_h-DontLinkElementID_7), [Reachability.m](https://developer.apple.com/Library/ios/samplecode/Reachability/Listings/Reachability_Reachability_m.html#//apple_ref/doc/uid/DTS40007324-Reachability_Reachability_m-DontLinkElementID_8)
+
+For Reachability code, copy and paste the 2 files into your Classes group in xCode.
 
 To include these dependencies you need to add them to your linked libraries. To do this click on project name in Project Navigator then click on your project target. Then under the "Build Phases" section you will see a "Link Binary With Libraries" item, expand it and click the "+" button.
 

@@ -16,6 +16,8 @@
 	UIBarButtonItem *doneButton;
 	
 	NSManagedObject *selectedFolder;
+    
+    NSString *defaultUrlFieldText;
 	
 	char mode;
 	
@@ -28,6 +30,8 @@
 @property(nonatomic, strong) UIBarButtonItem *doneButton;
 
 @property(nonatomic, strong) NSManagedObject *selectedFolder;
+
+@property(nonatomic,strong) NSString *defaultUrlFieldText;
 
 @property(nonatomic, assign) char mode;
 

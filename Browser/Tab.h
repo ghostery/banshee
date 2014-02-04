@@ -8,15 +8,20 @@
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
-@class BrowserViewController;
+@class BrowserViewController, FilterManager;
 
-@interface Tab : UIView {
+@interface Tab : UIView <NSURLConnectionDelegate, UIWebViewDelegate, UIActionSheetDelegate>{
 	UIButton *tabButton;
 	UILabel *tabTitle;
 	UIWebView *webView;
 	UIButton *closeButton;
-	
-	NSMutableArray *detectedBugArray;
+	    
+    NSString *currentURLString;
+    NSURL *currentURL;
+    NSString *connectionURLString;
+    NSURLConnection *urlConnection;
+    NSHTTPURLResponse *response;
+    NSMutableData *pageData;
     
     NSMutableArray *history;
     int traverse;
@@ -24,7 +29,16 @@
     
     int scrollPosition;
     
+    BOOL loading;
+    BOOL current;
+    BOOL actionSheetVisible;
+    
+    double loadStartTime;
+    double loadEndTime;
+    NSString *pageInfoJS;
+    
     BrowserViewController *viewController;
+    FilterManager *filterManager;
 	
 }
 
@@ -33,7 +47,12 @@
 @property(nonatomic,strong) UIWebView *webView;
 @property(nonatomic,strong) UIButton *closeButton;
 
-@property(nonatomic,strong) NSMutableArray *detectedBugArray;
+@property(nonatomic,strong) NSString *currentURLString;
+@property(nonatomic,strong) NSURL *currentURL;
+@property(nonatomic,strong) NSString *connectionURLString;
+@property(nonatomic,strong) NSURLConnection *urlConnection;
+@property(nonatomic,strong) NSHTTPURLResponse *response;
+@property(nonatomic,strong) NSMutableData *pageData;
 
 @property(nonatomic,strong) NSMutableArray *history;
 @property(nonatomic,assign) int traverse;
@@ -41,7 +60,16 @@
 
 @property(nonatomic,assign) int scrollPosition;
 
+@property(nonatomic,assign) BOOL loading;
+@property(nonatomic,assign) BOOL current;
+@property(nonatomic,assign) BOOL actionSheetVisible;
+
+@property(nonatomic,assign) double loadStartTime;
+@property(nonatomic,assign) double loadEndTime;
+@property(nonatomic,strong) NSString *pageInfoJS;
+
 @property(nonatomic,strong) BrowserViewController *viewController;
+@property(nonatomic,strong) FilterManager *filterManager;
 
 -(void) select;
 -(void) deselect;

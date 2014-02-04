@@ -10,23 +10,32 @@
 #import "BookmarksController.h"
 #import "BookmarksFormController.h"
 #import "BookmarkFolderFormController.h"
-
-#import <sys/socket.h>
-#import <netinet/in.h>
-#import <netinet6/in6.h>
-#import <arpa/inet.h>
-#import <ifaddrs.h>
-#import <netdb.h>
+#import "UIMainView.h"
+#import "AppDelegate.h"
+#import "Reachability.h"
 
 #import <CoreFoundation/CoreFoundation.h>
+
+typedef enum ScrollDirection {
+    ScrollDirectionNone,
+    ScrollDirectionRight,
+    ScrollDirectionLeft,
+    ScrollDirectionUp,
+    ScrollDirectionDown,
+    ScrollDirectionCrazy,
+} ScrollDirection;
 
 @interface BrowserViewController ()
 
 @end
 
-@implementation BrowserViewController
+@implementation BrowserViewController {
 
-@synthesize addressBar, searchBar, addressItem, searchItem, activityIndicator, topBar, refreshButton, forwardButton, backButton, navBar, oldAddressText, addTab, selectedTab, tabs, tabsView, webViewTemplate, bookmarksController, bookmarksFormController,  bookmarkButton, bugListNavBar, stopButton,  moreButton, reloadOnPageLoad,  initialPageLoad, pageData, progressBar, urlConnection, gotoUrl, contentSize, response, barItemPopoverPresenter, padPopover, popupQuery,  saveScrollPosition, currentURLString, customButton;
+    BOOL localWiFiRef;
+    SCNetworkReachabilityRef reachabilityRef;
+}
+
+@synthesize addressBar, addressBarButtonsView, addressItem, searchItem, activityIndicator, topBar, bottomBar, refreshButton, forwardButton, backButton, navBar, oldAddressText, addTab, selectedTab, tabs, tabsView, webViewTemplate, bookmarksController, bookmarksFormController,  bookmarkButton, bugListNavBar, stopButton,  moreButton, reloadOnPageLoad,  initialPageLoad, progressBar, gotoUrl, contentSize, barItemPopoverPresenter, padPopover, popupQuery,  saveScrollPosition, customButton, customButton2;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -37,6 +46,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    //set background for toolbar in top bar
+    if ([self isPad]) {
+        UIImage *img = [UIImage imageNamed:@"gray-pixel.png"];
+        [bottomBar setBackgroundImage:img forToolbarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
+    }
+    
+    //size statusbar
+    [(UIMainView *)[self view] sizeStatusBar];
     // Set up bookmark controllers
 	BookmarksFormController *bookmarksFormController = [[BookmarksFormController alloc]
                                                         initWithNibName:@"BookmarksForm"
@@ -61,8 +79,91 @@
 	[self.addressBar setRightViewMode: UITextFieldViewModeUnlessEditing];
 	self.oldAddressText = [NSMutableString stringWithString:@""];
     
-    self.currentURLString = @"";
+    selectedTab.currentURLString = @"";
     
+    [self registerForKeyboardNotifications];
+    
+}
+
+- (void)registerForKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWasShown:)
+                                                 name:UIKeyboardDidShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWasHidden:)
+                                                 name:UIKeyboardDidHideNotification object:nil];
+    
+}
+
+- (void)keyboardWasShown:(NSNotification *)aNotification {
+    if (![self isPad] && [selectedTab currentURL] == nil && ![addressBar isFirstResponder]) {
+        [self scrollToTop:aNotification];
+        [[selectedTab webView] stringByEvaluatingJavaScriptFromString:@"document.getElementById('contain').style.top = '-15px'"];
+    }
+}
+
+- (void)keyboardWasHidden:(NSNotification*)aNotification {
+    if (![self isPad] && [selectedTab currentURL] == nil && ![addressBar isFirstResponder]) {
+        [[selectedTab webView] stringByEvaluatingJavaScriptFromString:@"document.getElementById('contain').style.top = '15%'"];
+        [self scrollToTop:aNotification];
+    }
+}
+
+-(void) saveOpenTabs {
+    NSManagedObjectContext *managedObjectContext = [(AppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    NSError *error;
+    int orderCount = 0;
+    for (Tab *tab in [self tabs]) {
+        NSManagedObject *tabEntity =[NSEntityDescription insertNewObjectForEntityForName:@"Tab" inManagedObjectContext:managedObjectContext];
+        [tabEntity setValue:[[tab tabButton] titleForState:UIControlStateNormal] forKey:@"title"];
+        [tabEntity setValue:[tab currentURLString] forKey:@"url"];
+        [tabEntity setValue:[NSNumber numberWithInteger:orderCount] forKey:@"order"];
+        orderCount++;
+    }
+    if (![managedObjectContext save:&error]) {
+        NSLog(@"Error inserting %@ - error:%@",[self tabs],error);
+    }
+}
+
+-(void) openSavedTabs {
+    NSManagedObjectContext *managedObjectContext = [(AppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSError *error = nil;
+	NSEntityDescription *tabEntity = [NSEntityDescription entityForName:@"Tab" inManagedObjectContext:managedObjectContext];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"order" ascending:YES];
+
+    [request setEntity:tabEntity];
+    [request setSortDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+    NSMutableArray *tabFetchResults = [[managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
+    
+    for (NSManagedObject *tab in tabFetchResults) {
+        [self addTabWithAddress:[tab valueForKey:@"url"]];
+        [selectedTab setTitle:[tab valueForKey:@"title"]];
+        
+        [managedObjectContext deleteObject:tab];
+    }
+    if (![managedObjectContext save:&error]) {
+        NSLog(@"Error deleting %@ - error:%@",tabFetchResults,error);
+    }
+
+}
+
+-(void) deleteSavedTabs {
+    NSManagedObjectContext *managedObjectContext = [(AppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSError *error = nil;
+	NSEntityDescription *tabEntity = [NSEntityDescription entityForName:@"Tab" inManagedObjectContext:managedObjectContext];
+    [request setEntity:tabEntity];
+    NSMutableArray *tabFetchResults = [[managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
+    
+    for (NSManagedObject *tab in tabFetchResults) {
+        [managedObjectContext deleteObject:tab];
+    }
+    if (![managedObjectContext save:&error]) {
+        NSLog(@"Error deleting %@ - error:%@",tabFetchResults,error);
+    }
     
 }
 
@@ -76,7 +177,7 @@
 }
 
 - (void) viewWillAppear:(BOOL)animated {
-    [moreButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys: [UIFont fontWithName:@"Helvetica-Bold" size:29.0], UITextAttributeFont,nil] forState:UIControlStateNormal];
+    //[refreshButton setHidden:YES];
     [super viewWillAppear:animated];
 }
 
@@ -92,26 +193,172 @@
 
 // Scrolling
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
-    
-    if (saveScrollPosition) {
-        selectedTab.scrollPosition = scrollView.contentOffset.y;
-        //NSLog(@"search scroll: %i", selectedTab.scrollPosition);
-        
-    }
-    
-    if(![self isPad] && scrollView.contentOffset.y>=-topBar.frame.size.height)
-    {
-        topBar.frame=CGRectMake(0,-topBar.frame.size.height-scrollView.contentOffset.y, topBar.frame.size.width, topBar.frame.size.height);
+-(IBAction)scrollToTop:(id)sender {
+    if (![self isPad]) {
+        BOOL animated = ![sender isKindOfClass:[NSNotification class]];
+        [[[self webView] scrollView] setContentOffset:CGPointMake(0, - topBar.frame.size.height) animated:NO];
+        [[[self webView] scrollView] setContentInset:UIEdgeInsetsMake(-[[self webView] scrollView].contentOffset.y, 0, 0, 0)];
     }
 }
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    ScrollDirection scrollDirection;
+    if (self.lastScrollContentOffset > scrollView.contentOffset.y)
+        scrollDirection = ScrollDirectionUp;
+    else if (self.lastScrollContentOffset < scrollView.contentOffset.y)
+        scrollDirection = ScrollDirectionDown;
+    
+    if (saveScrollPosition) {
+        selectedTab.scrollPosition = scrollView.contentOffset.y;
+    }
+    if(![self isPad]) {
+        UIView *statusBarView = [(UIMainView *)self.view statusBarView];
+        if (scrollView.contentOffset.y <= -topBar.frame.size.height) {
+            // noop
+        } else if (scrollView.contentOffset.y < -statusBarView.frame.size.height) {
+            [[[self webView] scrollView] setContentInset:UIEdgeInsetsMake(-scrollView.contentOffset.y, 0, 0, 0)];
+        } else {
+            [[[self webView] scrollView] setContentInset:UIEdgeInsetsMake(statusBarView.frame.size.height, 0, 0, 0)];
+        }
+        
+        // show bottom toolbar when scrolling up fast
+        if (scrollDirection == ScrollDirectionUp && scrollView.contentOffset.y - self.lastScrollContentOffset < -20 && bottomBar.alpha == 0.0) {
+                [UIView animateWithDuration: 0.5
+                                      delay: 0.0
+                                    options: UIViewAnimationOptionCurveEaseOut
+                                 animations:^{
+                                     bottomBar.alpha = 1.0;
+                                 }
+                                 completion:^(BOOL finished){
+                                     if (finished) {
+                                         [selectedTab webView].frame = CGRectMake([selectedTab webView].frame.origin.x, [selectedTab webView].frame.origin.y, [selectedTab webView].frame.size.width, [selectedTab webView].frame.size.height - bottomBar.frame.size.height);
+                                     }
+                                 }];
+                topBar.frame=CGRectMake(0,0, topBar.frame.size.width, topBar.frame.size.height);
+    
+            
+        } else if (scrollView.contentOffset.y > 0 && scrollView.contentOffset.y + scrollView.frame.size.height < scrollView.contentSize.height) {
+            if (scrollDirection == ScrollDirectionDown && bottomBar.alpha == 1.0) {
+                [selectedTab webView].frame = CGRectMake([selectedTab webView].frame.origin.x, [selectedTab webView].frame.origin.y, [selectedTab webView].frame.size.width, [selectedTab webView].frame.size.height + bottomBar.frame.size.height);
+                
+                
+                
+                [UIView animateWithDuration: 1.0
+                                      delay: 0.0
+                                    options: UIViewAnimationOptionCurveEaseIn
+                                 animations:^{
+                                     bottomBar.alpha = 0.0;
+                                 }
+                                 completion:^(BOOL finished){
+                                     if (finished) {
+                                     }
+                                 }];
+            }
+        
+        // show bottom toolbar
+        } else if (bottomBar.alpha == 0.0)  {
+
+            
+            [UIView animateWithDuration: 0.5
+                                  delay: 0.0
+                                options: UIViewAnimationOptionCurveEaseOut
+                             animations:^{
+                                 bottomBar.alpha = 1.0;
+                             }
+                             completion:^(BOOL finished){
+                                 if (finished) {
+                                     [selectedTab webView].frame = CGRectMake([selectedTab webView].frame.origin.x, [selectedTab webView].frame.origin.y, [selectedTab webView].frame.size.width, [selectedTab webView].frame.size.height - bottomBar.frame.size.height);
+                                     if (scrollView.contentOffset.y > 0) {
+                                         CGPoint bottomOffset = CGPointMake(0, scrollView.contentSize.height - [selectedTab webView].frame.size.height);
+                                         [scrollView setContentOffset:bottomOffset animated:NO];
+                                     }
+                                 }
+                             }];
+
+        }
+    }
+    
+    if(![self isPad] && scrollView.contentOffset.y>=-topBar.frame.size.height && (scrollView.contentOffset.y <= 0 || scrollDirection == ScrollDirectionDown))
+    {
+        topBar.frame=CGRectMake(0,-topBar.frame.size.height-scrollView.contentOffset.y, topBar.frame.size.width, topBar.frame.size.height);
+    }
+    
+    self.lastScrollContentOffset = scrollView.contentOffset.y;
+}
+
+- (void)showHideView
+{
+    // Fade out the view right away
+    [UIView animateWithDuration:1.0
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         bottomBar.alpha = 0.0;
+                     }
+                     completion:^(BOOL finished){
+                         // Wait one second and then fade in the view
+                         [UIView animateWithDuration:1.0
+                                               delay: 1.0
+                                             options:UIViewAnimationOptionCurveEaseOut
+                                          animations:^{
+                                              bottomBar.alpha = 1.0;
+                                          }
+                                          completion:nil];
+                     }];
+}
+
+
+
 // Web methods
 
--(void) gotoAddress:(id) sender withRequestObj:(NSURLRequest *) request {
+- (void) currentWebViewDidStartLoading:(UIWebView *) webView  {
+    if (addressBar.editing) {
+        [webView stopLoading];
+        return;
+    }
+    
+    
+    Tab *tab = nil;
+    for (id cTab in tabs) {
+        if ([cTab webView] == webView) {
+            tab = cTab;
+        }
+    }
+    if (tab == selectedTab) {
+        
+        if (initialPageLoad) {
+            [refreshButton setHidden:true];
+            [stopButton setHidden:false];
+        }
+        
+    }
+    if (progressBar.progress < 0.95) {
+        [progressBar setProgress: progressBar.progress + 0.05];
+    }
+    [self setInitialPageLoad:NO];
+}
+
+-(void) currentWebViewDidFinishFinalLoad:(UIWebView *) webView {
+    [progressBar setProgress:1.0 animated:NO];
+    [progressBar setHidden:YES];
+    
+    [stopButton setHidden:YES];
+    
+    NSURL *url = [webView.request URL];
+    if ([url isFileURL] || [[url absoluteString] isEqualToString:@"about:blank"]) {
+        [refreshButton setHidden:YES];
+    } else {
+        [refreshButton setHidden:NO];
+    }
+    if (saveScrollPosition && [selectedTab scrollPosition] > 0) {
+        [[[self webView] scrollView] setContentOffset:CGPointMake(0, [selectedTab scrollPosition]) animated:NO];
+    }
+    [self loadTabs:webView];
+}
+
+-(void) gotoAddress:(id) sender withRequestObj:(NSURLRequest *)request inTab:(Tab *)tab {
     // Clear detected bugs
-    self.currentURLString = @"";
-	[[selectedTab detectedBugArray] removeAllObjects];
+    tab.currentURLString = @"";
     [self setInitialPageLoad:YES];
 	
     //[whiteView setHidden:NO];
@@ -121,7 +368,7 @@
     saveScrollPosition = [[[request URL] host] isEqualToString:@"duckduckgo.com"] || [[[request URL] host] isEqualToString:@"www.duckduckgo.com"];
     
     if (![self isPad]) {
-        [[[self webView] scrollView] setContentOffset:CGPointMake(0, - topBar.frame.size.height) animated:YES];
+        [self scrollToTop:nil];
     }
 	
 	[oldAddressText setString:[addressBar text]];
@@ -139,37 +386,65 @@
         } else {
             [progressBar setHidden:NO];
             [progressBar setProgress:0.1 animated:NO];
-            urlConnection = nil;
-            urlConnection = [[NSURLConnection alloc] initWithRequest:mRequest delegate:self];
+            tab.urlConnection = nil;
+            tab.urlConnection = [[NSURLConnection alloc] initWithRequest:mRequest delegate:tab];
             if (sender != refreshButton) {
-                [selectedTab updateHistory];
+                [tab updateHistory];
             }
         }
         
         
     } else {
-        UIAlertView *netAlert = [[UIAlertView alloc] initWithTitle:@"Cannot Open Page"
+        /*UIAlertView *netAlert = [[UIAlertView alloc] initWithTitle:@"Cannot Open Page"
                                                            message:@"Cannot open page because it is not connected to the internet!"
                                                           delegate:self
                                                  cancelButtonTitle:nil
                                                  otherButtonTitles:@"Okay", nil];
-        [netAlert show];
+
+        [netAlert show];*/
+        [progressBar setHidden:YES];
+        [self cannotConnect:nil];
         
     }
     
     [addressBar resignFirstResponder];
 }
 
+-(IBAction) didStartEditingAddressBar:(id)sender {
+    if ([[addressBar text] length] > 0) {
+        [self performSelector:@selector(selectAllAddressText) withObject:nil afterDelay:0.0];
+    }
+    [addressBarButtonsView setHidden:YES];
+}
+
+-(void) selectAllAddressText {
+    [addressBar setSelectedTextRange:[addressBar textRangeFromPosition:addressBar.beginningOfDocument toPosition:addressBar.endOfDocument]];
+}
+
 -(IBAction) gotoAddress:(id) sender {
-    gotoUrl = [NSURL URLWithString:[addressBar text]];
-	if (!([[gotoUrl scheme] isEqualToString:@"http"] || [[gotoUrl scheme] isEqualToString:@"https"])) {
-		gotoUrl = [NSURL URLWithString: [@"http://" stringByAppendingString: [gotoUrl absoluteString]]];
-	}
-    [self gotoAddress:sender withRequestObj:[NSURLRequest requestWithURL:gotoUrl]];
+    [addressBarButtonsView setHidden:NO];
+    [stopButton setHidden:NO];
+    [refreshButton setHidden:YES];
+    
+    NSString *inputText = [[addressBar text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    gotoUrl = [NSURL URLWithString:inputText];
+    if (gotoUrl != nil && (!([[gotoUrl scheme] isEqualToString:@"http"] || [[gotoUrl scheme] isEqualToString:@"https"]))) {
+        gotoUrl = [NSURL URLWithString: [@"http://" stringByAppendingString: [gotoUrl absoluteString]]];
+    }
+    NSURLRequest *request = [NSURLRequest requestWithURL:gotoUrl];
+    if ([inputText rangeOfString:@"."].location != NSNotFound && [NSURLConnection canHandleRequest:request]){
+        [self gotoAddress:sender withRequestObj:request inTab:selectedTab];
+    } else {
+        [self searchWeb:sender];
+    }
+}
+
+-(IBAction) didEndEditingAddressBar:(id)sender {
+    
 }
 
 -(IBAction) searchWeb:(id) sender {
-	NSString *searchQuery = [searchBar text];
+	NSString *searchQuery = [addressBar text];
     NSString *encodedSearchQuery = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
                                                                                                          NULL,
                                                                                                          (CFStringRef)searchQuery,
@@ -177,110 +452,53 @@
                                                                                                          (CFStringRef)@"!*'();:@&=+$,/?%#[]",
                                                                                                     kCFStringEncodingUTF8 ));
 	NSString *urlString = [@"http://www.duckduckgo.com/html/?q=" stringByAppendingString:encodedSearchQuery];
-	
-	[addressBar	setText: urlString];
-    
-    // Clear detected bugs
-	[[selectedTab detectedBugArray] removeAllObjects];
     
     // Load the request in the UIWebView.
     if ([self checkNetworkStatus]) {
-        [self gotoAddress:sender];
+        [self gotoAddress:sender withRequestObj:[NSURLRequest requestWithURL:[NSURL URLWithString:urlString]] inTab:selectedTab];
     } else {
-        UIAlertView *netAlert = [[UIAlertView alloc] initWithTitle:@"Cannot Open Page"
-                                                           message:@"Cannot open page because it is not connected to the internet!"
-                                                          delegate:self
-                                                 cancelButtonTitle:nil
-                                                 otherButtonTitles:@"Okay", nil];
-        [netAlert show];
+        [self cannotConnect:nil];
+        [progressBar setHidden:YES];
         
     }
 	//Load the request in the UIWebView.
 	[addressBar resignFirstResponder];
 }
 
+-(void) cannotConnect:(UIWebView *) cnWebView {
+    [stopButton setHidden:NO];
+    [refreshButton setHidden:YES];
+    NSURL *ucUrl = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"unable_to_connect" ofType:@"html"] isDirectory:NO];
+    NSString *ucContentString = [NSString stringWithContentsOfURL:ucUrl encoding:NSUTF8StringEncoding error:nil];
+    [[self webView] loadHTMLString:ucContentString baseURL:nil];
+}
+
 -(IBAction) goBack:(id)sender {
-	// Clear detected bugs
-	[[selectedTab detectedBugArray] removeAllObjects];
 	
     [selectedTab goBack];
     self.reloadOnPageLoad = YES;
 }
 
 -(IBAction) goForward:(id)sender {
-	// Clear detected bugs
-	[[selectedTab detectedBugArray] removeAllObjects];
 	
     [selectedTab goForward];
 	//[[self webView] stringByEvaluatingJavaScriptFromString:@"history.forward();"];
 }
 
--(IBAction) expandURLBar:(id)sender {
-	if ([self webView].loading) {
-		[self stopLoading:sender];
-	}
-	UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
-	NSArray *items = [NSArray arrayWithObjects: addressItem, cancelButton, nil];
-	
-	[navBar setItems: items animated: YES];
-	addressItem.width = 230;
-	[addressBar sizeToFit];
-	[refreshButton setHidden:true];
-}
-
--(IBAction) expandSearchBar:(id)sender {
-	if ([self webView].loading) {
-		[self stopLoading:sender];
-	}
-	UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
-	NSArray *items = [NSArray arrayWithObjects: searchItem, cancelButton, nil];
-	
-	[navBar setItems: items animated: YES];
-	searchItem.width = 230;
-	[searchBar sizeToFit];
-	[refreshButton setHidden:true];
-}
-
--(IBAction) contractBar:(id)sender {
-	
-    if ([[navBar items] objectAtIndex:1] != sender && ![searchBar isHidden]) {
-        [addressBar setText:oldAddressText];
-    }
-    
-    [searchBar setHidden:false];
-	[navBar setItems: [NSArray arrayWithObjects:addressItem, searchItem, nil] animated: YES];
-	
-	addressItem.width = 214;
-	searchItem.width = 74;
-    
-    if ([[self urlConnection] currentRequest] != nil && !([tabs count] == 0 || [[[[self webView] request] URL] isFileURL])) {
-        [refreshButton setHidden:false];
-    }
-	
-	[addressBar resignFirstResponder];
-	[searchBar resignFirstResponder];
-	[addressBar sizeToFit];
-	[searchBar sizeToFit];
-}
-
 -(IBAction) cancel:(id)sender {
-	[self contractBar: sender];
+	//[self contractBar: sender];
 }
 
 -(IBAction) showBookmarks:(id)sender {
     [self showBookmarksView:sender];
 }
 
--(IBAction) customButtonClick:(id)sender {
-    //noop, implement in subclass
-}
-
 -(void) showBookmarksView:(id)sender {
 
     [UIView transitionFromView:self.view
                         toView:[bookmarksController view]
-                      duration:1.0
-                       options:(UIViewAnimationOptionTransitionCurlDown)
+                      duration:0.5
+                       options:(UIViewAnimationOptionTransitionCrossDissolve)
                     completion:^(BOOL finished) {}];
 	
 }
@@ -288,6 +506,7 @@
 -(IBAction) stopLoading:(id)sender {
 	[stopButton setHidden:true];
     [refreshButton setHidden:false];
+    [progressBar setHidden:YES];
     
 	//[activityIndicator stopAnimating];
     if ([tabs count] > 0) {        
@@ -305,19 +524,6 @@
 }
 
 -(IBAction)showActionSheet:(id)sender {
-    //self.popupQuery = nil;
-    UIActionSheet *pQuery= [[UIActionSheet alloc] initWithTitle:nil
-                                                       delegate:self
-                                              cancelButtonTitle:nil
-                                         destructiveButtonTitle:nil
-                                              otherButtonTitles:nil];
-    for (NSString *button in [self actionSheetButtons]) {
-        [pQuery addButtonWithTitle:button];
-    }
-    
-    pQuery.cancelButtonIndex = [pQuery addButtonWithTitle:@"Cancel Button"];
-    
-    self.popupQuery = pQuery;
 	// Hide popover for ipad
 	if ([self isPad] ) {
         
@@ -327,14 +533,31 @@
         
 		if (popupQuery.visible || barItemPopoverPresenter == moreButton) {
 			barItemPopoverPresenter = nil;
-			[popupQuery dismissWithClickedButtonIndex:0 animated:YES];
+			[popupQuery dismissWithClickedButtonIndex:nil animated:YES];
 		} else {
+            [self generatePopupQuery];
 			barItemPopoverPresenter = moreButton;
 			[popupQuery showFromBarButtonItem:moreButton animated:YES];
 		}
 	} else {
+        [self generatePopupQuery];
 		[popupQuery showInView:self.view];
 	}
+}
+
+-(void) generatePopupQuery {
+    UIActionSheet *pQuery= [[UIActionSheet alloc] initWithTitle:nil
+                                                       delegate:self
+                                              cancelButtonTitle:nil
+                                         destructiveButtonTitle:nil
+                                              otherButtonTitles:nil];
+    for (NSString *button in [self actionSheetButtons]) {
+        [pQuery addButtonWithTitle:button];
+    }
+    
+    pQuery.cancelButtonIndex = [pQuery addButtonWithTitle:@"Cancel"];
+    
+    self.popupQuery = pQuery;
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -344,29 +567,7 @@
     }
     // Add Bookmark
 	if (buttonIndex == 0) {
-        [actionSheet dismissWithClickedButtonIndex:0 animated:YES];
-		[bookmarksFormController setMode:'A'];
-		[[bookmarksFormController navigationItem] setHidesBackButton:YES animated:NO];
-		[bookmarksController pushViewController:bookmarksFormController animated:NO];
-		if ([self isPad]) {
-			if (padPopover == nil) {
-                UIPopoverController *ppop = [[UIPopoverController alloc]
-                                             initWithContentViewController:bookmarksController];
-                self.padPopover = ppop;
-                
-			} else {
-				[self.padPopover setContentViewController:bookmarksController animated:YES];
-			}
-			[self.padPopover presentPopoverFromBarButtonItem: bookmarkButton
-									permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-			
-		} else {
-			[UIView transitionFromView:self.view
-								toView:[bookmarksController view]
-							  duration:1.0
-							   options:(UIViewAnimationOptionTransitionCurlDown)
-							completion:^(BOOL finished) {}];
-		}
+        [self addBookmarkFromSheet:actionSheet];
     }
     
     // Clear Cookies
@@ -391,10 +592,36 @@
         //[[self webView] loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"import_bookmark_howto" ofType:@"html"]isDirectory:NO]]];
         NSString *path = [[NSBundle mainBundle] pathForResource:@"import_bookmark_howto" ofType:@"html"];
         NSData *launchData = [NSData dataWithContentsOfFile:path];
-        [[self webView] loadData:launchData MIMEType:@"text/html" textEncodingName:@"utf-8" baseURL:[NSURL fileURLWithPath:path]];
+        [[self webView] loadData:launchData MIMEType:@"text/html" textEncodingName:@"utf-8" baseURL:nil];
         [addressBar setText:urlAddress];
     }
 
+}
+
+-(void) addBookmarkFromSheet:(UIActionSheet *) sheet {
+    [sheet dismissWithClickedButtonIndex:0 animated:YES];
+    [bookmarksFormController setMode:'A'];
+    [[bookmarksFormController navigationItem] setHidesBackButton:YES animated:NO];
+    [bookmarksController pushViewController:bookmarksFormController animated:NO];
+    if ([self isPad]) {
+        if (padPopover == nil) {
+            UIPopoverController *ppop = [[UIPopoverController alloc]
+                                         initWithContentViewController:bookmarksController];
+            self.padPopover = ppop;
+            
+        } else {
+            [self.padPopover setContentViewController:bookmarksController animated:YES];
+        }
+        [self.padPopover presentPopoverFromBarButtonItem: bookmarkButton
+                                permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        
+    } else {
+        [UIView transitionFromView:self.view
+                            toView:[bookmarksController view]
+                          duration:0.5
+                           options:(UIViewAnimationOptionTransitionCrossDissolve)
+                        completion:^(BOOL finished) {}];
+    }
 }
 
 // TABS
@@ -403,12 +630,19 @@
     if (tabsView.hidden) {
         [self toggleTabsView:sender];
     }
+    [self addTabWithAddress:@""];
+}
+
+-(void) addTabWithAddress:(NSString *)urlAddress {
+
 	if ([tabs count] == 0) {
 		tabs = [[NSMutableArray alloc] initWithCapacity:8];
 	}
 	// reset navbar
-	[self contractBar:sender];
-	[self stopLoading:sender];
+	//[self contractBar:sender];
+    /*if (!stopButton.hidden) {
+     [self stopLoading:sender];
+     }*/
 	
     Tab *nTab = [[Tab alloc] initWithFrame:CGRectMake((100.0 * [tabs count]) + 2.0, 2.0, 100.0, 34.0) addTarget: self];
     
@@ -417,22 +651,29 @@
 	
 	[tabs addObject:selectedTab];
 	[selectedTab select];
-	addTab.frame = CGRectOffset(addTab.frame, 100.0, 0.0);
 	
 	//scrolling
-	tabsView.contentSize = CGSizeMake(((100.0 + 2.0) * [tabs count]) + 40.0, 23.0);
+	tabsView.contentSize = CGSizeMake(((100.0) * [tabs count]) + 5.0, 23.0);
+    if (tabsView.frame.size.width < tabsView.contentSize.width) {
+        tabsView.contentOffset = CGPointMake(tabsView.contentSize.width - tabsView.frame.size.width,0);
+    }
+    
 	tabsView.clipsToBounds = YES;
 	tabsView.showsHorizontalScrollIndicator = NO;
 	
-    NSString *urlAddress = @"";
-    //[[self webView] loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"launch" ofType:@"html"]isDirectory:NO]]];
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"launch" ofType:@"html"];
-    NSData *launchData = [NSData dataWithContentsOfFile:path];
-    [[self webView] loadData:launchData MIMEType:@"text/html" textEncodingName:@"utf-8" baseURL:[NSURL fileURLWithPath:path]];
-    [addressBar setText:urlAddress];
+    if ([urlAddress isEqualToString:@""]) {
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"launch" ofType:@"html"];
+        NSData *launchData = [NSData dataWithContentsOfFile:path];
+        [[self webView] loadData:launchData MIMEType:@"text/html" textEncodingName:@"utf-8" baseURL:nil];
+        if (![addressBar isFirstResponder])  {
+            [addressBar setText:urlAddress];
+        }
+        
+    } else {
+        [self gotoAddress:nil withRequestObj:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:urlAddress]] inTab:selectedTab];
+    }
     
 	[self loadTabs:[selectedTab webView]];
-    
 }
 
 -(IBAction) removeTab:(id)sender {
@@ -468,14 +709,13 @@
 	[tabs removeObject: toBeRemoved];
 	
 	
-	addTab.frame = CGRectOffset(addTab.frame, -100.0, 0.0);
 	if ([tabs count] == 0) {
 		[self addTab:nil];
 	}
 	[self loadTabs:[selectedTab webView]];
 	
 	//scrolling
-	tabsView.contentSize = CGSizeMake(((100.0 + 2.0) * [tabs count]) + 40.0, 23.0);
+	tabsView.contentSize = CGSizeMake(((100.0) * [tabs count]) + 40.0, 23.0);
 }
 
 -(IBAction) selectTab:(id)sender {
@@ -484,24 +724,30 @@
 			[self switchTabFrom:selectedTab ToTab:cTab];
 		}
 	}
-	// set address bar
-    if ([[[selectedTab webView] request].URL isFileURL]) {
-        [addressBar setText:@""];
-    } else {
-        [addressBar setText:[selectedTab webView].request.URL.absoluteString];
-    }
 	[self loadTabs:[selectedTab webView]];
 }
 
 -(void) switchTabFrom:(Tab *)fromTab ToTab:(Tab *)toTab {
 	if ([tabs count] > 0) {
 		[fromTab deselect];
+
 	}
 	[toTab select];
 	selectedTab = toTab;
+    if (![toTab loading]) {
+        [[self progressBar] setHidden:YES];
+        [[self stopButton] setHidden:YES];
+        [[self refreshButton] setHidden:NO];
+        [[self addressBar] setText:[selectedTab currentURLString]];
+    } else {
+        [[self progressBar] setHidden:NO];
+        [[self stopButton] setHidden:NO];
+        [[self refreshButton] setHidden:YES];
+    }
+
 }
 
--(IBAction) toggleTabsView:(id)sender {
+/*-(IBAction) toggleTabsView:(id)sender {
     if ([self isPad]) {
         if (tabsView.hidden) {
             [self webView].frame = CGRectMake([self webView].frame.origin.x,
@@ -526,21 +772,17 @@
         }
     } else {
         if (tabsView.hidden) {
-            topBar.frame = CGRectMake(topBar.frame.origin.x,
-                                      topBar.frame.origin.y ,
-                                      topBar.bounds.size.width,
-                                      topBar.bounds.size.height + tabsView.bounds.size.height);
+
             progressBar.frame = CGRectMake(progressBar.frame.origin.x,
                                            progressBar.frame.origin.y + tabsView.bounds.size.height,
                                            progressBar.frame.size.width,
                                            progressBar.frame.size.height);
             tabsView.hidden = NO;
+            addTab.hidden = NO;
         } else {
+            addTab.hidden = YES;
             tabsView.hidden = YES;
-            topBar.frame = CGRectMake(topBar.frame.origin.x,
-                                      topBar.frame.origin.y ,
-                                      topBar.bounds.size.width,
-                                      topBar.bounds.size.height - tabsView.bounds.size.height);
+
             progressBar.frame = CGRectMake(progressBar.frame.origin.x,
                                            progressBar.frame.origin.y - tabsView.bounds.size.height,
                                            progressBar.frame.size.width,
@@ -551,88 +793,7 @@
         [[[self webView] scrollView] setContentOffset:CGPointMake(0, - topBar.frame.size.height) animated:YES];
     }
     
-}
-
-// CONNECTION
-#pragma mark -
-#pragma mark urlConnection delegate
-
-- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse {
-    if (redirectResponse) {
-        NSMutableURLRequest *r = [[connection currentRequest] mutableCopy]; // original request
-        [r setURL: [request URL]];
-        self.currentURLString = [[request URL] absoluteString];
-        return r;
-    } else {
-        return request;
-    }
-}
-
-- (void)connection: (NSURLConnection*) connection didReceiveResponse: (NSHTTPURLResponse*) response
-{
-    self.currentURLString = [[response URL] absoluteString];
-    [self setResponse:response];
-    [progressBar setProgress:0.25 animated:NO];
-    pageData = [[NSMutableData alloc] initWithLength:0];
-}
-
-- (void) connection: (NSURLConnection*) connection didReceiveData: (NSData*) data
-{
-    [pageData appendData: data];
-    if ([progressBar progress] < 0.75) {
-        [progressBar setProgress:[progressBar progress] + .05 animated:NO];
-    }
-    // Broadcast a notification with the progress change, or call a delegate
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    if ([pageData length] == 0) {
-        [[[self selectedTab] history] removeObjectAtIndex:[[[self selectedTab] history] count] - 1];
-        self.currentURLString = [[[[[self selectedTab] history] lastObject] URL] absoluteString];
-        [addressBar setText:self.currentURLString];
-        [progressBar setHidden:YES];
-        return;
-    }
-    if ([[response MIMEType] isEqualToString:@"text/html"] || [[response MIMEType] isEqualToString:@"application/xhtml+xml"] || [[response MIMEType] isEqualToString:@"text/vnd.wap.wml"]) {
-        NSStringEncoding *enc;
-        if ([response textEncodingName] != nil) {
-            enc = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)[response textEncodingName]));
-        } else {
-            enc = NSUTF8StringEncoding;
-        }
-        NSString *page = (NSString *)[[NSString alloc] initWithData:pageData encoding:enc];
-        
-        [self loadPageString:page];
-
-    } else {
-        [[self webView] stopLoading];
-        [[self webView] loadData:pageData MIMEType:[response MIMEType] textEncodingName:[response textEncodingName] baseURL:[response URL]];
-        //[whiteView setHidden:YES];
-        [progressBar setHidden:YES];
-    }
-    
-    [progressBar setProgress:0.75 animated:NO];
-    pageData = nil;
-    
-}
-
--(void) loadPageString:(NSString *)page {
-    [[self webView] stopLoading];
-    [[self webView] loadHTMLString:page baseURL:[response URL]];
-}
-
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    UIAlertView *netAlert = [[UIAlertView alloc] initWithTitle:@"Cannot Open Page"
-                                                       message:[error localizedDescription]
-                                                      delegate:self
-                                             cancelButtonTitle:nil
-                                             otherButtonTitles:@"Okay", nil];
-    [netAlert show];
-    
-    NSString *urlAddress = @"";
-    [[self webView] loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"launch" ofType:@"html"]isDirectory:NO]]];
-    [addressBar setText:urlAddress];
-}
+}*/
 
 // WEBVIEW
 
@@ -645,100 +806,11 @@
 	return newWebView;
 }
 
-#pragma mark -
-#pragma mark webview delegate
-
--(BOOL) webView:(UIWebView*)webView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType {
-    
-    if (request == nil) {
-        return NO;
-    }
-    
-    // CAPTURE PAGE LOAD
-    if ([[[request URL] absoluteString] isEqualToString:@"js:gh-page-loaded"]) {
-        [self webViewDidFinishFinalLoad:webView];
-    }
-    
-	//CAPTURE USER LINK-CLICK.
-	if (navigationType == UIWebViewNavigationTypeLinkClicked || navigationType == UIWebViewNavigationTypeFormSubmitted) {
-		NSURL *URL = [request URL];
-		if ([[URL scheme] isEqualToString:@"http"] || [[URL scheme] isEqualToString:@"https"]) {
-			[addressBar setText:[URL absoluteString]];
-			[self gotoAddress:nil withRequestObj:request];
-		}
-		return NO;
-	}
-	return YES;
-}
-
--(void) webViewDidStartLoad:(UIWebView *)webView {
-    
-    if (!initialPageLoad) {
-        //[whiteView setHidden:YES];
-    }
-    if (addressBar.editing) {
-        [webView stopLoading];
-        return;
-    }
-    
-    
-	Tab *tab = nil;
-	for (id cTab in tabs) {
-		if ([cTab webView] == webView) {
-			tab = cTab;
-		}
-	}
-	if (tab == selectedTab) {
-		
-		if (initialPageLoad) {
-            [refreshButton setHidden:true];
-            [stopButton setHidden:false];
-        }
-        
-	}
-    if (progressBar.progress < 0.95) {
-        [progressBar setProgress: progressBar.progress + 0.05];
-    }
-    [self setInitialPageLoad:NO];
-    
-}
-
--(void) webViewDidFinishFinalLoad:(UIWebView *)webView {
-    [progressBar setProgress:1.0 animated:NO];
-    [progressBar setHidden:YES];
-    //[whiteView setHidden:YES];
-    if (saveScrollPosition && [selectedTab scrollPosition] > 0) {
-        [[[self webView] scrollView] setContentOffset:CGPointMake(0, [selectedTab scrollPosition]) animated:NO];
-    }
-    [self loadTabs:webView];
-}
-
--(void) webViewDidFinishLoad:(UIWebView *)webView {
-    
-    
-    if (![[[webView request] URL] isFileURL]) {
-        [webView stringByEvaluatingJavaScriptFromString:@"if (document.getElementById('gh-page-loaded') == null && document.documentElement.innerHTML != '<head></head><body></body>') {"
-         "var iframe = document.createElement('IFRAME');"
-         "iframe.setAttribute('id','gh-page-loaded');"
-         "iframe.setAttribute('src', 'js:gh-page-loaded');"
-         "document.body.appendChild(iframe);"
-         "iframe.parentNode.removeChild(iframe);"
-         "iframe = null;}" ];
-    }
-}
 
 -(void) loadTabs:(UIWebView *)webView {
     Tab *tab = nil;
 	
     [[self view] sendSubviewToBack:webView];
-    
-	//[activityIndicator stopAnimating];
-	[stopButton setHidden:true];
-    if ([webView request] == nil || [[webView request].URL isFileURL]) {
-        [refreshButton setHidden:true];
-    } else {
-        [refreshButton setHidden:false];
-    }
     
 	for (id cTab in tabs) {
 		if ([cTab webView] == webView) {
@@ -750,9 +822,18 @@
 	
 	if (tab == selectedTab) {
         if ([webView request] == nil || [[webView request].URL isFileURL]) {
-            [addressBar setText: @""];
+            if (![addressBar isFirstResponder]) {
+                [addressBar setText: @""];
+            }
+            
         } else {
-            [addressBar setText: [[[selectedTab webView] request].URL absoluteString]];
+            NSString *addressText = tab.currentURLString;
+            if (![addressText isEqualToString:@"about:blank"] && [addressText rangeOfString:@"https://duckduckgo.com"].location == NSNotFound) {
+                if (![addressBar isFirstResponder]) {
+                    [addressBar setText: addressText];
+                }
+                [refreshButton setHidden:[tab loading]];
+            }
             
         }
         
@@ -772,15 +853,6 @@
 	}
     // Set title
     //[tab showText];
-	NSString *tabTitle = [webView stringByEvaluatingJavaScriptFromString:@"document.title"];
-	NSString *url = [webView stringByEvaluatingJavaScriptFromString:@"window.location.href"];
-	if ((tab != nil) && (![url isEqualToString:@"about:blank"])) {
-		if ([tabTitle length] == 0) {
-			[tab setTitle:@"Untitled"];
-		} else {
-			[tab setTitle:tabTitle];
-		}
-	}
 }
 
 
@@ -795,39 +867,9 @@
 // Reachability
 - (BOOL) checkNetworkStatus
 {
-    // called after network status changes
-    
-    struct sockaddr_in zeroAddress;
-	bzero(&zeroAddress, sizeof(zeroAddress));
-	zeroAddress.sin_len = sizeof(zeroAddress);
-	zeroAddress.sin_family = AF_INET;
-    
-    SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, (const struct sockaddr*)&zeroAddress);
-    
-	SCNetworkReachabilityFlags flags;
-	if (SCNetworkReachabilityGetFlags(reachability, &flags)) {
-        if ((flags & kSCNetworkReachabilityFlagsReachable) == 0) {
-            NSLog(@"The internet is down.");
-            return NO;
-        }
-        if ((flags & kSCNetworkReachabilityFlagsConnectionRequired) == 0) {
-            NSLog(@"The internet is working via WIFI.");
-            return YES;
-        }
-        
-        if ((((flags & kSCNetworkReachabilityFlagsConnectionOnDemand ) != 0) || (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0)) {
-            
-			if ((flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0) {
-                NSLog(@"The internet is working via WIFI.");
-                return YES;
-            }
-        }
-        if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN) {
-            NSLog(@"The internet is working via WWAN.");
-            return YES;
-        }
-	}
-    return YES;
+    Reachability *reachability = [Reachability reachabilityForInternetConnection];
+    NetworkStatus *netstat = [reachability currentReachabilityStatus];
+    return netstat != NotReachable;
 }
 
 // HARDWARE
