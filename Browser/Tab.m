@@ -6,7 +6,8 @@
 //
 
 #import "Tab.h"
-#import "BrowserViewController.h"
+#import "GhosteryViewController.h"
+#import "FilterManager.h"
 #import "BookmarksFormController.h"
 #import "UIMainView.h"
 
@@ -14,7 +15,7 @@
 
 @synthesize tabButton, webView, closeButton, tabTitle, history, traverse, history_position, scrollPosition, currentURLString, currentURL, current, filterManager, urlConnection, connectionURLString, actionSheetVisible, loadStartTime, loadEndTime, pageInfoJS, response, viewController, loading;
 
--(id) initWithFrame:(CGRect)frame addTarget:(BrowserViewController *) vc {
+-(id) initWithFrame:(CGRect)frame addTarget:(GhosteryViewController *) vc {
 	if ((self = [super initWithFrame:frame])) {
         viewController = vc;
         NSString *path = [[NSBundle mainBundle] pathForResource:@"page_info" ofType:@"js"];
@@ -54,7 +55,12 @@
 		[self addSubview:closeButton];
 	
 		// Set up webview
-		webView = [[UIWebView alloc] initWithFrame:((UIView *)[viewController webViewTemplate]).frame];
+        UIWebView *wvTemplate = (UIView *)[viewController webViewTemplate];
+        int minWebViewSize = wvTemplate.frame.size.height;
+        int maxWebViewSize = minWebViewSize + [viewController bottomBar].frame.size.height;
+        int height = [viewController bottomBar].alpha > 0.0 ? minWebViewSize : maxWebViewSize;
+        CGRect frame = CGRectMake(wvTemplate.frame.origin.x, wvTemplate.frame.origin.y, wvTemplate.frame.size.width, height);
+		webView = [[UIWebView alloc] initWithFrame:frame];
 		webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 		webView.scalesPageToFit = true;
         webView.scrollView.scrollEnabled = YES; 
@@ -63,6 +69,13 @@
 		[webView sizeToFit];
 		[webView setDelegate:self];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contextualMenuAction:) name:@"TapAndHoldNotification" object:nil];
+        
+        // Set up filter manager
+        self.filterManager = [[FilterManager alloc] init];
+        [filterManager setTab:self];
+
+        [filterManager setBugArray:[[[viewController selectedTab] filterManager] bugArray]];
+        [filterManager setBugRegexArray:[[[viewController selectedTab] filterManager] bugRegexArray]];
         
         // Scroll topbar
         [[webView scrollView] setDelegate:viewController];
@@ -148,6 +161,9 @@
         self.connectionURLString = [self.connectionURLString stringByAppendingString:@"/"];
     }
     
+    if (loadStartTime == 0) {
+        loadStartTime = CACurrentMediaTime();
+    }
     if (redirectResponse) {
         NSMutableURLRequest *r = [[connection currentRequest] mutableCopy]; // original request
         [r setURL: [request URL]];
@@ -272,6 +288,12 @@
     if (current) {
         [viewController currentWebViewDidFinishFinalLoad:webView];
     }
+    loadEndTime = CACurrentMediaTime();
+    NSString *pageLatency = [NSString stringWithFormat:@"%g",(loadEndTime - loadStartTime) * 1000];
+    loadStartTime = 0;
+    NSString *domainPlusPath = [NSString stringWithFormat:@"%@%@", [currentURL host], [currentURL path]];
+    NSString *adSpots = [webView stringByEvaluatingJavaScriptFromString:pageInfoJS];
+    [filterManager ghostRankforPageInfo:domainPlusPath withLatency:pageLatency withAdSpots:adSpots];
     
     NSLog(@"Loaded url: %@", [webView.request mainDocumentURL]);
     
@@ -298,6 +320,7 @@
          "iframe = null;"
          "document.body.style.webkitTouchCallout='none';}" ];
     }
+    [viewController loadBugsIcon];
 }
 
 - (void)contextualMenuAction:(NSNotification*)notification

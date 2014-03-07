@@ -11,6 +11,7 @@
 #import "BookmarksFormController.h"
 #import "BookmarkFolderFormController.h"
 #import "UIMainView.h"
+#import "FilterManager.h"
 #import "AppDelegate.h"
 #import "Reachability.h"
 
@@ -203,6 +204,8 @@ typedef enum ScrollDirection {
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
     ScrollDirection scrollDirection;
+    int minWebViewSize = webViewTemplate.frame.size.height;
+    int maxWebViewSize = minWebViewSize + bottomBar.frame.size.height;
     if (self.lastScrollContentOffset > scrollView.contentOffset.y)
         scrollDirection = ScrollDirectionUp;
     else if (self.lastScrollContentOffset < scrollView.contentOffset.y)
@@ -231,7 +234,7 @@ typedef enum ScrollDirection {
                                  }
                                  completion:^(BOOL finished){
                                      if (finished) {
-                                         [selectedTab webView].frame = CGRectMake([selectedTab webView].frame.origin.x, [selectedTab webView].frame.origin.y, [selectedTab webView].frame.size.width, [selectedTab webView].frame.size.height - bottomBar.frame.size.height);
+                                         [selectedTab webView].frame = CGRectMake([selectedTab webView].frame.origin.x, [selectedTab webView].frame.origin.y, [selectedTab webView].frame.size.width, minWebViewSize);
                                      }
                                  }];
                 topBar.frame=CGRectMake(0,0, topBar.frame.size.width, topBar.frame.size.height);
@@ -239,9 +242,7 @@ typedef enum ScrollDirection {
             
         } else if (scrollView.contentOffset.y > 0 && scrollView.contentOffset.y + scrollView.frame.size.height < scrollView.contentSize.height) {
             if (scrollDirection == ScrollDirectionDown && bottomBar.alpha == 1.0) {
-                [selectedTab webView].frame = CGRectMake([selectedTab webView].frame.origin.x, [selectedTab webView].frame.origin.y, [selectedTab webView].frame.size.width, [selectedTab webView].frame.size.height + bottomBar.frame.size.height);
-                
-                
+                [selectedTab webView].frame = CGRectMake([selectedTab webView].frame.origin.x, [selectedTab webView].frame.origin.y, [selectedTab webView].frame.size.width, maxWebViewSize);
                 
                 [UIView animateWithDuration: 1.0
                                       delay: 0.0
@@ -267,7 +268,7 @@ typedef enum ScrollDirection {
                              }
                              completion:^(BOOL finished){
                                  if (finished) {
-                                     [selectedTab webView].frame = CGRectMake([selectedTab webView].frame.origin.x, [selectedTab webView].frame.origin.y, [selectedTab webView].frame.size.width, [selectedTab webView].frame.size.height - bottomBar.frame.size.height);
+                                     [selectedTab webView].frame = CGRectMake([selectedTab webView].frame.origin.x, [selectedTab webView].frame.origin.y, [selectedTab webView].frame.size.width, minWebViewSize);
                                      if (scrollView.contentOffset.y > 0) {
                                          CGPoint bottomOffset = CGPointMake(0, scrollView.contentSize.height - [selectedTab webView].frame.size.height);
                                          [scrollView setContentOffset:bottomOffset animated:NO];
@@ -278,6 +279,7 @@ typedef enum ScrollDirection {
         }
     }
     
+    //topbar logic
     if(![self isPad] && scrollView.contentOffset.y>=-topBar.frame.size.height && (scrollView.contentOffset.y <= 0 || scrollDirection == ScrollDirectionDown))
     {
         topBar.frame=CGRectMake(0,-topBar.frame.size.height-scrollView.contentOffset.y, topBar.frame.size.width, topBar.frame.size.height);
@@ -359,6 +361,7 @@ typedef enum ScrollDirection {
 -(void) gotoAddress:(id) sender withRequestObj:(NSURLRequest *)request inTab:(Tab *)tab {
     // Clear detected bugs
     tab.currentURLString = @"";
+	[[[tab filterManager] detectedBugArray] removeAllObjects];
     [self setInitialPageLoad:YES];
 	
     //[whiteView setHidden:NO];
@@ -453,6 +456,9 @@ typedef enum ScrollDirection {
                                                                                                     kCFStringEncodingUTF8 ));
 	NSString *urlString = [@"http://www.duckduckgo.com/html/?q=" stringByAppendingString:encodedSearchQuery];
     
+    // Clear detected bugs
+	[[[selectedTab filterManager] detectedBugArray] removeAllObjects];
+    
     // Load the request in the UIWebView.
     if ([self checkNetworkStatus]) {
         [self gotoAddress:sender withRequestObj:[NSURLRequest requestWithURL:[NSURL URLWithString:urlString]] inTab:selectedTab];
@@ -474,12 +480,16 @@ typedef enum ScrollDirection {
 }
 
 -(IBAction) goBack:(id)sender {
+	// Clear detected bugs
+	[[[selectedTab filterManager] detectedBugArray] removeAllObjects];
 	
     [selectedTab goBack];
     self.reloadOnPageLoad = YES;
 }
 
 -(IBAction) goForward:(id)sender {
+	// Clear detected bugs
+	[[[selectedTab filterManager] detectedBugArray] removeAllObjects];
 	
     [selectedTab goForward];
 	//[[self webView] stringByEvaluatingJavaScriptFromString:@"history.forward();"];
@@ -858,9 +868,18 @@ typedef enum ScrollDirection {
 
 // Orientation
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	return YES;
+- (NSUInteger) supportedInterfaceOrientations {
+    // Return a bitmask of supported orientations. If you need more,
+    // use bitwise or (see the commented return).
+    return UIInterfaceOrientationMaskAll;
+    // return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+}
+
+- (UIInterfaceOrientation) preferredInterfaceOrientationForPresentation {
+    // Return the orientation you'd prefer - this is what it launches to. The
+    // user can still rotate. You don't have to implement this method, in which
+    // case it launches in the current orientation
+    return UIDeviceOrientationPortrait;
 }
 
 
@@ -869,6 +888,7 @@ typedef enum ScrollDirection {
 {
     Reachability *reachability = [Reachability reachabilityForInternetConnection];
     NetworkStatus *netstat = [reachability currentReachabilityStatus];
+    ((AppDelegate *)[[UIApplication sharedApplication] delegate]).wifiEnabled = (netstat == ReachableViaWiFi);
     return netstat != NotReachable;
 }
 

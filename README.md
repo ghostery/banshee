@@ -64,8 +64,7 @@ You will also need to implement the following CoreData methods in your AppDelega
 
   There is a `customButtom` UIBarButtonitem which you can customize programatically in your view controller. This button appears in the bottom toolbar on the right. You can also overwrite the click handler method `-(IBAction) customButtonClick:(id)sender`.
 
-  Note: The views are not iOS7 ready yet.
-
+  There are now 2 custom buttoms.
 
 ## License
 
