@@ -68,7 +68,7 @@ You will also need to implement the following CoreData methods in your AppDelega
 
 ## License
 
-Copyright (c) 2013 Evidon
+Copyright (c) 2014 Evidon
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
