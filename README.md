@@ -45,9 +45,9 @@ The browser code does reference the app delegate, so you must have an AppDelegat
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
     return YES;
-    
+
 You will also need to implement the following CoreData methods in your AppDelegate to pull in the BrowserModel for storing bookmarks in core data:
-    
+
     - (NSManagedObjectContext *)managedObjectContext {
         ....
     }
@@ -62,9 +62,9 @@ You will also need to implement the following CoreData methods in your AppDelega
 
 ## Misc
 
-  There is a `customButtom` UIBarButtonitem which you can customize programatically in your view controller. This button appears in the bottom toolbar on the right. You can also overwrite the click handler method `-(IBAction) customButtonClick:(id)sender`.
+  There is a `customButton` UIBarButtonitem which you can customize programmatically in your view controller. This button appears in the bottom toolbar on the right. You can also overwrite the click handler method `-(IBAction) customButtonClick:(id)sender`.
 
-  There are now 2 custom buttoms.
+  There are now 2 custom buttons.
 
 ## License
 
