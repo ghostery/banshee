@@ -11,7 +11,6 @@
 #import "BookmarksFormController.h"
 #import "BookmarkFolderFormController.h"
 #import "UIMainView.h"
-#import "FilterManager.h"
 #import "AppDelegate.h"
 #import "Reachability.h"
 
@@ -361,7 +360,6 @@ typedef enum ScrollDirection {
 -(void) gotoAddress:(id) sender withRequestObj:(NSURLRequest *)request inTab:(Tab *)tab {
     // Clear detected bugs
     tab.currentURLString = @"";
-	[[[tab filterManager] detectedBugArray] removeAllObjects];
     [self setInitialPageLoad:YES];
 	
     //[whiteView setHidden:NO];
@@ -456,9 +454,6 @@ typedef enum ScrollDirection {
                                                                                                     kCFStringEncodingUTF8 ));
 	NSString *urlString = [@"http://www.duckduckgo.com/html/?q=" stringByAppendingString:encodedSearchQuery];
     
-    // Clear detected bugs
-	[[[selectedTab filterManager] detectedBugArray] removeAllObjects];
-    
     // Load the request in the UIWebView.
     if ([self checkNetworkStatus]) {
         [self gotoAddress:sender withRequestObj:[NSURLRequest requestWithURL:[NSURL URLWithString:urlString]] inTab:selectedTab];
@@ -480,16 +475,12 @@ typedef enum ScrollDirection {
 }
 
 -(IBAction) goBack:(id)sender {
-	// Clear detected bugs
-	[[[selectedTab filterManager] detectedBugArray] removeAllObjects];
 	
     [selectedTab goBack];
     self.reloadOnPageLoad = YES;
 }
 
 -(IBAction) goForward:(id)sender {
-	// Clear detected bugs
-	[[[selectedTab filterManager] detectedBugArray] removeAllObjects];
 	
     [selectedTab goForward];
 	//[[self webView] stringByEvaluatingJavaScriptFromString:@"history.forward();"];
@@ -888,7 +879,6 @@ typedef enum ScrollDirection {
 {
     Reachability *reachability = [Reachability reachabilityForInternetConnection];
     NetworkStatus *netstat = [reachability currentReachabilityStatus];
-    ((AppDelegate *)[[UIApplication sharedApplication] delegate]).wifiEnabled = (netstat == ReachableViaWiFi);
     return netstat != NotReachable;
 }
 

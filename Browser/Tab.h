@@ -38,7 +38,6 @@
     NSString *pageInfoJS;
     
     BrowserViewController *viewController;
-    FilterManager *filterManager;
 	
 }
 
@@ -69,7 +68,6 @@
 @property(nonatomic,strong) NSString *pageInfoJS;
 
 @property(nonatomic,strong) BrowserViewController *viewController;
-@property(nonatomic,strong) FilterManager *filterManager;
 
 -(void) select;
 -(void) deselect;

@@ -7,7 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		FAA4556F18A193E600B1BDF4 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA4556E18A193E600B1BDF4 /* Reachability.m */; };
+		B572E55718D08D2A005E4834 /* Tab.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E54718D08D2A005E4834 /* Tab.m */; };
+		B572E55818D08D2A005E4834 /* BookmarksController.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E54818D08D2A005E4834 /* BookmarksController.m */; };
+		B572E55918D08D2A005E4834 /* BookmarksFormController.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E54A18D08D2A005E4834 /* BookmarksFormController.m */; };
+		B572E55A18D08D2A005E4834 /* BrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E54C18D08D2A005E4834 /* BrowserViewController.m */; };
+		B572E55B18D08D2A005E4834 /* UIMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E54F18D08D2A005E4834 /* UIMainView.m */; };
+		B572E55C18D08D2A005E4834 /* BookmarkFolderFormController.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E55118D08D2A005E4834 /* BookmarkFolderFormController.m */; };
+		B572E55D18D08D2A005E4834 /* BookmarkImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E55318D08D2A005E4834 /* BookmarkImporter.m */; };
+		B572E55E18D08D2A005E4834 /* BookmarkItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E55518D08D2A005E4834 /* BookmarkItem.m */; };
+		B5A210C218D091F700D65141 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A210C118D091F700D65141 /* Reachability.m */; };
 		FAA4557418A19A2E00B1BDF4 /* gsearch.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA4557118A19A2E00B1BDF4 /* gsearch.png */; };
 		FAA4557518A19A2E00B1BDF4 /* magglass.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA4557218A19A2E00B1BDF4 /* magglass.png */; };
 		FAA4557618A19A2E00B1BDF4 /* tab_add.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA4557318A19A2E00B1BDF4 /* tab_add.png */; };
@@ -27,13 +35,6 @@
 		FAC9B3B116F3863500E37710 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B3B016F3863500E37710 /* libxml2.2.dylib */; };
 		FAC9B3B516F38C6500E37710 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B3B416F38C6500E37710 /* CoreData.framework */; };
 		FAC9B3B916F38D3700E37710 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B3B816F38D3700E37710 /* SystemConfiguration.framework */; };
-		FAF75E7918A17A52007B317D /* BookmarksController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAF75E6B18A17A52007B317D /* BookmarksController.m */; };
-		FAF75E7A18A17A52007B317D /* BookmarksFormController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAF75E6D18A17A52007B317D /* BookmarksFormController.m */; };
-		FAF75E7B18A17A52007B317D /* BrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAF75E6F18A17A52007B317D /* BrowserViewController.m */; };
-		FAF75E7C18A17A52007B317D /* Tab.m in Sources */ = {isa = PBXBuildFile; fileRef = FAF75E7118A17A52007B317D /* Tab.m */; };
-		FAF75E7D18A17A52007B317D /* BookmarkFolderFormController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAF75E7318A17A52007B317D /* BookmarkFolderFormController.m */; };
-		FAF75E7E18A17A52007B317D /* BookmarkImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = FAF75E7518A17A52007B317D /* BookmarkImporter.m */; };
-		FAF75E7F18A17A52007B317D /* BookmarkItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FAF75E7718A17A52007B317D /* BookmarkItem.m */; };
 		FAF75E9618A17A77007B317D /* BookmarkFoldersForm.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF75E8118A17A77007B317D /* BookmarkFoldersForm.xib */; };
 		FAF75E9718A17A77007B317D /* BookmarkItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF75E8218A17A77007B317D /* BookmarkItem.xib */; };
 		FAF75E9818A17A77007B317D /* BookmarksForm.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF75E8318A17A77007B317D /* BookmarksForm.xib */; };
@@ -55,12 +56,27 @@
 		FAF75EEB18A17BFD007B317D /* refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EDF18A17BFD007B317D /* refresh.png */; };
 		FAF75EEC18A17BFD007B317D /* tabs.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EE018A17BFD007B317D /* tabs.png */; };
 		FAF75EED18A17BFD007B317D /* JSTools.js in Sources */ = {isa = PBXBuildFile; fileRef = FAF75EE118A17BFD007B317D /* JSTools.js */; };
-		FAF75EF018A17C17007B317D /* UIMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = FAF75EEF18A17C17007B317D /* UIMainView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		FAA4556D18A193E600B1BDF4 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
-		FAA4556E18A193E600B1BDF4 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		B572E54718D08D2A005E4834 /* Tab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Tab.m; path = ../../../../acatighera/Projects/banshee/Browser/Tab.m; sourceTree = "<group>"; };
+		B572E54818D08D2A005E4834 /* BookmarksController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BookmarksController.m; path = ../../../../acatighera/Projects/banshee/Browser/BookmarksController.m; sourceTree = "<group>"; };
+		B572E54918D08D2A005E4834 /* BookmarksFormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BookmarksFormController.h; path = ../../../../acatighera/Projects/banshee/Browser/BookmarksFormController.h; sourceTree = "<group>"; };
+		B572E54A18D08D2A005E4834 /* BookmarksFormController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BookmarksFormController.m; path = ../../../../acatighera/Projects/banshee/Browser/BookmarksFormController.m; sourceTree = "<group>"; };
+		B572E54B18D08D2A005E4834 /* BrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserViewController.h; path = ../../../../acatighera/Projects/banshee/Browser/BrowserViewController.h; sourceTree = "<group>"; };
+		B572E54C18D08D2A005E4834 /* BrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserViewController.m; path = ../../../../acatighera/Projects/banshee/Browser/BrowserViewController.m; sourceTree = "<group>"; };
+		B572E54D18D08D2A005E4834 /* Tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tab.h; path = ../../../../acatighera/Projects/banshee/Browser/Tab.h; sourceTree = "<group>"; };
+		B572E54E18D08D2A005E4834 /* UIMainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIMainView.h; path = ../../../../acatighera/Projects/banshee/Browser/UIMainView.h; sourceTree = "<group>"; };
+		B572E54F18D08D2A005E4834 /* UIMainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIMainView.m; path = ../../../../acatighera/Projects/banshee/Browser/UIMainView.m; sourceTree = "<group>"; };
+		B572E55018D08D2A005E4834 /* BookmarkFolderFormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BookmarkFolderFormController.h; path = ../../../../acatighera/Projects/banshee/Browser/BookmarkFolderFormController.h; sourceTree = "<group>"; };
+		B572E55118D08D2A005E4834 /* BookmarkFolderFormController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BookmarkFolderFormController.m; path = ../../../../acatighera/Projects/banshee/Browser/BookmarkFolderFormController.m; sourceTree = "<group>"; };
+		B572E55218D08D2A005E4834 /* BookmarkImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BookmarkImporter.h; path = ../../../../acatighera/Projects/banshee/Browser/BookmarkImporter.h; sourceTree = "<group>"; };
+		B572E55318D08D2A005E4834 /* BookmarkImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BookmarkImporter.m; path = ../../../../acatighera/Projects/banshee/Browser/BookmarkImporter.m; sourceTree = "<group>"; };
+		B572E55418D08D2A005E4834 /* BookmarkItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BookmarkItem.h; path = ../../../../acatighera/Projects/banshee/Browser/BookmarkItem.h; sourceTree = "<group>"; };
+		B572E55518D08D2A005E4834 /* BookmarkItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BookmarkItem.m; path = ../../../../acatighera/Projects/banshee/Browser/BookmarkItem.m; sourceTree = "<group>"; };
+		B572E55618D08D2A005E4834 /* BookmarksController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BookmarksController.h; path = ../../../../acatighera/Projects/banshee/Browser/BookmarksController.h; sourceTree = "<group>"; };
+		B5A210C018D091F700D65141 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		B5A210C118D091F700D65141 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		FAA4557118A19A2E00B1BDF4 /* gsearch.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gsearch.png; sourceTree = "<group>"; };
 		FAA4557218A19A2E00B1BDF4 /* magglass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = magglass.png; sourceTree = "<group>"; };
 		FAA4557318A19A2E00B1BDF4 /* tab_add.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tab_add.png; sourceTree = "<group>"; };
@@ -85,20 +101,6 @@
 		FAC9B3B016F3863500E37710 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
 		FAC9B3B416F38C6500E37710 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		FAC9B3B816F38D3700E37710 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		FAF75E6B18A17A52007B317D /* BookmarksController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarksController.m; sourceTree = "<group>"; };
-		FAF75E6C18A17A52007B317D /* BookmarksFormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarksFormController.h; sourceTree = "<group>"; };
-		FAF75E6D18A17A52007B317D /* BookmarksFormController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarksFormController.m; sourceTree = "<group>"; };
-		FAF75E6E18A17A52007B317D /* BrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserViewController.h; sourceTree = "<group>"; };
-		FAF75E6F18A17A52007B317D /* BrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowserViewController.m; sourceTree = "<group>"; };
-		FAF75E7018A17A52007B317D /* Tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tab.h; sourceTree = "<group>"; };
-		FAF75E7118A17A52007B317D /* Tab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tab.m; sourceTree = "<group>"; };
-		FAF75E7218A17A52007B317D /* BookmarkFolderFormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkFolderFormController.h; sourceTree = "<group>"; };
-		FAF75E7318A17A52007B317D /* BookmarkFolderFormController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkFolderFormController.m; sourceTree = "<group>"; };
-		FAF75E7418A17A52007B317D /* BookmarkImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkImporter.h; sourceTree = "<group>"; };
-		FAF75E7518A17A52007B317D /* BookmarkImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkImporter.m; sourceTree = "<group>"; };
-		FAF75E7618A17A52007B317D /* BookmarkItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkItem.h; sourceTree = "<group>"; };
-		FAF75E7718A17A52007B317D /* BookmarkItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkItem.m; sourceTree = "<group>"; };
-		FAF75E7818A17A52007B317D /* BookmarksController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarksController.h; sourceTree = "<group>"; };
 		FAF75E8118A17A77007B317D /* BookmarkFoldersForm.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BookmarkFoldersForm.xib; sourceTree = "<group>"; };
 		FAF75E8218A17A77007B317D /* BookmarkItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BookmarkItem.xib; sourceTree = "<group>"; };
 		FAF75E8318A17A77007B317D /* BookmarksForm.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BookmarksForm.xib; sourceTree = "<group>"; };
@@ -120,8 +122,6 @@
 		FAF75EDF18A17BFD007B317D /* refresh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = refresh.png; sourceTree = "<group>"; };
 		FAF75EE018A17BFD007B317D /* tabs.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabs.png; sourceTree = "<group>"; };
 		FAF75EE118A17BFD007B317D /* JSTools.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JSTools.js; sourceTree = "<group>"; };
-		FAF75EEE18A17C17007B317D /* UIMainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIMainView.h; sourceTree = "<group>"; };
-		FAF75EEF18A17C17007B317D /* UIMainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIMainView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +186,8 @@
 		FAC9B26316F27BF800E37710 /* TestBrowser */ = {
 			isa = PBXGroup;
 			children = (
+				B5A210C018D091F700D65141 /* Reachability.h */,
+				B5A210C118D091F700D65141 /* Reachability.m */,
 				FAC9B26C16F27BF800E37710 /* AppDelegate.h */,
 				FAC9B26D16F27BF800E37710 /* AppDelegate.m */,
 				FAC9B27516F27BF800E37710 /* ViewController.h */,
@@ -212,24 +214,22 @@
 		FAF75E6A18A179D1007B317D /* Browser */ = {
 			isa = PBXGroup;
 			children = (
-				FAA4556D18A193E600B1BDF4 /* Reachability.h */,
-				FAA4556E18A193E600B1BDF4 /* Reachability.m */,
-				FAF75EEE18A17C17007B317D /* UIMainView.h */,
-				FAF75EEF18A17C17007B317D /* UIMainView.m */,
-				FAF75E6B18A17A52007B317D /* BookmarksController.m */,
-				FAF75E6C18A17A52007B317D /* BookmarksFormController.h */,
-				FAF75E6D18A17A52007B317D /* BookmarksFormController.m */,
-				FAF75E6E18A17A52007B317D /* BrowserViewController.h */,
-				FAF75E6F18A17A52007B317D /* BrowserViewController.m */,
-				FAF75E7018A17A52007B317D /* Tab.h */,
-				FAF75E7118A17A52007B317D /* Tab.m */,
-				FAF75E7218A17A52007B317D /* BookmarkFolderFormController.h */,
-				FAF75E7318A17A52007B317D /* BookmarkFolderFormController.m */,
-				FAF75E7418A17A52007B317D /* BookmarkImporter.h */,
-				FAF75E7518A17A52007B317D /* BookmarkImporter.m */,
-				FAF75E7618A17A52007B317D /* BookmarkItem.h */,
-				FAF75E7718A17A52007B317D /* BookmarkItem.m */,
-				FAF75E7818A17A52007B317D /* BookmarksController.h */,
+				B572E54718D08D2A005E4834 /* Tab.m */,
+				B572E54818D08D2A005E4834 /* BookmarksController.m */,
+				B572E54918D08D2A005E4834 /* BookmarksFormController.h */,
+				B572E54A18D08D2A005E4834 /* BookmarksFormController.m */,
+				B572E54B18D08D2A005E4834 /* BrowserViewController.h */,
+				B572E54C18D08D2A005E4834 /* BrowserViewController.m */,
+				B572E54D18D08D2A005E4834 /* Tab.h */,
+				B572E54E18D08D2A005E4834 /* UIMainView.h */,
+				B572E54F18D08D2A005E4834 /* UIMainView.m */,
+				B572E55018D08D2A005E4834 /* BookmarkFolderFormController.h */,
+				B572E55118D08D2A005E4834 /* BookmarkFolderFormController.m */,
+				B572E55218D08D2A005E4834 /* BookmarkImporter.h */,
+				B572E55318D08D2A005E4834 /* BookmarkImporter.m */,
+				B572E55418D08D2A005E4834 /* BookmarkItem.h */,
+				B572E55518D08D2A005E4834 /* BookmarkItem.m */,
+				B572E55618D08D2A005E4834 /* BookmarksController.h */,
 			);
 			name = Browser;
 			path = /Users/alex/Projects/banshee/Browser;
@@ -365,21 +365,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B572E55D18D08D2A005E4834 /* BookmarkImporter.m in Sources */,
+				B572E55918D08D2A005E4834 /* BookmarksFormController.m in Sources */,
+				B572E55E18D08D2A005E4834 /* BookmarkItem.m in Sources */,
 				FAF75EA818A17A77007B317D /* BrowserModel.xcdatamodeld in Sources */,
-				FAF75EF018A17C17007B317D /* UIMainView.m in Sources */,
-				FAF75E7F18A17A52007B317D /* BookmarkItem.m in Sources */,
+				B5A210C218D091F700D65141 /* Reachability.m in Sources */,
+				B572E55718D08D2A005E4834 /* Tab.m in Sources */,
 				FAF75EE218A17BFD007B317D /* BrowserModel.xcdatamodeld in Sources */,
-				FAA4556F18A193E600B1BDF4 /* Reachability.m in Sources */,
 				FAC9B26A16F27BF800E37710 /* main.m in Sources */,
-				FAF75E7C18A17A52007B317D /* Tab.m in Sources */,
-				FAF75E7918A17A52007B317D /* BookmarksController.m in Sources */,
-				FAF75E7E18A17A52007B317D /* BookmarkImporter.m in Sources */,
-				FAF75E7D18A17A52007B317D /* BookmarkFolderFormController.m in Sources */,
-				FAF75E7A18A17A52007B317D /* BookmarksFormController.m in Sources */,
 				FAC9B26E16F27BF800E37710 /* AppDelegate.m in Sources */,
+				B572E55B18D08D2A005E4834 /* UIMainView.m in Sources */,
+				B572E55818D08D2A005E4834 /* BookmarksController.m in Sources */,
+				B572E55A18D08D2A005E4834 /* BrowserViewController.m in Sources */,
 				FAC9B27716F27BF800E37710 /* ViewController.m in Sources */,
-				FAF75E7B18A17A52007B317D /* BrowserViewController.m in Sources */,
 				FAF75EED18A17BFD007B317D /* JSTools.js in Sources */,
+				B572E55C18D08D2A005E4834 /* BookmarkFolderFormController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,7 +400,7 @@
 		FAC9B27E16F27BF800E37710 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -433,7 +433,7 @@
 		FAC9B27F16F27BF800E37710 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
