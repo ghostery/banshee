@@ -6,7 +6,7 @@
 //
 
 #import "BookmarksController.h"
-#import "AppDelegate.h"
+#import "BrowserDelegate.h"
 #import "BrowserViewController.h"
 #import	"BookmarkItem.h"
 #import "BookmarksFormController.h"
@@ -86,7 +86,7 @@
 - (NSMutableArray *) reloadBookmarks {
 	if (managedObjectContext == nil) 
 	{ 
-        managedObjectContext = [(AppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext]; 
+        managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
         NSLog(@"After managedObjectContext: %@",  managedObjectContext);
 	}
 	

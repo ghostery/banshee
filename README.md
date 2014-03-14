@@ -9,12 +9,13 @@ This projects implements tabs, bookmarks, address bar, search bar, loading indic
 
 * Copy "Browser" and "Browser Resources" folder into your xcode project.
 
+* This project is cocoapods compatible if you prefer installing it via cocoapods.
+
 ## Dependencies
 
 * CoreData.framework
 * SystemConfiguration.framework
 * libxml2.2.dylib
-* [Reachability.h](https://developer.apple.com/Library/ios/samplecode/Reachability/Listings/Reachability_Reachability_h.html#//apple_ref/doc/uid/DTS40007324-Reachability_Reachability_h-DontLinkElementID_7), [Reachability.m](https://developer.apple.com/Library/ios/samplecode/Reachability/Listings/Reachability_Reachability_m.html#//apple_ref/doc/uid/DTS40007324-Reachability_Reachability_m-DontLinkElementID_8)
 
 To include these dependencies you need to add them to your linked libraries. To do this click on project name in Project Navigator then click on your project target. Then under the "Build Phases" section you will see a "Link Binary With Libraries" item, expand it and click the "+" button.
 
@@ -30,32 +31,14 @@ The recommended way to integrate the browser code is to make your view controlle
 
 ### AppDelegate
 
+Your app delegate needs to inherit from the browser delegate as so:
+    #import "BrowserDelegate.h"
+
+    @interface AppDelegate : BrowserDelegate <UIApplicationDelegate>
+
 The browser code does reference the app delegate, so you must have an AppDelegate Task. In the app delegate you should place this code in your `didFinishLaunchingWithOptions`:
 
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        self.viewController = [[ViewController alloc] initWithNibName:@"MainWindow" bundle:nil];
-    } else {
-        self.viewController = [[ViewController alloc] initWithNibName:@"MainWindow-iPad" bundle:nil];
-    }
-    self.window.rootViewController = self.viewController;
-    [self.window makeKeyAndVisible];
-    return YES;
-
-You will also need to implement the following CoreData methods in your AppDelegate to pull in the BrowserModel for storing bookmarks in core data:
-
-    - (NSManagedObjectContext *)managedObjectContext {
-        ....
-    }
-
-    - (NSManagedObjectModel *)managedObjectModel {
-        ....
-    }
-
-    - (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
-        ....
-    }
+    self.viewController = [[BrowserViewController alloc] init];
 
 ## Misc
 

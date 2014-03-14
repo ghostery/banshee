@@ -7,7 +7,7 @@
 
 #import "BookmarksController.h"
 #import "BookmarksFormController.h"
-#import "AppDelegate.h"
+#import "BrowserDelegate.h"
 #import "BrowserViewController.h"
 
 @class BrowserViewController;
@@ -35,7 +35,7 @@
 	//set up DB
 	if (managedObjectContext == nil) 
 	{ 
-        managedObjectContext = [(AppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext]; 
+        managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
         NSLog(@"After managedObjectContext: %@",  managedObjectContext);
 	}
 	

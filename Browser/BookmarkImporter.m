@@ -6,7 +6,7 @@
 //
 
 #import "BookmarkImporter.h"
-#import "AppDelegate.h"
+#import "BrowserDelegate.h"
 
 #import <libxml/tree.h>
 #import <libxml/parser.h>
@@ -23,7 +23,7 @@
     if (managedObjectContext == nil)
         
 	{
-        managedObjectContext = [(AppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+        managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
         NSLog(@"After managedObjectContext: %@",  managedObjectContext);
 	}
     

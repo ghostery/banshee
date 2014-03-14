@@ -11,7 +11,7 @@
 #import "BookmarksFormController.h"
 #import "BookmarkFolderFormController.h"
 #import "UIMainView.h"
-#import "AppDelegate.h"
+#import "BrowserDelegate.h"
 #import "Reachability.h"
 
 #import <CoreFoundation/CoreFoundation.h>
@@ -39,6 +39,13 @@ typedef enum ScrollDirection {
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
+    if (nibNameOrNil == nil) {
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+            nibNameOrNil = @"MainWindow";
+        } else {
+            nibNameOrNil = @"MainWindow-iPad";
+        }
+    }
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     return self;
 }
@@ -112,7 +119,7 @@ typedef enum ScrollDirection {
 }
 
 -(void) saveOpenTabs {
-    NSManagedObjectContext *managedObjectContext = [(AppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    NSManagedObjectContext *managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSError *error;
     int orderCount = 0;
     for (Tab *tab in [self tabs]) {
@@ -128,7 +135,7 @@ typedef enum ScrollDirection {
 }
 
 -(void) openSavedTabs {
-    NSManagedObjectContext *managedObjectContext = [(AppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    NSManagedObjectContext *managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSError *error = nil;
 	NSEntityDescription *tabEntity = [NSEntityDescription entityForName:@"Tab" inManagedObjectContext:managedObjectContext];
@@ -151,7 +158,7 @@ typedef enum ScrollDirection {
 }
 
 -(void) deleteSavedTabs {
-    NSManagedObjectContext *managedObjectContext = [(AppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    NSManagedObjectContext *managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSError *error = nil;
 	NSEntityDescription *tabEntity = [NSEntityDescription entityForName:@"Tab" inManagedObjectContext:managedObjectContext];
