@@ -52,6 +52,8 @@
     BOOL initialPageLoad;
     BOOL saveScrollPosition;
     
+    NSString *userAgent;
+    
     
     IBOutlet UIProgressView *progressBar;
     float contentSize;
@@ -101,6 +103,8 @@
 @property(nonatomic,assign) BOOL initialPageLoad;
 @property(nonatomic,assign) BOOL saveScrollPosition;
 @property(nonatomic, assign) NSInteger lastScrollContentOffset;
+
+@property(nonatomic,strong) NSString *userAgent;
 
 @property(nonatomic,strong) UIProgressView *progressBar;
 @property(nonatomic,assign) float contentSize;

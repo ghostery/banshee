@@ -35,7 +35,7 @@ typedef enum ScrollDirection {
     SCNetworkReachabilityRef reachabilityRef;
 }
 
-@synthesize addressBar, addressBarButtonsView, addressItem, searchItem, activityIndicator, topBar, bottomBar, refreshButton, forwardButton, backButton, navBar, oldAddressText, addTab, selectedTab, tabs, tabsView, webViewTemplate, bookmarksController, bookmarksFormController,  bookmarkButton, bugListNavBar, stopButton,  moreButton, reloadOnPageLoad,  initialPageLoad, progressBar, gotoUrl, contentSize, barItemPopoverPresenter, padPopover, popupQuery,  saveScrollPosition, customButton, customButton2;
+@synthesize addressBar, addressBarButtonsView, addressItem, searchItem, activityIndicator, topBar, bottomBar, refreshButton, forwardButton, backButton, navBar, oldAddressText, addTab, selectedTab, tabs, tabsView, webViewTemplate, bookmarksController, bookmarksFormController,  bookmarkButton, bugListNavBar, stopButton,  moreButton, reloadOnPageLoad,  initialPageLoad, progressBar, gotoUrl, contentSize, barItemPopoverPresenter, padPopover, popupQuery,  saveScrollPosition, customButton, customButton2, userAgent;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -387,7 +387,10 @@ typedef enum ScrollDirection {
         
         NSMutableURLRequest *mRequest = [request mutableCopy];
         NSString *d = [self isPad] ? @"iPad" : @"iPhone";
-        [mRequest setValue:[NSString stringWithFormat:@"iOS AppleWebKit Mobile %@", d] forHTTPHeaderField:@"User-Agent"];
+        if (!self.userAgent) {
+            self.userAgent = [[tab webView] stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+        }
+        [mRequest setValue:[NSString stringWithFormat:self.userAgent, d] forHTTPHeaderField:@"User-Agent"];
         
         if ( [[[request URL] host] isEqualToString:@"itunes.apple.com"]) {
             [[UIApplication sharedApplication] openURL: mRequest.URL ];
