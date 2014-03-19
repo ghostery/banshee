@@ -1,7 +1,7 @@
 banshee
 =======
 
-An iOS browser built on top of UIWebView
+An iOS browser built on top of UIWebView - [screenshot](https://d1k68i4h6ifyxa.cloudfront.net/screens/banshee_screen1.png)
 
 This projects implements tabs, bookmarks, address bar, search bar, loading indicators, and much more for UIWebView. Currently it only supports iOS 7.0 and greater with ARC-only. See branches for older versions.
 
