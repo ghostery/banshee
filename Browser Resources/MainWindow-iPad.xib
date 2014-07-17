@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="5056" systemVersion="12F45" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -12,8 +12,6 @@
                 <outlet property="backButton" destination="9rt-QG-NlJ" id="6aC-Jd-p4L"/>
                 <outlet property="bookmarkButton" destination="LNT-s5-BBY" id="eLZ-bw-7EG"/>
                 <outlet property="bottomBar" destination="hZW-qO-rvv" id="U5f-MO-oJ0"/>
-                <outlet property="customButton" destination="KVO-MV-PU3" id="WO6-OS-xiu"/>
-                <outlet property="customButton2" destination="l0C-Hm-dEm" id="bUO-zq-Apj"/>
                 <outlet property="forwardButton" destination="hJx-zz-ow8" id="7NC-9q-X17"/>
                 <outlet property="moreButton" destination="BFd-HB-iTN" id="4M8-j6-3at"/>
                 <outlet property="progressBar" destination="183" id="184"/>
@@ -85,19 +83,6 @@
                                     <inset key="imageInsets" minX="0.0" minY="0.0" maxX="-5" maxY="0.0"/>
                                     <connections>
                                         <action selector="showBookmarks:" destination="-1" id="Vvq-aC-fzd"/>
-                                    </connections>
-                                </barButtonItem>
-                                <barButtonItem style="plain" systemItem="flexibleSpace" id="aal-KA-OyH"/>
-                                <barButtonItem title="Item2" style="plain" id="l0C-Hm-dEm" userLabel="Custom2">
-                                    <inset key="imageInsets" minX="0.0" minY="0.0" maxX="-1" maxY="0.0"/>
-                                    <connections>
-                                        <action selector="customButtonClick2:" destination="-1" id="j48-TT-SG8"/>
-                                    </connections>
-                                </barButtonItem>
-                                <barButtonItem style="plain" systemItem="flexibleSpace" id="Hmv-GA-Yfc"/>
-                                <barButtonItem title="Item" style="plain" id="KVO-MV-PU3" userLabel="Custom">
-                                    <connections>
-                                        <action selector="customButtonClick:" destination="-1" id="ZRJ-vr-H1a"/>
                                     </connections>
                                 </barButtonItem>
                             </items>

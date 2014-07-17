@@ -40,12 +40,6 @@ The browser code does reference the app delegate, so you must have an AppDelegat
 
     self.viewController = [[BrowserViewController alloc] init];
 
-## Misc
-
-  There is a `customButton` UIBarButtonitem which you can customize programmatically in your view controller. This button appears in the bottom toolbar on the right. You can also overwrite the click handler method `-(IBAction) customButtonClick:(id)sender`.
-
-  There are now 2 custom buttons.
-
 ## License
 
 Copyright (c) 2014 Evidon unless otherwise specified

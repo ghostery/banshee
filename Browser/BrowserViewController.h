@@ -116,8 +116,6 @@
 -(IBAction) goForward:(id)sender;
 -(IBAction) stopLoading:(id)sender;
 -(IBAction) showBookmarks:(id)sender;
--(IBAction) customButtonClick:(id)sender;
--(IBAction) customButtonClick2:(id)sender;
 -(IBAction) scrollToTop:(id)sender;
 
 -(NSArray *) actionSheetButtons;
