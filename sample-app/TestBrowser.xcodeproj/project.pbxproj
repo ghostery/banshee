@@ -159,9 +159,6 @@
 			children = (
 				FAF75E8018A17A59007B317D /* Browser Resources */,
 				FAF75E6A18A179D1007B317D /* Browser */,
-				FAC9B3B816F38D3700E37710 /* SystemConfiguration.framework */,
-				FAC9B3B416F38C6500E37710 /* CoreData.framework */,
-				FAC9B3B016F3863500E37710 /* libxml2.2.dylib */,
 				FAC9B26316F27BF800E37710 /* TestBrowser */,
 				FAC9B25C16F27BF800E37710 /* Frameworks */,
 				FAC9B25B16F27BF800E37710 /* Products */,
@@ -179,6 +176,9 @@
 		FAC9B25C16F27BF800E37710 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FAC9B3B016F3863500E37710 /* libxml2.2.dylib */,
+				FAC9B3B816F38D3700E37710 /* SystemConfiguration.framework */,
+				FAC9B3B416F38C6500E37710 /* CoreData.framework */,
 				FAC9B25D16F27BF800E37710 /* UIKit.framework */,
 				FAC9B25F16F27BF800E37710 /* Foundation.framework */,
 				FAC9B26116F27BF800E37710 /* CoreGraphics.framework */,
