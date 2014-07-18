@@ -124,16 +124,11 @@
 		[self finishEditMode:sender];
 	}
 	
-	if ([browserController isPad]) {
-		[[browserController padPopover] dismissPopoverAnimated:YES];
-	} else {
-		[UIView transitionFromView:[self.navigationController view]
-							toView: [browserController view]
-						  duration:0.5
-						   options:(UIViewAnimationOptionTransitionCrossDissolve)
-						completion:^(BOOL finished) {}];
-	}
-	
+    [UIView transitionFromView:[self.navigationController view]
+                        toView: [browserController view]
+                      duration:0.5
+                       options:(UIViewAnimationOptionTransitionCrossDissolve)
+                    completion:^(BOOL finished) {}];
 	
 	[self.navigationController popToRootViewControllerAnimated:NO];
 }
