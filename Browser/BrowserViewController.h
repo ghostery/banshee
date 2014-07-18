@@ -77,7 +77,7 @@
 -(void) addTabWithAddress:(NSString *)urlAddress;
 -(IBAction) selectTab:(id)sender;
 -(IBAction) removeTab:(id)sender;
--(IBAction) toggleTabsView:(id)sender;
+//-(IBAction) toggleTabsView:(id)sender;
 
 -(void) loadTabs:(UIWebView *) webView;
 -(void) switchTabFrom:(Tab *)fromTab ToTab:(Tab *)toTab;

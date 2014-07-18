@@ -542,7 +542,7 @@ typedef enum ScrollDirection {
         
 		if (_popupQuery.visible || _barItemPopoverPresenter == _moreButton) {
 			_barItemPopoverPresenter = nil;
-			[_popupQuery dismissWithClickedButtonIndex:nil animated:YES];
+			[_popupQuery dismissWithClickedButtonIndex:_popupQuery.cancelButtonIndex animated:YES];
 		} else {
             [self generatePopupQuery];
 			_barItemPopoverPresenter = _moreButton;
@@ -636,9 +636,9 @@ typedef enum ScrollDirection {
 // TABS
 
 -(IBAction) addTab:(id)sender {
-    if (_tabsView.hidden) {
-        [self toggleTabsView:sender];
-    }
+//    if (_tabsView.hidden) {
+//        [self toggleTabsView:sender];
+//    }
     [self addTabWithAddress:@""];
 }
 
@@ -886,7 +886,7 @@ typedef enum ScrollDirection {
 - (BOOL) checkNetworkStatus
 {
     Reachability *reachability = [Reachability reachabilityForInternetConnection];
-    NetworkStatus *netstat = [reachability currentReachabilityStatus];
+    NetworkStatus netstat = [reachability currentReachabilityStatus];
     return netstat != NotReachable;
 }
 
