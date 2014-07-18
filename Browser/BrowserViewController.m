@@ -78,6 +78,8 @@ typedef enum ScrollDirection {
 	[bookmarkFolderFormController setBookmarksController:bookmarksController];
 	[bookmarksController setFolderController:bookmarkFolderFormController];
 	[self setBookmarksController:bookmarksNavController];
+    [self.view addSubview:self.bookmarksController.view];
+    self.bookmarksController.view.alpha = 0.0f; //Hide the bookmarks controller
     
     // Tweak address bar view so text doesn't overflow
     UIView *addressBarStatusView = [[ UIView  alloc ]  initWithFrame:
@@ -505,13 +507,10 @@ typedef enum ScrollDirection {
 }
 
 -(void) showBookmarksView:(id)sender {
-
-    [UIView transitionFromView:self.view
-                        toView:[bookmarksController view]
-                      duration:0.5
-                       options:(UIViewAnimationOptionTransitionCrossDissolve)
-                    completion:^(BOOL finished) {}];
-	
+    [self.view bringSubviewToFront:bookmarksController.view];
+    [UIView animateWithDuration:0.25 animations:^{
+         bookmarksController.view.alpha =1.0f;
+    }];
 }
 
 -(IBAction) stopLoading:(id)sender {

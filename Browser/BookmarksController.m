@@ -72,8 +72,7 @@
 - (NSUInteger) supportedInterfaceOrientations {
     // Return a bitmask of supported orientations. If you need more,
     // use bitwise or (see the commented return).
-    return UIInterfaceOrientationMaskPortrait;
-    // return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+    return UIInterfaceOrientationMaskAll;
 }
 
 - (UIInterfaceOrientation) preferredInterfaceOrientationForPresentation {
@@ -82,6 +81,7 @@
     // case it launches in the current orientation
     return UIInterfaceOrientationPortrait;
 }
+ 
 
 - (NSMutableArray *) reloadBookmarks {
 	if (managedObjectContext == nil) 
@@ -123,14 +123,9 @@
 	if (mode == 'E') {
 		[self finishEditMode:sender];
 	}
-	
-    [UIView transitionFromView:[self.navigationController view]
-                        toView: [browserController view]
-                      duration:0.5
-                       options:(UIViewAnimationOptionTransitionCrossDissolve)
-                    completion:^(BOOL finished) {}];
-	
-	[self.navigationController popToRootViewControllerAnimated:NO];
+	[UIView animateWithDuration:0.25 animations:^{
+        [self.navigationController view].alpha =0.0f;
+    }];
 }
 
 -(void) openBookmark:(NSIndexPath *) indexPath{	
