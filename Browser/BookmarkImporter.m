@@ -16,19 +16,17 @@
 
 @implementation BookmarkImporter
 
-@synthesize managedObjectContext, rootFolder;
-
 - (void)loadBookmarksFromUrl:(NSURL *) url{
     NSError *error;
-    if (managedObjectContext == nil)
+    if (_managedObjectContext == nil)
         
 	{
-        managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
-        NSLog(@"After managedObjectContext: %@",  managedObjectContext);
+        _managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+        NSLog(@"After managedObjectContext: %@",  _managedObjectContext);
 	}
     
     
-    NSString *bookmarkHTML = [NSString stringWithContentsOfURL:url];
+    NSString *bookmarkHTML = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
     
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"<DT>|<dt>|<p>|</p>|FOLDED|\n|\t|\r|<meta[^>]*|<!--(.|\n|\r)*-->|<!DOCTYPE.*>" options:NSRegularExpressionCaseInsensitive error:&error];
     bookmarkHTML = [regex stringByReplacingMatchesInString:bookmarkHTML options:0 range:NSMakeRange(0, [bookmarkHTML length]) withTemplate:@""];
@@ -36,14 +34,14 @@
     if ([[bookmarkHTML lowercaseString] rangeOfString:@"<html>"].location != NSNotFound) {
         bookmarkHTML = [bookmarkHTML stringByReplacingOccurrencesOfString:@"<HTML>" withString:@"<root>"];
         bookmarkHTML = [bookmarkHTML stringByReplacingOccurrencesOfString:@"<html>" withString:@"<root>"];
-        bookmarkHTML = [bookmarkHTML stringByReplacingOccurrencesOfString:@"<\HTML>" withString:@"<\root>"];
-        bookmarkHTML = [bookmarkHTML stringByReplacingOccurrencesOfString:@"<\html>" withString:@"<\root>"];
+        bookmarkHTML = [bookmarkHTML stringByReplacingOccurrencesOfString:@"<\\HTML>" withString:@"<\root>"];
+        bookmarkHTML = [bookmarkHTML stringByReplacingOccurrencesOfString:@"<\\html>" withString:@"<\root>"];
     } else {
         bookmarkHTML = [NSString stringWithFormat:@"<root>%@</root>", bookmarkHTML];
     }
     NSData *bookmarkData = [bookmarkHTML dataUsingEncoding:NSUTF8StringEncoding];
     
-    NSManagedObject *parentFolder = [NSEntityDescription insertNewObjectForEntityForName:@"Folder" inManagedObjectContext:managedObjectContext];
+    NSManagedObject *parentFolder = [NSEntityDescription insertNewObjectForEntityForName:@"Folder" inManagedObjectContext:_managedObjectContext];
     [parentFolder setValue:[NSString stringWithFormat:@"import folder %@", [[NSDate date] description]] forKey:@"name"];
     [parentFolder setNilValueForKey:@"Parent"];
     
@@ -74,7 +72,7 @@
             nodeName = [[NSString stringWithCString:(const char *)node->name encoding:NSUTF8StringEncoding] lowercaseString];
         }
         if (nodeName != nil && [nodeName isEqualToString:@"h3"]) {
-            NSManagedObject *folder = [NSEntityDescription insertNewObjectForEntityForName:@"Folder" inManagedObjectContext:managedObjectContext];
+            NSManagedObject *folder = [NSEntityDescription insertNewObjectForEntityForName:@"Folder" inManagedObjectContext:_managedObjectContext];
             NSString *name = [NSString stringWithCString:node->children->content encoding:NSUTF8StringEncoding];
             name = [name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
             
@@ -105,12 +103,12 @@
                 if ([attrName isEqualToString:@"href"] &&
                     [attrVal hasPrefix:@"http"] &&
                     ![attrVal hasPrefix:@"http://localhost"]) {
-                    NSManagedObject *bookmark = [NSEntityDescription insertNewObjectForEntityForName:@"Bookmark" inManagedObjectContext:managedObjectContext];
+                    NSManagedObject *bookmark = [NSEntityDescription insertNewObjectForEntityForName:@"Bookmark" inManagedObjectContext:_managedObjectContext];
                     NSString *name = [NSString stringWithCString:(const char *)node->children->content encoding:NSUTF8StringEncoding];
                     [bookmark setValue:name forKey:@"name"];
                     [bookmark setValue:attrVal forKey:@"url"];
                     [bookmark setValue:parentFolder forKey:@"Folder"];
-                    if (![managedObjectContext save:nil]) {
+                    if (![_managedObjectContext save:nil]) {
                         NSLog(@"save attempt %@ | %@",name, attrVal);
                     }
                 }
@@ -145,9 +143,9 @@
 }
 
 - (void) save:(NSError **) err {
-    if (managedObjectContext != nil)
+    if (_managedObjectContext != nil)
 	{
-        [managedObjectContext save:err];
+        [_managedObjectContext save:err];
         //NSLog(@"managed error: %@ %@ %@ %i", [*err localizedDescription], [*err helpAnchor], [*err domain], [*err code]);
     }
 }

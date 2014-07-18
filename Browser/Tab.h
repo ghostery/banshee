@@ -10,36 +10,7 @@
 
 @class BrowserViewController, FilterManager;
 
-@interface Tab : UIView <NSURLConnectionDelegate, UIWebViewDelegate, UIActionSheetDelegate>{
-	UIButton *tabButton;
-	UILabel *tabTitle;
-	UIWebView *webView;
-	UIButton *closeButton;
-	    
-    NSString *currentURLString;
-    NSURL *currentURL;
-    NSString *connectionURLString;
-    NSURLConnection *urlConnection;
-    NSHTTPURLResponse *response;
-    NSMutableData *pageData;
-    
-    NSMutableArray *history;
-    int traverse;
-    int history_position;
-    
-    int scrollPosition;
-    
-    BOOL loading;
-    BOOL current;
-    BOOL actionSheetVisible;
-    
-    double loadStartTime;
-    double loadEndTime;
-    NSString *pageInfoJS;
-    
-    BrowserViewController *viewController;
-	
-}
+@interface Tab : UIView <NSURLConnectionDelegate, UIWebViewDelegate, UIActionSheetDelegate>
 
 @property(nonatomic,strong) UIButton *tabButton;
 @property(nonatomic,strong) UILabel *tabTitle;
