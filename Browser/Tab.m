@@ -202,11 +202,9 @@
         [[_response MIMEType] isEqualToString:@"application/xhtml+xml"] ||
         [[_response MIMEType] isEqualToString:@"text/vnd.wap.wml"])
     {
-        NSStringEncoding *enc = NULL;
+        NSStringEncoding enc = NSUTF8StringEncoding;
         if ([_response textEncodingName] != nil) {
             enc = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)[_response textEncodingName]));
-        } else {
-            enc = NSUTF8StringEncoding;
         }
         NSString *page = (NSString *)[[NSString alloc] initWithData:_pageData encoding:enc];
         

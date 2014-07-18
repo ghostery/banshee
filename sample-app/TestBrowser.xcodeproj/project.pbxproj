@@ -56,7 +56,6 @@
 		FAF75EEA18A17BFD007B317D /* iphone_delete_button.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EDE18A17BFD007B317D /* iphone_delete_button.png */; };
 		FAF75EEB18A17BFD007B317D /* refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EDF18A17BFD007B317D /* refresh.png */; };
 		FAF75EEC18A17BFD007B317D /* tabs.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EE018A17BFD007B317D /* tabs.png */; };
-		FAF75EED18A17BFD007B317D /* JSTools.js in Sources */ = {isa = PBXBuildFile; fileRef = FAF75EE118A17BFD007B317D /* JSTools.js */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -384,7 +383,6 @@
 				B572E55818D08D2A005E4834 /* BookmarksController.m in Sources */,
 				B572E55A18D08D2A005E4834 /* BrowserViewController.m in Sources */,
 				FAC9B27716F27BF800E37710 /* ViewController.m in Sources */,
-				FAF75EED18A17BFD007B317D /* JSTools.js in Sources */,
 				B572E55C18D08D2A005E4834 /* BookmarkFolderFormController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
