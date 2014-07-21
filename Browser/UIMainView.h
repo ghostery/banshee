@@ -8,14 +8,10 @@
 #import <UIKit/UIKit.h>
 @class BrowserViewController;
 
-@interface UIMainView : UIView {
-    IBOutlet UIView *statusBarView;
-    IBOutlet BrowserViewController *controller;
-    IBOutlet NSLayoutConstraint *statusViewHeightConstraint;
-}
+@interface UIMainView : UIView
 
-@property(nonatomic,strong) UIView *statusBarView;
-@property(nonatomic,strong) BrowserViewController *controller;
+@property(nonatomic, strong) IBOutlet UIView *statusBarView;
+@property(nonatomic, strong) IBOutlet BrowserViewController *controller;
 @property(nonatomic, strong) IBOutlet NSLayoutConstraint *statusViewHeightConstraint;
 
 - (void) sizeStatusBar;
