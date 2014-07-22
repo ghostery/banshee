@@ -47,7 +47,11 @@
 	
 	[nameField becomeFirstResponder];
 	
-	self.preferredContentSize = CGSizeMake(320.0, 480.0);
+    if ([self respondsToSelector:@selector(setPreferredContentSize:)]) {
+        self.preferredContentSize = CGSizeMake(320.0, 480.0);
+    } else {
+        self.contentSizeForViewInPopover = CGSizeMake(320.0, 480.0);
+    }
 	[super viewDidLoad];
 }
 
