@@ -148,6 +148,8 @@
 	[bookmarksController reloadBookmarks];
 	[[bookmarksController tableView] reloadData];
 	[bookmarksController switchToBrowser:sender];
+    [bookmarksController.browserController dismissPopups];
+    
 }
 
 - (void)didReceiveMemoryWarning {

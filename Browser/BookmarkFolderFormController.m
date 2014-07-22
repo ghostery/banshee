@@ -7,6 +7,7 @@
 
 #import "BookmarkFolderFormController.h"
 #import "BookmarksController.h"
+#import "BrowserViewController.h"
 #import "BrowserDelegate.h"
 
 @implementation BookmarkFolderFormController
@@ -87,6 +88,7 @@
 	[bookmarksController reloadBookmarks];
 	[[bookmarksController tableView] reloadData];
 	[self.navigationController popViewControllerAnimated:YES];
+    [bookmarksController.browserController dismissPopups];
 }
 
 - (void)didReceiveMemoryWarning {

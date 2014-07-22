@@ -35,6 +35,7 @@ typedef enum ScrollDirection {
 
 @implementation BrowserViewController
 
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     if (nibNameOrNil == nil) {
@@ -61,21 +62,7 @@ typedef enum ScrollDirection {
     //size statusbar
     [(UIMainView *)[self view] sizeStatusBar];
     // Set up bookmark controllers
-	BookmarksFormController *bookmarksFormController = [[BookmarksFormController alloc]
-                                                        initWithNibName:@"BookmarksForm"
-                                                        bundle:[NSBundle mainBundle]];
-	BookmarkFolderFormController *bookmarkFolderFormController = [[BookmarkFolderFormController alloc]
-																  initWithNibName:@"BookmarkFoldersForm"
-																  bundle:[NSBundle mainBundle]];
-	
-	BookmarksController *bookmarksController = [[BookmarksController alloc] initWithNibName:@"Bookmarks" bundle:[NSBundle mainBundle]];
-	UINavigationController *bookmarksNavController = [[UINavigationController alloc] initWithRootViewController:bookmarksController];
-	
-	[self setBookmarksFormController:bookmarksFormController];
-	[bookmarksController setBrowserController:self];
-	[bookmarkFolderFormController setBookmarksController:bookmarksController];
-	[bookmarksController setFolderController:bookmarkFolderFormController];
-	[self setBookmarksController:bookmarksNavController];
+    [self createBookmarksController:YES];
     [self.view addSubview:self.bookmarksController.view];
     self.bookmarksController.view.alpha = 0.0f; //Hide the bookmarks controller
     
@@ -90,6 +77,30 @@ typedef enum ScrollDirection {
     
     [self registerForKeyboardNotifications];
     
+}
+
+-(UINavigationController*)createBookmarksController:(BOOL)isMainController {
+    BookmarksFormController *bookmarksFormController = [[BookmarksFormController alloc]
+                                                        initWithNibName:@"BookmarksForm"
+                                                        bundle:[NSBundle mainBundle]];
+	BookmarkFolderFormController *bookmarkFolderFormController = [[BookmarkFolderFormController alloc]
+																  initWithNibName:@"BookmarkFoldersForm"
+																  bundle:[NSBundle mainBundle]];
+	BookmarksController *bookmarksController = [[BookmarksController alloc] initWithNibName:@"Bookmarks" bundle:[NSBundle mainBundle]];
+	UINavigationController *bookmarksNavController = [[UINavigationController alloc] initWithRootViewController:bookmarksController];
+	[bookmarksController setBrowserController:self];
+	[bookmarkFolderFormController setBookmarksController:bookmarksController];
+	[bookmarksController setFolderController:bookmarkFolderFormController];
+    if(isMainController) //Creating the main bookmarks page which persists by hiding/unhiding
+    {
+        [self setBookmarksController:bookmarksNavController];
+        [self setBookmarksFormController:bookmarksFormController];
+    }
+    else //Creating a temporary bookmark controller for the popup with a form controller on the top of the nav stack
+    {
+        [bookmarksNavController pushViewController:bookmarksFormController animated:NO];
+    }
+    return bookmarksNavController;
 }
 
 - (void)registerForKeyboardNotifications
@@ -506,6 +517,9 @@ typedef enum ScrollDirection {
 
 -(void) showBookmarksView:(id)sender {
     [self.view bringSubviewToFront:self.bookmarksController.view];
+    BookmarksController* bC = [self.bookmarksController.viewControllers objectAtIndex:0];
+    bC.bookmarks = [bC reloadBookmarks];
+    [bC.tableView reloadData];
     [UIView animateWithDuration:0.25 animations:^{
          self.bookmarksController.view.alpha =1.0f;
     }];
@@ -539,7 +553,7 @@ typedef enum ScrollDirection {
 			[_padPopover dismissPopoverAnimated:YES];
 		}
         
-		if (_popupQuery.visible || _barItemPopoverPresenter == _moreButton) {
+		if (_popupQuery.visible) {
 			_barItemPopoverPresenter = nil;
 			[_popupQuery dismissWithClickedButtonIndex:_popupQuery.cancelButtonIndex animated:YES];
 		} else {
@@ -565,7 +579,7 @@ typedef enum ScrollDirection {
     
     pQuery.cancelButtonIndex = [pQuery addButtonWithTitle:@"Cancel"];
     
-    self.popupQuery = pQuery;
+    _popupQuery = pQuery;
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -608,28 +622,38 @@ typedef enum ScrollDirection {
 
 -(void) addBookmarkFromSheet:(UIActionSheet *) sheet {
     [sheet dismissWithClickedButtonIndex:0 animated:YES];
-    [_bookmarksFormController setMode:'A'];
-    [[_bookmarksFormController navigationItem] setHidesBackButton:YES animated:NO];
-    [_bookmarksController pushViewController:_bookmarksFormController animated:NO];
+    
+    // Set up bookmark controllers
+	UINavigationController *bookmarksNavController = [self createBookmarksController:NO];
+    BookmarksController* bookmarksController = (BookmarksController*)[[bookmarksNavController viewControllers] objectAtIndex:0];
+    BookmarksFormController* bookmarksFormController = (BookmarksFormController*)[[bookmarksNavController viewControllers] objectAtIndex:1];
+    [bookmarksFormController setMode:'A'];
+    [[bookmarksFormController navigationItem] setHidesBackButton:YES animated:NO];
+    
     if ([self isPad]) {
         if (_padPopover == nil) {
             UIPopoverController *ppop = [[UIPopoverController alloc]
-                                         initWithContentViewController:_bookmarksController];
+                                         initWithContentViewController:bookmarksNavController];
             self.padPopover = ppop;
             
         } else {
-            [self.padPopover setContentViewController:_bookmarksController animated:YES];
+            [self.padPopover setContentViewController:bookmarksNavController animated:YES];
         }
         [self.padPopover presentPopoverFromBarButtonItem:_bookmarkButton
                                 permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
         
     } else {
         [UIView transitionFromView:self.view
-                            toView:[_bookmarksController view]
+                            toView:[bookmarksController view]
                           duration:0.5
                            options:(UIViewAnimationOptionTransitionCrossDissolve)
                         completion:^(BOOL finished) {}];
     }
+}
+
+-(void) dismissPopups {
+    [_popupQuery dismissWithClickedButtonIndex:_popupQuery.cancelButtonIndex animated:NO];
+    [_padPopover dismissPopoverAnimated:NO];
 }
 
 // TABS

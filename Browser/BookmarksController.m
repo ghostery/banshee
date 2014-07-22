@@ -123,8 +123,10 @@
 	if (mode == 'E') {
 		[self finishEditMode:sender];
 	}
+    [self.navigationController popToRootViewControllerAnimated:NO];
 	[UIView animateWithDuration:0.25 animations:^{
         [self.navigationController view].alpha =0.0f;
+        [browserController dismissPopups];
     }];
 }
 

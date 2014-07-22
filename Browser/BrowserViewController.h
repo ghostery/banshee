@@ -100,5 +100,6 @@
 -(void) saveOpenTabs;
 -(void) openSavedTabs;
 -(void) deleteSavedTabs;
+-(void) dismissPopups;
 
 @end
