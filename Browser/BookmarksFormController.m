@@ -46,7 +46,11 @@
 	doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(saveBookmark:)];
 	cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(switchToBrowser:)];
 	
-	self.preferredContentSize = CGSizeMake(320.0, 480.0);
+	if ([self respondsToSelector:@selector(setPreferredContentSize:)]) {
+        self.preferredContentSize = CGSizeMake(320.0, 480.0);
+    } else {
+        self.contentSizeForViewInPopover = CGSizeMake(320.0, 480.0);
+    }
 	[super viewDidLoad];
 }
 
