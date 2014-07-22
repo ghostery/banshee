@@ -58,6 +58,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4B1C68B2197DEC050014AB79 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		71ED23B4194470B2002ACD24 /* BrowserDelegate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BrowserDelegate.h; path = ../Browser/BrowserDelegate.h; sourceTree = "<group>"; };
 		71ED23B5194470B2002ACD24 /* BrowserDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserDelegate.m; path = ../Browser/BrowserDelegate.m; sourceTree = "<group>"; };
 		B572E54718D08D2A005E4834 /* Tab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Tab.m; path = ../Browser/Tab.m; sourceTree = "<group>"; };
@@ -182,6 +183,14 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
+		4B1C68B1197DEC050014AB79 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				4B1C68B2197DEC050014AB79 /* Logging.h */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
 		FAA4557718A19B2700B1BDF4 /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
@@ -253,6 +262,7 @@
 		FAF75E6A18A179D1007B317D /* Browser */ = {
 			isa = PBXGroup;
 			children = (
+				4B1C68B1197DEC050014AB79 /* Logging */,
 				0E54DB6D197DAE31005BF033 /* Bookmarks */,
 				B572E54D18D08D2A005E4834 /* Tab.h */,
 				B572E54718D08D2A005E4834 /* Tab.m */,

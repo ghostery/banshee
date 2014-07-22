@@ -13,6 +13,7 @@
 #import "UIMainView.h"
 #import "BrowserDelegate.h"
 #import "Reachability.h"
+#import "Logging.h"
 
 #import <CoreFoundation/CoreFoundation.h>
 
@@ -37,6 +38,8 @@ typedef enum ScrollDirection {
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     if (nibNameOrNil == nil) {
         if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
             nibNameOrNil = @"MainWindow";
@@ -50,6 +53,8 @@ typedef enum ScrollDirection {
 
 - (void)viewDidLoad
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [super viewDidLoad];
     
     //set background for toolbar in top bar
@@ -94,6 +99,8 @@ typedef enum ScrollDirection {
 
 - (void)registerForKeyboardNotifications
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWasShown:)
                                                  name:UIKeyboardDidShowNotification object:nil];
@@ -105,6 +112,8 @@ typedef enum ScrollDirection {
 }
 
 - (void)keyboardWasShown:(NSNotification *)aNotification {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     if (![self isPad] && [_selectedTab currentURL] == nil && ![_addressBar isFirstResponder]) {
         [self scrollToTop:aNotification];
         [[_selectedTab webView] stringByEvaluatingJavaScriptFromString:@"document.getElementById('contain').style.top = '-15px'"];
@@ -112,6 +121,8 @@ typedef enum ScrollDirection {
 }
 
 - (void)keyboardWasHidden:(NSNotification*)aNotification {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     if (![self isPad] && [_selectedTab currentURL] == nil && ![_addressBar isFirstResponder]) {
         [[_selectedTab webView] stringByEvaluatingJavaScriptFromString:@"document.getElementById('contain').style.top = '15%'"];
         [self scrollToTop:aNotification];
@@ -119,6 +130,8 @@ typedef enum ScrollDirection {
 }
 
 -(void) saveOpenTabs {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     NSManagedObjectContext *managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSError *error;
     int orderCount = 0;
@@ -135,6 +148,8 @@ typedef enum ScrollDirection {
 }
 
 -(void) openSavedTabs {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     NSManagedObjectContext *managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSError *error = nil;
@@ -158,6 +173,8 @@ typedef enum ScrollDirection {
 }
 
 -(void) deleteSavedTabs {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     NSManagedObjectContext *managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSError *error = nil;
@@ -175,6 +192,8 @@ typedef enum ScrollDirection {
 }
 
 - (void) viewDidAppear:(BOOL)animated {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [super viewDidAppear:animated];
     //create initial tab
     if ([self.tabs count] == 0) {
@@ -184,16 +203,22 @@ typedef enum ScrollDirection {
 }
 
 - (void) viewWillAppear:(BOOL)animated {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     //[refreshButton setHidden:YES];
     [super viewWillAppear:animated];
 }
 
 -(void) viewWillDisappear:(BOOL)animated {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	[self.navigationController setNavigationBarHidden:NO animated:animated];
 }
 
 - (void)didReceiveMemoryWarning
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
@@ -201,6 +226,8 @@ typedef enum ScrollDirection {
 // Scrolling
 
 -(IBAction)scrollToTop:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     if (![self isPad]) {
 //        BOOL animated = ![sender isKindOfClass:[NSNotification class]];
         [[[self webView] scrollView] setContentOffset:CGPointMake(0, - _topBar.frame.size.height) animated:NO];
@@ -209,6 +236,8 @@ typedef enum ScrollDirection {
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     ScrollDirection scrollDirection;
     int minWebViewSize = _webViewTemplate.frame.size.height;
     int maxWebViewSize = minWebViewSize + _bottomBar.frame.size.height;
@@ -296,6 +325,8 @@ typedef enum ScrollDirection {
 
 - (void)showHideView
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // Fade out the view right away
     [UIView animateWithDuration:1.0
                           delay: 0.0
@@ -320,6 +351,8 @@ typedef enum ScrollDirection {
 // Web methods
 
 - (void) currentWebViewDidStartLoading:(UIWebView *) webView  {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     if (_addressBar.editing) {
         [webView stopLoading];
         return;
@@ -346,7 +379,9 @@ typedef enum ScrollDirection {
     [self setInitialPageLoad:NO];
 }
 
--(void) currentWebViewDidFinishFinalLoad:(UIWebView *) webView {
+- (void)currentWebViewDidFinishFinalLoad:(UIWebView *) webView {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [_progressBar setProgress:1.0 animated:NO];
     [_progressBar setHidden:YES];
     
@@ -364,7 +399,9 @@ typedef enum ScrollDirection {
     [self loadTabs:webView];
 }
 
--(void) gotoAddress:(id) sender withRequestObj:(NSURLRequest *)request inTab:(Tab *)tab {
+- (void)gotoAddress:(id)sender withRequestObj:(NSURLRequest *)request inTab:(Tab *)tab {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // Clear detected bugs
     tab.currentURLString = @"";
     [self setInitialPageLoad:YES];
@@ -386,13 +423,13 @@ typedef enum ScrollDirection {
         //[[self webView] loadRequest:requestObj];
         
         NSMutableURLRequest *mRequest = [request mutableCopy];
-        NSString *d = [self isPad] ? @"iPad" : @"iPhone";
+        NSString *deviceString = [self isPad] ? @"iPad" : @"iPhone";
         if (!self.userAgent) {
             self.userAgent = [[tab webView] stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
         }
-        [mRequest setValue:[NSString stringWithFormat:self.userAgent, d] forHTTPHeaderField:@"User-Agent"];
+        [mRequest setValue:[NSString stringWithFormat:self.userAgent, deviceString] forHTTPHeaderField:@"User-Agent"];
         
-        if ( [[[request URL] host] isEqualToString:@"itunes.apple.com"]) {
+        if ([[[request URL] host] isEqualToString:@"itunes.apple.com"]) {
             [[UIApplication sharedApplication] openURL: mRequest.URL ];
         } else {
             [_progressBar setHidden:NO];
@@ -422,6 +459,8 @@ typedef enum ScrollDirection {
 }
 
 -(IBAction) didStartEditingAddressBar:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     if ([[_addressBar text] length] > 0) {
         [self performSelector:@selector(selectAllAddressText) withObject:nil afterDelay:0.0];
     }
@@ -429,10 +468,14 @@ typedef enum ScrollDirection {
 }
 
 -(void) selectAllAddressText {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [_addressBar setSelectedTextRange:[_addressBar textRangeFromPosition:_addressBar.beginningOfDocument toPosition:_addressBar.endOfDocument]];
 }
 
 -(IBAction) gotoAddress:(id) sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [_addressBarButtonsView setHidden:NO];
     [_stopButton setHidden:NO];
     [_refreshButton setHidden:YES];
@@ -440,7 +483,7 @@ typedef enum ScrollDirection {
     NSString *inputText = [[_addressBar text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     _gotoUrl = [NSURL URLWithString:inputText];
     if (_gotoUrl != nil && (!([[_gotoUrl scheme] isEqualToString:@"http"] || [[_gotoUrl scheme] isEqualToString:@"https"]))) {
-        _gotoUrl = [NSURL URLWithString: [@"http://" stringByAppendingString: [_gotoUrl absoluteString]]];
+        _gotoUrl = [NSURL URLWithString: [@"http://" stringByAppendingString:[_gotoUrl absoluteString]]];
     }
     NSURLRequest *request = [NSURLRequest requestWithURL:_gotoUrl];
     if ([inputText rangeOfString:@"."].location != NSNotFound && [NSURLConnection canHandleRequest:request]){
@@ -451,10 +494,13 @@ typedef enum ScrollDirection {
 }
 
 -(IBAction) didEndEditingAddressBar:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
     
 }
 
 -(IBAction) searchWeb:(id) sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	NSString *searchQuery = [_addressBar text];
     NSString *encodedSearchQuery = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
                                                                                                          NULL,
@@ -477,6 +523,8 @@ typedef enum ScrollDirection {
 }
 
 -(void) cannotConnect:(UIWebView *) cnWebView {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [_stopButton setHidden:NO];
     [_refreshButton setHidden:YES];
     NSURL *ucUrl = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"unable_to_connect" ofType:@"html"] isDirectory:NO];
@@ -485,26 +533,34 @@ typedef enum ScrollDirection {
 }
 
 -(IBAction) goBack:(id)sender {
-	
+	LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [_selectedTab goBack];
     self.reloadOnPageLoad = YES;
 }
 
 -(IBAction) goForward:(id)sender {
-	
+	LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [_selectedTab goForward];
 	//[[self webView] stringByEvaluatingJavaScriptFromString:@"history.forward();"];
 }
 
 -(IBAction) cancel:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	//[self contractBar: sender];
 }
 
 -(IBAction) showBookmarks:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [self showBookmarksView:sender];
 }
 
 -(void) showBookmarksView:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [self.view bringSubviewToFront:self.bookmarksController.view];
     [UIView animateWithDuration:0.25 animations:^{
          self.bookmarksController.view.alpha =1.0f;
@@ -512,6 +568,8 @@ typedef enum ScrollDirection {
 }
 
 -(IBAction) stopLoading:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	[_stopButton setHidden:true];
     [_refreshButton setHidden:false];
     [_progressBar setHidden:YES];
@@ -523,6 +581,8 @@ typedef enum ScrollDirection {
 }
 
 -(NSArray *) actionSheetButtons {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // hide add bookmark for local html files
     if ([[[_selectedTab webView] request].URL isFileURL]) {
         return [NSArray arrayWithObjects:@"Clear Cookies", @"Clear Cache", @"Import Bookmarks", nil];
@@ -532,6 +592,8 @@ typedef enum ScrollDirection {
 }
 
 -(IBAction)showActionSheet:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	// Hide popover for ipad
 	if ([self isPad] ) {
         
@@ -554,6 +616,8 @@ typedef enum ScrollDirection {
 }
 
 -(void) generatePopupQuery {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     UIActionSheet *pQuery= [[UIActionSheet alloc] initWithTitle:nil
                                                        delegate:self
                                               cancelButtonTitle:nil
@@ -569,6 +633,8 @@ typedef enum ScrollDirection {
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // skip add bookmarks if we are loading a local file
     if ([[[_selectedTab webView] request].URL isFileURL]) {
         buttonIndex += 1;
@@ -607,6 +673,8 @@ typedef enum ScrollDirection {
 }
 
 -(void) addBookmarkFromSheet:(UIActionSheet *) sheet {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [sheet dismissWithClickedButtonIndex:0 animated:YES];
     [_bookmarksFormController setMode:'A'];
     [[_bookmarksFormController navigationItem] setHidesBackButton:YES animated:NO];
@@ -635,6 +703,8 @@ typedef enum ScrollDirection {
 // TABS
 
 -(IBAction) addTab:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 //    if (_tabsView.hidden) {
 //        [self toggleTabsView:sender];
 //    }
@@ -642,7 +712,8 @@ typedef enum ScrollDirection {
 }
 
 -(void) addTabWithAddress:(NSString *)urlAddress {
-
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	if ([_tabs count] == 0) {
 		_tabs = [[NSMutableArray alloc] initWithCapacity:8];
 	}
@@ -685,6 +756,8 @@ typedef enum ScrollDirection {
 }
 
 -(IBAction) removeTab:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	[sender setEnabled:NO];
 	Tab *toBeRemoved = (Tab *)[sender superview];
 	[[toBeRemoved tabButton] setEnabled:NO];
@@ -727,6 +800,8 @@ typedef enum ScrollDirection {
 }
 
 -(IBAction) selectTab:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	for (id cTab in _tabs) {
 		if ([cTab tabButton] == sender) {
 			[self switchTabFrom:_selectedTab ToTab:cTab];
@@ -736,6 +811,8 @@ typedef enum ScrollDirection {
 }
 
 -(void) switchTabFrom:(Tab *)fromTab ToTab:(Tab *)toTab {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	if ([_tabs count] > 0) {
 		[fromTab deselect];
 
@@ -806,16 +883,22 @@ typedef enum ScrollDirection {
 // WEBVIEW
 
 -(UIWebView *) webView {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     return [_selectedTab webView];
 }
 
 -(UIWebView *) setWebView:(UIWebView *)newWebView {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	[_selectedTab setWebView:newWebView];
 	return newWebView;
 }
 
 
 -(void) loadTabs:(UIWebView *)webView {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     Tab *tab = nil;
 	
     [[self view] sendSubviewToBack:webView];
@@ -867,6 +950,8 @@ typedef enum ScrollDirection {
 // Orientation
 
 - (NSUInteger) supportedInterfaceOrientations {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // Return a bitmask of supported orientations. If you need more,
     // use bitwise or (see the commented return).
     return UIInterfaceOrientationMaskAll;
@@ -874,6 +959,8 @@ typedef enum ScrollDirection {
 }
 
 - (UIInterfaceOrientation) preferredInterfaceOrientationForPresentation {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // Return the orientation you'd prefer - this is what it launches to. The
     // user can still rotate. You don't have to implement this method, in which
     // case it launches in the current orientation
@@ -884,6 +971,8 @@ typedef enum ScrollDirection {
 // Reachability
 - (BOOL) checkNetworkStatus
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     Reachability *reachability = [Reachability reachabilityForInternetConnection];
     NetworkStatus netstat = [reachability currentReachabilityStatus];
     return netstat != NotReachable;
@@ -891,6 +980,8 @@ typedef enum ScrollDirection {
 
 // HARDWARE
 - (BOOL) isPad {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 #ifdef UI_USER_INTERFACE_IDIOM
     return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
 #else

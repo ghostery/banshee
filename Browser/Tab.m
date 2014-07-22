@@ -9,10 +9,13 @@
 #import "BrowserViewController.h"
 #import "BookmarksFormController.h"
 #import "UIMainView.h"
+#import "Logging.h"
 
 @implementation Tab
 
 -(id) initWithFrame:(CGRect)frame addTarget:(BrowserViewController *) vc {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	if ((self = [super initWithFrame:frame])) {
         _viewController = vc;
         NSString *path = [[NSBundle mainBundle] pathForResource:@"page_info" ofType:@"js"];
@@ -99,6 +102,8 @@
 }
 
 -(void) setTitle:(NSString *)title {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	if ([title length] > 11) {
 		title = [[title substringToIndex:11] stringByAppendingString:@".."];
 	}
@@ -110,6 +115,8 @@
 }
 
 -(void) select {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     _current = YES;
 	[_tabButton setBackgroundColor:[UIColor whiteColor]];
 	_tabButton.selected = YES;
@@ -119,6 +126,8 @@
 }
 
 -(void) deselect {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     _current = NO;
 	[_tabButton setBackgroundColor:[UIColor lightGrayColor]];
 	_tabButton.selected = NO;
@@ -128,14 +137,20 @@
 }
 
 -(void) incrementOffset {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	self.frame = CGRectOffset(self.frame, -100.0, 0.0);
 }
 
 -(void) hideText {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [_tabButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 }
 
 -(void) showText {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [_tabButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
 }
 
@@ -144,6 +159,8 @@
 #pragma mark urlConnection delegate
 
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     self.loading =YES;
     self.urlConnection = connection;
     self.connectionURLString = [[[connection currentRequest] URL] absoluteString];
@@ -164,6 +181,8 @@
 
 - (void)connection: (NSURLConnection*) connection didReceiveResponse: (NSHTTPURLResponse*) response
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     self.currentURL = [response URL];
     self.currentURLString = [[response URL] absoluteString];
     [self setResponse:response];
@@ -175,6 +194,8 @@
 
 - (void) connection: (NSURLConnection*) connection didReceiveData: (NSData*) data
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [_pageData appendData: data];
     if ([[self progressBar] progress] < 0.75) {
         [[self progressBar] setProgress:[[self progressBar] progress] + .05 animated:NO];
@@ -183,6 +204,8 @@
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 //    NSURLRequest *request = [connection originalRequest];/
     
     if ([_pageData length] == 0) {
@@ -223,6 +246,8 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [[self progressBar] setHidden:YES];
     if ([[connection currentRequest] URL] != NULL) {
         [_viewController cannotConnect:_webView];
@@ -233,6 +258,8 @@
 }
 
 -(UIProgressView *) progressBar {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     return _current ? [_viewController progressBar] : nil;
 }
 
@@ -240,6 +267,7 @@
 #pragma mark webview delegate
 
 -(BOOL) webView:(UIWebView*)webView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
     
     if (request == nil) {
         return NO;
@@ -270,9 +298,13 @@
 }
 
 -(void) webViewDidStartLoad:(UIWebView *)webView {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 }
 
 -(void) webViewDidFinishFinalLoad:(UIWebView *)webView {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     self.loading = NO;
     if (_current) {
         [_viewController currentWebViewDidFinishFinalLoad:webView];
@@ -291,7 +323,7 @@
 }
 
 -(void) webViewDidFinishLoad:(UIWebView *)webView {
-    
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
     
     if (![[[webView request] URL] isFileURL] && _currentURL != nil) {
         [webView stringByEvaluatingJavaScriptFromString:@"if (document.getElementById('gh-page-loaded') == null && document.documentElement.innerHTML != '<head></head><body></body>') {"
@@ -307,6 +339,8 @@
 
 - (void)contextualMenuAction:(NSNotification*)notification
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     if (_actionSheetVisible || _webView != [_viewController webView]) {
         return;
     }
@@ -332,6 +366,8 @@
 
 - (void)openContextualMenuAt:(CGPoint)pt
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // Load the JavaScript code from the Resources and inject it into the web page
     NSString *path = [[NSBundle mainBundle] pathForResource:@"JSTools" ofType:@"js"];
     NSString *jsCode = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
@@ -380,6 +416,8 @@
 
 - (CGSize)windowSize
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     CGSize size;
     size.width = [[_webView stringByEvaluatingJavaScriptFromString:@"window.innerWidth"] integerValue];
     size.height = [[_webView stringByEvaluatingJavaScriptFromString:@"window.innerHeight"] integerValue];
@@ -388,6 +426,8 @@
 
 - (CGPoint)scrollOffset
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     CGPoint pt;
     pt.x = [[_webView stringByEvaluatingJavaScriptFromString:@"window.pageXOffset"] integerValue];
     pt.y = [[_webView stringByEvaluatingJavaScriptFromString:@"window.pageYOffset"] integerValue];
@@ -395,6 +435,8 @@
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     NSURL *url = [NSURL URLWithString:[actionSheet title]];
     NSString *clickedButton = [actionSheet buttonTitleAtIndex:buttonIndex];
     if ([clickedButton isEqualToString:@"Open Link"]) {
@@ -419,10 +461,14 @@
 }
 
 - (void)didPresentActionSheet:(UIActionSheet *)actionSheet {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     _actionSheetVisible = YES;
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     _actionSheetVisible = NO;
 }
 
@@ -430,22 +476,32 @@
 // HISTORY
 
 -(BOOL) canGoBack {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     return _history.count > 0 && _history_position > 0;
 }
 
 -(BOOL) canGoForward {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     return _history.count > 0 && _history_position < _history.count - 1;
 }
 
 -(void) goBack {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [self go:-1];
 }
 
 -(void) goForward {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [self go:1];
 }
 
 -(void) go:(int)t {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     NSURLRequest *req;
     [_viewController forwardButton].enabled = FALSE;
     [_viewController backButton].enabled = FALSE;
@@ -463,6 +519,8 @@
 }
 
 -(void) updateHistory {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     if (_traverse == 0) {
         if (_history_position + 1 < _history.count) {
             [_history removeObjectsInRange:NSMakeRange(_history_position + 1, _history.count - _history_position - 1)];
