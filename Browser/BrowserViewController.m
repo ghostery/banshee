@@ -249,7 +249,7 @@ typedef enum ScrollDirection {
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-    ScrollDirection scrollDirection;
+    ScrollDirection scrollDirection = ScrollDirectionNone;
     int minWebViewSize = _webViewTemplate.frame.size.height;
     int maxWebViewSize = minWebViewSize + _bottomBar.frame.size.height;
     if (self.lastScrollContentOffset > scrollView.contentOffset.y)
