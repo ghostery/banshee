@@ -8,6 +8,10 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
+
+#define kStartedLoadingNotification @"kStartedLoadingNotification"
+#define kFinishedLoadingNotification @"kFinishedLoadingNotification"
+
 @class Tab, BookmarksController, BookmarksFormController, Reachability;
 
 @interface BrowserViewController : UIViewController <UIActionSheetDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>

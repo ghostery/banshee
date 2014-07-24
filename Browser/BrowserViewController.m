@@ -81,7 +81,7 @@ typedef enum ScrollDirection {
     _selectedTab.currentURLString = @"";
     
     [self registerForKeyboardNotifications];
-    
+    [self registerForBrowserNotifications];
 }
 
 -(UINavigationController*)createBookmarksController:(BOOL)isMainController {
@@ -138,6 +138,49 @@ typedef enum ScrollDirection {
         [[_selectedTab webView] stringByEvaluatingJavaScriptFromString:@"document.getElementById('contain').style.top = '15%'"];
         [self scrollToTop:aNotification];
     }
+}
+
+- (void)registerForBrowserNotifications
+{
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kStartedLoadingNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kFinishedLoadingNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(startedLoadingNotification:)
+                                                 name:kStartedLoadingNotification
+                                               object:_selectedTab];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(finishedLoadingNotification:)
+                                                 name:kFinishedLoadingNotification
+                                               object:_selectedTab];
+    
+}
+
+- (void)startedLoadingNotification:(NSNotification *)notification {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [self displayAsLoading];
+}
+
+- (void)finishedLoadingNotification:(NSNotification *)notification {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [self displayAsNotLoading];
+}
+
+- (void)displayAsLoading {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [_stopButton setHidden:NO];
+    [_refreshButton setHidden:YES];
+}
+
+- (void)displayAsNotLoading {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [_stopButton setHidden:YES];
+    [_refreshButton setHidden:NO];
 }
 
 -(void) saveOpenTabs {
@@ -379,8 +422,8 @@ typedef enum ScrollDirection {
     if (tab == _selectedTab) {
         
         if (_initialPageLoad) {
-            [_refreshButton setHidden:true];
-            [_stopButton setHidden:false];
+            [_refreshButton setHidden:YES];
+            [_stopButton setHidden:NO];
         }
         
     }
@@ -584,8 +627,8 @@ typedef enum ScrollDirection {
 -(IBAction) stopLoading:(id)sender {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-	[_stopButton setHidden:true];
-    [_refreshButton setHidden:false];
+	[_stopButton setHidden:YES];
+    [_refreshButton setHidden:NO];
     [_progressBar setHidden:YES];
     
 	//[activityIndicator stopAnimating];
@@ -786,13 +829,13 @@ typedef enum ScrollDirection {
 	Tab *toBeRemoved = (Tab *)[sender superview];
 	[[toBeRemoved tabButton] setEnabled:NO];
 	
-	BOOL removed = false;
-	BOOL select = false;
+	BOOL removed = NO;
+	BOOL select = NO;
 	
 	for (id cTab in _tabs) {
 		if (select) {
 			[self switchTabFrom:_selectedTab ToTab:cTab];
-			select = false;
+			select = NO;
 		}
 		if (removed) {
 			[cTab incrementOffset];
@@ -829,6 +872,12 @@ typedef enum ScrollDirection {
 	for (id cTab in _tabs) {
 		if ([cTab tabButton] == sender) {
 			[self switchTabFrom:_selectedTab ToTab:cTab];
+            if ([_selectedTab isLoading]) {
+                [self displayAsLoading];
+            } else {
+                [self displayAsNotLoading];
+            }
+            [self registerForBrowserNotifications];
 		}
 	}
 	[self loadTabs:[_selectedTab webView]];

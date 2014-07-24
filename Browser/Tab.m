@@ -11,6 +11,16 @@
 #import "UIMainView.h"
 #import "Logging.h"
 
+@interface Tab ()
+
+/**
+ Counter that increments when webViewDidStartLoad: is called and decrements 
+ when webViewDidFinishLoad: is called.
+ */
+@property (assign) NSUInteger loadingCount;
+
+@end
+
 @implementation Tab
 
 -(id) initWithFrame:(CGRect)frame addTarget:(BrowserViewController *) vc {
@@ -68,7 +78,18 @@
         _webView.backgroundColor = [UIColor whiteColor];
 		[_webView sizeToFit];
 		[_webView setDelegate:self];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contextualMenuAction:) name:@"TapAndHoldNotification" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(contextualMenuAction:)
+                                                     name:@"TapAndHoldNotification"
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(startedLoadingNotification:)
+                                                     name:kStartedLoadingNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(finishedLoadingNotification:)
+                                                     name:kFinishedLoadingNotification
+                                                   object:nil];
         
         // Scroll topbar
         [[_webView scrollView] setDelegate:_viewController];
@@ -91,6 +112,7 @@
         [self setHistory:[[NSMutableArray alloc] initWithCapacity:0]];
         _traverse = 0;
         _history_position = 0;
+        _loadingCount = 0;
 	
 		//Set title
 		[_tabButton setTitle:@"New Tab" forState:UIControlStateNormal];
@@ -99,6 +121,32 @@
 
 	}
 	return self;
+}
+
+- (void)startedLoadingNotification:(NSNotification *)notification {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    
+}
+
+- (void)finishedLoadingNotification:(NSNotification *)notification {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    
+}
+
+- (void)incrementLoadingCount {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    _loadingCount++;
+}
+
+- (void)decrementLoadingCount {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    if (_loadingCount > 0) {
+        _loadingCount--;
+    }
 }
 
 -(void) setTitle:(NSString *)title {
@@ -257,10 +305,16 @@
     }
 }
 
--(UIProgressView *) progressBar {
+- (UIProgressView *)progressBar {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
     return _current ? [_viewController progressBar] : nil;
+}
+
+- (void)loadingBegan {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    
 }
 
 #pragma mark -
@@ -300,11 +354,19 @@
 -(void) webViewDidStartLoad:(UIWebView *)webView {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
+    if (_loadingCount == 0) {
+        _isLoading = YES;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kStartedLoadingNotification object:self];
+    }
+    [self incrementLoadingCount];
+    LogDebug(@"loading count: %lu", (unsigned long)_loadingCount);
 }
 
 -(void) webViewDidFinishFinalLoad:(UIWebView *)webView {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
+//    _loadingCount--;
+//    LogDebug(@"loading count: %lu", (unsigned long)_loadingCount);
     self.loading = NO;
     if (_current) {
         [_viewController currentWebViewDidFinishFinalLoad:webView];
@@ -325,6 +387,12 @@
 -(void) webViewDidFinishLoad:(UIWebView *)webView {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
+    [self decrementLoadingCount];
+    LogDebug(@"loading count: %lu", (unsigned long)_loadingCount);
+    if (_loadingCount == 0) {
+        _isLoading = NO;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kFinishedLoadingNotification object:self];
+    }
     if (![[[webView request] URL] isFileURL] && _currentURL != nil) {
         [webView stringByEvaluatingJavaScriptFromString:@"if (document.getElementById('gh-page-loaded') == null && document.documentElement.innerHTML != '<head></head><body></body>') {"
          "var iframe = document.createElement('IFRAME');"
@@ -335,6 +403,21 @@
          "iframe = null;"
          "document.body.style.webkitTouchCallout='none';}" ];
     }
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    BOOL wasLoadingBeforeDecrement = NO;
+    if (_loadingCount > 0) {
+        wasLoadingBeforeDecrement = YES;
+    }
+    [self decrementLoadingCount];
+    if (wasLoadingBeforeDecrement && _loadingCount == 0) {
+        _isLoading = NO;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kFinishedLoadingNotification object:self];
+    }
+    LogDebug(@"loading count: %lu", (unsigned long)_loadingCount);
 }
 
 - (void)contextualMenuAction:(NSNotification*)notification

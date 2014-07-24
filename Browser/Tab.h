@@ -30,6 +30,7 @@
 
 @property(nonatomic,assign) int scrollPosition;
 
+@property(nonatomic,assign) BOOL isLoading;
 @property(nonatomic,assign) BOOL loading;
 @property(nonatomic,assign) BOOL current;
 @property(nonatomic,assign) BOOL actionSheetVisible;
