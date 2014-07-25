@@ -11,19 +11,7 @@
 
 @implementation BookmarkFolderFormController
 
-//Core Data Fix
-@synthesize nameField, /*folder, managedObjectContext,*/ mode, bookmarksController;
-
-// The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-/*
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization.
-    }
-    return self;
-}
-*/
+@synthesize nameField, mode, bookmarksController;
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
@@ -66,38 +54,18 @@
     }
     
 	if (mode == 'A') {
-        //Core Data Fix
-		//folder = [NSEntityDescription insertNewObjectForEntityForName:@"Folder" inManagedObjectContext:managedObjectContext];
         // check for parent folder
             NSMutableArray* bookmarksArray = [[NSMutableArray alloc] init];
             folderDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:nameField.text,@"title",bookmarksArray,@"bookmarks", nil];
             [foldersArray addObject:folderDict];
-            //Core Data Fix
-            /*
-            BookmarksController *parentBookmarksController = (BookmarksController *)[controllers objectAtIndex:[controllers count] - 3];
-            NSMutableArray *folders = (NSMutableArray *)[parentBookmarksController bookmarks];
-            NSIndexPath *selectedIndexPath = [[parentBookmarksController tableView] indexPathForSelectedRow];
-            NSManagedObject *parentFolder = [folders objectAtIndex:[selectedIndexPath row]];
-            [folder setValue:parentFolder forKey:@"Parent"];
-            */
 	} else if (mode == 'E') {
         folderDict = (NSMutableDictionary*)[[bookmarksController.folders objectAtIndex:bookmarksController.folderIndex] mutableCopy];
         [folderDict setObject:nameField.text forKey:@"title"];
         [foldersArray setObject:folderDict atIndexedSubscript:bookmarksController.folderIndex];
-        //Core Data Fix
-		//NSIndexPath *selectedIndexPath = [[newBookmarksController tableView] indexPathForSelectedRow];
-		//folder = [folders objectAtIndex:[selectedIndexPath row]];
 	}
     
     [defaults setObject:foldersArray forKey:FOLDERS_KEY];
     [defaults synchronize];
-    
-    //Core Data Fix
-    /*
-	[folder setValue:nameField.text forKey:@"name"];
-	
-	[managedObjectContext save:nil];
-	*/
     
     //Reset the folder index back to the bookmarks root, since we're navigating back to the folder root
     bookmarksController.folderIndex = BOOKMARKS_ROOT;

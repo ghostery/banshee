@@ -11,9 +11,6 @@
 #define BOOKMARKS_ROOT -1
 #define MAX_BOOKMARKS 1000
 
-//Core Data Fix
-//#import <CoreData/CoreData.h>
-
 @class BookmarksFormController;
 @class BookmarkFolderFormController;
 @class BrowserViewController;
@@ -23,10 +20,7 @@
 	BrowserViewController *browserController;
 	BookmarksFormController *formController;
 	BookmarkFolderFormController *folderController;
-	
-    //Core Data Fix
-	//NSManagedObjectContext *managedObjectContext;
-	//NSManagedObject *currentFolder;
+
 	char mode;
     NSInteger folderIndex;
     NSInteger bookmarkIndex;
@@ -45,10 +39,6 @@
 @property(nonatomic, strong) BrowserViewController *browserController;
 @property(nonatomic, strong) BookmarksFormController *formController;
 @property(nonatomic, strong) BookmarkFolderFormController *folderController;
-
-//Core Data Fix
-//@property(nonatomic, strong) NSManagedObjectContext *managedObjectContext;
-//@property(nonatomic, strong) NSManagedObject *currentFolder;
 
 @property(nonatomic, assign) char mode;
 @property(nonatomic, assign) NSInteger folderIndex;

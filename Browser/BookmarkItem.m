@@ -86,13 +86,6 @@
 -(IBAction) deleteItem:(id)sender {
 	NSArray *indexPaths = [NSArray arrayWithObject:indexPath];
     [self deleteFromBookmarks:[indexPath row]];
-    //Core Data Fix
-    /*
-	NSManagedObject *bookmarkToDelete = [[bookmarksController bookmarks] objectAtIndex:[indexPath row]];
-	[[bookmarksController bookmarks] removeObject:bookmarkToDelete];
-	[self deleteItemFromDB:bookmarkToDelete];
-	[[bookmarksController managedObjectContext] save:nil];
-     */
 	[tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:YES];
 	[tableView reloadData];
 }
@@ -117,26 +110,5 @@
     [defaults synchronize];
     [bookmarksController reloadData];
 }
-
-//Core Data Fix
-/*
-- (void) deleteItemFromDB:(NSManagedObject *) dbItem {
-    if ([[[dbItem entity] name] isEqualToString:@"Folder"]) {
-        NSFetchRequest *request = [[NSFetchRequest alloc] init];
-        NSEntityDescription *folderEntity = [NSEntityDescription entityForName:@"Folder" inManagedObjectContext:[bookmarksController managedObjectContext]];
-        NSPredicate *predicateF = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"Parent.name == '%@'", [dbItem valueForKey:@"name"]]];
-        [request setEntity:folderEntity];
-        [request setPredicate:predicateF];
-        for (id child in [[bookmarksController managedObjectContext] executeFetchRequest:request error:nil]) {
-            [self deleteItemFromDB:child];
-        }
-
-    }
-    [[bookmarksController managedObjectContext] deleteObject:dbItem];
-}
-*/
-
-
-
 
 @end

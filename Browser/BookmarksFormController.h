@@ -6,8 +6,6 @@
 //
 
 #import <UIKit/UIKit.h>
-//Core Data Fix
-//#import <CoreData/CoreData.h>
 
 @interface BookmarksFormController : UIViewController {
 	IBOutlet UIButton *parentField;
@@ -16,15 +14,8 @@
     IBOutlet UILabel *arrowLabel;
 	UIBarButtonItem *cancelButton;
 	UIBarButtonItem *doneButton;
-	
-    //Core Data Fix
-	//NSManagedObject *selectedFolder;
-    //NSManagedObjectContext *managedObjectContext;
-    
     NSString *defaultUrlFieldText;
-	
 	char mode;
-	
 }
 @property(nonatomic, strong) UIButton *parentField;
 @property(nonatomic, strong) UITextField *nameField;
@@ -32,13 +23,7 @@
 @property(nonatomic, strong) IBOutlet UILabel *arrowLabel;
 @property(nonatomic, strong) UIBarButtonItem *cancelButton;
 @property(nonatomic, strong) UIBarButtonItem *doneButton;
-
-//Core Data Fix
-//@property(nonatomic, strong) NSManagedObject *selectedFolder;
-//@property(nonatomic, strong) NSManagedObjectContext *managedObjectContext;
-
 @property(nonatomic,strong) NSString *defaultUrlFieldText;
-
 @property(nonatomic, assign) char mode;
 
 

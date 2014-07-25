@@ -83,14 +83,11 @@
         folderImage = [UIImage imageNamed:@"folder.png"];
         bookmarkImage = [UIImage imageNamed:@"bookmark.png"];
     }
-    //Core Data Fix
-    //if (mode == 'P') {
     if (mode == 'P') {
         ((UIBarItem *)[[toolbar items] objectAtIndex:0]).enabled = NO;
     } else {
         ((UIBarItem *)[[toolbar items] objectAtIndex:0]).enabled = YES;
     }
-    //Core Data Fix
     [self reloadData];
     [tableView reloadData];
 	[super viewWillAppear:animated];
@@ -111,7 +108,6 @@
 }
 
 -(void)reloadData {
-    //Core Data Fix
     //Get the array of folder dictionaries from NSUSerDefaults
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSMutableArray* foldersArray = (NSMutableArray*)[defaults objectForKey:FOLDERS_KEY];
@@ -253,29 +249,6 @@
 	} else {
         [cell disableEdit];
     }
-    
-    
-    //Core Data Fix
-    /*
-    NSManagedObject *item= [bookmarks objectAtIndex:[indexPath row]];
-	if (![item isEqual:@"Bookmarks"] && [[[item entity] name] isEqualToString:@"Bookmark"]) {
-		cell.cellImage.image = bookmarkImage;
-	} else {
-		cell.cellImage.image = folderImage;
-	}
-    if ([item isEqual:@"Bookmarks"]) {
-        [cell.cellLabel setText:@"Bookmarks"];
-    } else {
-        [cell.cellLabel setText:[item valueForKey:@"name"]];
-    }
-	
-	if (self.mode == 'E') {
-		[cell enableEdit];
-	} else if (self.mode == 'V') {
-		[cell disableEdit];
-	}
-     */
-
     return cell;
 }
 
@@ -341,10 +314,7 @@
         //Open the URL from the bookmark in the folder
         [self openBookmark:indexPath];
         
-    }
-    //Core Data Fix
-	//NSManagedObject *item = [bookmarks objectAtIndex:[indexPath row]];
-	else if (mode == 'V') {
+    } else if (mode == 'V') {
         //Create a new bookmark controller, set the mode, and folder index
         BookmarksController *nextBookmarkController = [[BookmarksController alloc] initWithNibName:@"Bookmarks" bundle:[NSBundle mainBundle]];
         [nextBookmarkController setMode:'B'];
@@ -353,8 +323,7 @@
         [nextBookmarkController setFolderController:[self folderController]];
         [self.navigationController pushViewController:nextBookmarkController animated:YES];
 		
-	}
-    else if (mode == 'E') {
+	} else if (mode == 'E') {
         
         [self reloadData];
         
@@ -370,18 +339,6 @@
             [self setBookmarkIndex:[indexPath row]];
             [self.navigationController pushViewController:formController animated:YES];
         }
-            
-        //Core Data Fix
-        /*
-		if ([[[item entity] name] isEqualToString:@"Folder"]) {
-			[folderController setMode:'E'];
-			[folderController setFolder:item];
-			[self.navigationController pushViewController:(UIViewController *)folderController animated:YES];
-		} else {
-			[formController setMode:'E'];
-			[self.navigationController pushViewController:formController animated:YES];
-		}
-        */
         
 	} else if (self.mode == 'P') {
         NSArray *vControllers = self.navigationController.viewControllers;
@@ -389,15 +346,6 @@
         [self.navigationController popViewControllerAnimated:YES];
         
     }
-    
-    //Core Data Fix
-    /*else if (mode == 'P') {
-		NSArray *vControllers = self.navigationController.viewControllers;
-		[[vControllers objectAtIndex:([vControllers count] - 2) ] setSelectedFolder:item];
-		[self.navigationController popViewControllerAnimated:YES];
-       
-	}*/
-       
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
