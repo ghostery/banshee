@@ -32,6 +32,7 @@ The recommended way to integrate the browser code is to make your view controlle
 ### AppDelegate
 
 Your app delegate needs to inherit from the browser delegate as so:
+
     #import "BrowserDelegate.h"
 
     @interface AppDelegate : BrowserDelegate <UIApplicationDelegate>
