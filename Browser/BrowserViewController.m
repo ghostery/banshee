@@ -11,7 +11,6 @@
 #import "BookmarksFormController.h"
 #import "BookmarkFolderFormController.h"
 #import "UIMainView.h"
-#import "BrowserDelegate.h"
 #import "Reachability.h"
 #import "Logging.h"
 
@@ -68,8 +67,8 @@ typedef enum ScrollDirection {
     [(UIMainView *)[self view] sizeStatusBar];
     // Set up bookmark controllers
     [self createBookmarksController:YES];
-    [self.view addSubview:self.bookmarksController.view];
-    self.bookmarksController.view.alpha = 0.0f; //Hide the bookmarks controller
+    [self.view addSubview:self.bookmarksNavController.view];
+    self.bookmarksNavController.view.alpha = 0.0f; //Hide the bookmarks controller
     
     // Tweak address bar view so text doesn't overflow
     UIView *addressBarStatusView = [[ UIView  alloc ]  initWithFrame:
@@ -98,7 +97,7 @@ typedef enum ScrollDirection {
 	[bookmarksController setFolderController:bookmarkFolderFormController];
     if(isMainController) //Creating the main bookmarks page which persists by hiding/unhiding
     {
-        [self setBookmarksController:bookmarksNavController];
+        [self setBookmarksNavController:bookmarksNavController];
         [self setBookmarksFormController:bookmarksFormController];
     }
     else //Creating a temporary bookmark controller for the popup with a form controller on the top of the nav stack
@@ -186,6 +185,8 @@ typedef enum ScrollDirection {
 -(void) saveOpenTabs {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
+    //Core Data Fix
+    /*
     NSManagedObjectContext *managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSError *error;
     int orderCount = 0;
@@ -199,11 +200,14 @@ typedef enum ScrollDirection {
     if (![managedObjectContext save:&error]) {
         NSLog(@"Error inserting %@ - error:%@",[self tabs],error);
     }
+     */
 }
 
 -(void) openSavedTabs {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
+    //Core Data Fix
+    /*
     NSManagedObjectContext *managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSError *error = nil;
@@ -223,12 +227,15 @@ typedef enum ScrollDirection {
     if (![managedObjectContext save:&error]) {
         NSLog(@"Error deleting %@ - error:%@",tabFetchResults,error);
     }
+     */
 
 }
 
 -(void) deleteSavedTabs {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
+    //Core Data Fix
+    /*
     NSManagedObjectContext *managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSError *error = nil;
@@ -242,6 +249,7 @@ typedef enum ScrollDirection {
     if (![managedObjectContext save:&error]) {
         NSLog(@"Error deleting %@ - error:%@",tabFetchResults,error);
     }
+    */
     
 }
 
@@ -615,12 +623,18 @@ typedef enum ScrollDirection {
 -(void) showBookmarksView:(id)sender {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-    [self.view bringSubviewToFront:self.bookmarksController.view];
-    BookmarksController* bC = [self.bookmarksController.viewControllers objectAtIndex:0];
-    bC.bookmarks = [bC reloadBookmarks];
-    [bC.tableView reloadData];
+    [self.view bringSubviewToFront:self.bookmarksNavController.view];
+    //Reload all bC controllers on the navigation stack
+    for (BookmarksController* bC in self.bookmarksNavController.viewControllers)
+    {
+        if([bC isKindOfClass:[BookmarksController class]])
+        {
+            [bC reloadData];
+            [bC.tableView reloadData];
+        }
+    }
     [UIView animateWithDuration:0.25 animations:^{
-         self.bookmarksController.view.alpha =1.0f;
+         self.bookmarksNavController.view.alpha =1.0f;
     }];
 }
 
@@ -642,9 +656,9 @@ typedef enum ScrollDirection {
     
     // hide add bookmark for local html files
     if ([[[_selectedTab webView] request].URL isFileURL]) {
-        return [NSArray arrayWithObjects:@"Clear Cookies", @"Clear Cache", @"Import Bookmarks", nil];
+        return [NSArray arrayWithObjects:@"Clear Cookies", @"Clear Cache", nil];
     } else {
-        return [NSArray arrayWithObjects:@"Add Bookmark", @"Clear Cookies", @"Clear Cache", @"Import Bookmarks", nil];
+        return [NSArray arrayWithObjects:@"Add Bookmark", @"Clear Cookies", @"Clear Cache", nil];
     }
 }
 
@@ -717,7 +731,7 @@ typedef enum ScrollDirection {
     
     
     // Import Bookmarks
-    else if (buttonIndex == 3) {
+    /*else if (buttonIndex == 3) {
         [self addTab:actionSheet];
         NSString *urlAddress = @"";
         //[[self webView] loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"import_bookmark_howto" ofType:@"html"]isDirectory:NO]]];
@@ -725,7 +739,7 @@ typedef enum ScrollDirection {
         NSData *launchData = [NSData dataWithContentsOfFile:path];
         [[self webView] loadData:launchData MIMEType:@"text/html" textEncodingName:@"utf-8" baseURL:nil];
         [_addressBar setText:urlAddress];
-    }
+    }*/
 
 }
 

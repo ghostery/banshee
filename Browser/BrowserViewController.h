@@ -50,7 +50,7 @@
 
 @property(nonatomic,strong) NSURL *gotoUrl;
 
-@property(nonatomic,strong) UINavigationController *bookmarksController;
+@property(nonatomic,strong) UINavigationController *bookmarksNavController;
 @property(nonatomic,strong) BookmarksFormController *bookmarksFormController;
 @property(nonatomic,strong) BrowserViewController *browserController;
 
