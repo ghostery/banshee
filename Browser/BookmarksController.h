@@ -6,7 +6,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <CoreData/CoreData.h>
+
+#define FOLDERS_KEY @"BookmarksFolders"
+#define BOOKMARKS_ROOT -1
+#define MAX_BOOKMARKS 1000
+
+//Core Data Fix
+//#import <CoreData/CoreData.h>
 
 @class BookmarksFormController;
 @class BookmarkFolderFormController;
@@ -18,11 +24,15 @@
 	BookmarksFormController *formController;
 	BookmarkFolderFormController *folderController;
 	
-	NSManagedObjectContext *managedObjectContext;
-	NSManagedObject *currentFolder;
+    //Core Data Fix
+	//NSManagedObjectContext *managedObjectContext;
+	//NSManagedObject *currentFolder;
 	char mode;
+    NSInteger folderIndex;
+    NSInteger bookmarkIndex;
 	
 	NSMutableArray *bookmarks;
+    NSMutableArray *folders;
 	
 	IBOutlet UITableView *tableView;
 	
@@ -36,12 +46,16 @@
 @property(nonatomic, strong) BookmarksFormController *formController;
 @property(nonatomic, strong) BookmarkFolderFormController *folderController;
 
-@property(nonatomic, strong) NSManagedObjectContext *managedObjectContext;
-@property(nonatomic, strong) NSManagedObject *currentFolder;
+//Core Data Fix
+//@property(nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+//@property(nonatomic, strong) NSManagedObject *currentFolder;
 
 @property(nonatomic, assign) char mode;
+@property(nonatomic, assign) NSInteger folderIndex;
+@property(nonatomic, assign) NSInteger bookmarkIndex;
 
 @property(nonatomic, strong) NSMutableArray *bookmarks;
+@property(nonatomic, strong) NSMutableArray *folders;
 
 @property(nonatomic, strong) UITableView *tableView;
 
@@ -55,7 +69,7 @@
 -(IBAction) finishEditMode:(id)sender;
 -(IBAction) addFolder:(id)sender;
 
--(NSMutableArray *) reloadBookmarks;
+-(void)reloadData;
 -(void) openBookmark:(NSIndexPath *) indexPath;
 
 @end

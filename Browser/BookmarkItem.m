@@ -85,15 +85,41 @@
 
 -(IBAction) deleteItem:(id)sender {
 	NSArray *indexPaths = [NSArray arrayWithObject:indexPath];
+    [self deleteFromBookmarks:[indexPath row]];
+    //Core Data Fix
+    /*
 	NSManagedObject *bookmarkToDelete = [[bookmarksController bookmarks] objectAtIndex:[indexPath row]];
-	
 	[[bookmarksController bookmarks] removeObject:bookmarkToDelete];
 	[self deleteItemFromDB:bookmarkToDelete];
 	[[bookmarksController managedObjectContext] save:nil];
+     */
 	[tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:YES];
 	[tableView reloadData];
 }
 
+-(void)deleteFromBookmarks:(NSInteger)index {
+    
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    
+    if (bookmarksController.folderIndex == BOOKMARKS_ROOT)
+    {
+        [bookmarksController.folders removeObjectAtIndex:index];
+    }
+    else
+    {
+        [bookmarksController.bookmarks removeObjectAtIndex:index];
+        NSMutableDictionary* folderDict = (NSMutableDictionary*)[[bookmarksController.folders objectAtIndex:bookmarksController.folderIndex] mutableCopy];
+        [folderDict setObject:bookmarksController.bookmarks forKey:@"bookmarks"];
+        [bookmarksController.folders setObject:folderDict atIndexedSubscript:bookmarksController.folderIndex];
+    }
+    
+    [defaults setObject:bookmarksController.folders forKey:FOLDERS_KEY];
+    [defaults synchronize];
+    [bookmarksController reloadData];
+}
+
+//Core Data Fix
+/*
 - (void) deleteItemFromDB:(NSManagedObject *) dbItem {
     if ([[[dbItem entity] name] isEqualToString:@"Folder"]) {
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
@@ -108,6 +134,7 @@
     }
     [[bookmarksController managedObjectContext] deleteObject:dbItem];
 }
+*/
 
 
 

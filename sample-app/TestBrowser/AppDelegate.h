@@ -7,11 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BrowserDelegate.h"
 
 @class BrowserViewController;
 
-@interface AppDelegate : BrowserDelegate <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 
