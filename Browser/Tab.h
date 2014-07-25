@@ -13,7 +13,7 @@
 @interface Tab : UIView <NSURLConnectionDelegate, UIWebViewDelegate, UIActionSheetDelegate>
 
 @property(nonatomic,strong) UIButton *tabButton;
-@property(nonatomic,strong) UILabel *tabTitle;
+//@property(nonatomic,strong) UILabel *tabTitle;
 @property(nonatomic,strong) UIWebView *webView;
 @property(nonatomic,strong) UIButton *closeButton;
 

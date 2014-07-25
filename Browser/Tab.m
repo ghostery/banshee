@@ -18,6 +18,7 @@
  when webViewDidFinishLoad: is called.
  */
 @property (assign) NSUInteger loadingCount;
+@property (nonatomic, strong) UILabel *tabTitle;
 
 @end
 
@@ -42,7 +43,7 @@
 	
 		[_tabButton setBackgroundColor:[UIColor grayColor]];
 	
-		_tabButton.titleLabel.font = [UIFont systemFontOfSize: 11];
+		_tabButton.titleLabel.font = [UIFont systemFontOfSize:11];
 		[_tabButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
 
 		_tabButton.contentEdgeInsets = UIEdgeInsetsMake(0.0, 8.0, 0.0, 0.0);
@@ -58,9 +59,15 @@
         [_closeButton setAccessibilityLabel:@"close tab"];
 		[_closeButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
 		_closeButton.frame = CGRectMake(79.0, -1.0, 25.0, 25.0);
-		_closeButton.titleLabel.font = [UIFont systemFontOfSize: 18];
+		_closeButton.titleLabel.font = [UIFont systemFontOfSize:18];
 	
+        
+        _tabTitle = [[UILabel alloc] initWithFrame:CGRectMake(3, 0, 80, 22)];
+        _tabTitle.font = [UIFont systemFontOfSize:11];
+        _tabTitle.text = @"Untitled";
+        
 		// append views
+        [_tabButton addSubview:_tabTitle];
 		[self addSubview:_tabButton];
 		[self addSubview:_closeButton];
 	
@@ -115,8 +122,8 @@
         _loadingCount = 0;
 	
 		//Set title
-		[_tabButton setTitle:@"New Tab" forState:UIControlStateNormal];
-		[_tabButton setTitle:@"New Tab" forState:UIControlStateHighlighted];
+//		[_tabButton setTitle:@"New Tab" forState:UIControlStateNormal];
+//		[_tabButton setTitle:@"New Tab" forState:UIControlStateHighlighted];
         
 
 	}
@@ -378,9 +385,11 @@
     NSString *tabTitle = [webView stringByEvaluatingJavaScriptFromString:@"document.title"];
 //    NSString *url = [webView stringByEvaluatingJavaScriptFromString:@"window.location.href"];
     if ([tabTitle length] == 0) {
-        [self setTitle:@"Untitled"];
+        _tabTitle.text = @"Untitled";
+//        [self setTitle:@"Untitled"];
     } else {
-        [self setTitle:tabTitle];
+//        [self setTitle:tabTitle];
+        _tabTitle.text = tabTitle;
     }
 }
 
