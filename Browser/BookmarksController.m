@@ -148,7 +148,10 @@
 }
 
 -(IBAction) finishEditMode:(id)sender{
-	self.mode = 'V';
+	if(self.folderIndex == BOOKMARKS_ROOT)
+        self.mode = 'V';
+    else
+        self.mode = 'B';
 	toolbar.hidden = NO;
 	editToolbar.hidden = YES;
 	
