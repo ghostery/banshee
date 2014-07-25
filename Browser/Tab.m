@@ -19,6 +19,8 @@
  */
 @property (assign) NSUInteger loadingCount;
 @property (nonatomic, strong) UILabel *tabTitle;
+@property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
+@property (nonatomic, assign) CGRect tabTitleFrame;
 
 @end
 
@@ -51,6 +53,9 @@
 		_tabButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
 	
 		_tabButton.frame = CGRectMake(0.0, 0.0, 100.0, 26.0);
+        
+        _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        _activityIndicator.frame = CGRectMake(5, 2, 20, 20);
 	
 		// Create close tab button
 		[self setCloseButton:[UIButton buttonWithType:UIButtonTypeCustom]];
@@ -61,8 +66,8 @@
 		_closeButton.frame = CGRectMake(79.0, -1.0, 25.0, 25.0);
 		_closeButton.titleLabel.font = [UIFont systemFontOfSize:18];
 	
-        
-        _tabTitle = [[UILabel alloc] initWithFrame:CGRectMake(3, 0, 80, 22)];
+        _tabTitleFrame = CGRectMake(3, 0, 80, 22);
+        _tabTitle = [[UILabel alloc] initWithFrame:_tabTitleFrame];
         _tabTitle.font = [UIFont systemFontOfSize:11];
         _tabTitle.text = @"Untitled";
         
@@ -70,6 +75,7 @@
         [_tabButton addSubview:_tabTitle];
 		[self addSubview:_tabButton];
 		[self addSubview:_closeButton];
+        [self addSubview:_activityIndicator];
 	
 		// Set up webview
         UIWebView *wvTemplate = (UIWebView *)[_viewController webViewTemplate];
@@ -145,7 +151,20 @@
 - (void)incrementLoadingCount {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
+    BOOL startedAtZero = NO;
+    if (_loadingCount == 0) {
+        startedAtZero = YES;
+    }
     _loadingCount++;
+    if (startedAtZero) {
+        CGRect newTabButtonFrame = _tabTitle.frame;
+        CGFloat offset = _activityIndicator.frame.size.width + 5;
+        LogDebug(@"offset: %f", offset);
+        newTabButtonFrame.origin.x += offset;
+        newTabButtonFrame.size.width -= offset;
+        _tabTitle.frame = newTabButtonFrame;
+        [_activityIndicator startAnimating];
+    }
 }
 
 - (void)decrementLoadingCount {
@@ -153,6 +172,15 @@
     
     if (_loadingCount > 0) {
         _loadingCount--;
+    }
+    if (_loadingCount == 0) {
+        [_activityIndicator stopAnimating];
+//        CGRect newTabButtonFrame = _tabTitle.frame;
+//        CGFloat offset = _activityIndicator.frame.size.width + 5;
+//        LogDebug(@"offset: %f", offset);
+//        newTabButtonFrame.origin.x -= offset;
+//        newTabButtonFrame.size.width += offset;
+        _tabTitle.frame = _tabTitleFrame;
     }
 }
 
@@ -416,6 +444,8 @@
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    LogDebug(@"error: %@", error);
     
     BOOL wasLoadingBeforeDecrement = NO;
     if (_loadingCount > 0) {
