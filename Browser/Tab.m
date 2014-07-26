@@ -655,5 +655,11 @@
     _traverse = 0;
 }
 
+- (void)dealloc {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 
 @end
