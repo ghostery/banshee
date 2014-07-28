@@ -805,7 +805,7 @@ typedef enum ScrollDirection {
      [self stopLoading:sender];
      }*/
 	
-    Tab *nTab = [[Tab alloc] initWithFrame:CGRectMake((100.0 * [_tabs count]) + 2.0, 2.0, 100.0, 34.0) addTarget: self];
+    Tab *nTab = [[Tab alloc] initWithFrame:CGRectMake((kTabWidth * [_tabs count]) + 2.0, 2.0, kTabWidth, 34.0) addTarget: self];
     
 	[self switchTabFrom:_selectedTab ToTab:nTab];
 	[_tabsView addSubview:_selectedTab];
@@ -814,7 +814,7 @@ typedef enum ScrollDirection {
 	[_selectedTab select];
 	
 	//scrolling
-	_tabsView.contentSize = CGSizeMake(((100.0) * [_tabs count]) + 5.0, 23.0);
+	_tabsView.contentSize = CGSizeMake((kTabWidth * [_tabs count]) + 5.0, 23.0);
     if (_tabsView.frame.size.width < _tabsView.contentSize.width) {
         _tabsView.contentOffset = CGPointMake(_tabsView.contentSize.width - _tabsView.frame.size.width,0);
     }
@@ -878,7 +878,7 @@ typedef enum ScrollDirection {
 	[self loadTabs:[_selectedTab webView]];
 	
 	//scrolling
-	_tabsView.contentSize = CGSizeMake(((100.0) * [_tabs count]) + 40.0, 23.0);
+	_tabsView.contentSize = CGSizeMake((kTabWidth * [_tabs count]) + 40.0, 23.0);
 }
 
 -(IBAction) selectTab:(id)sender {

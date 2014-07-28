@@ -52,7 +52,7 @@
 		_tabButton.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
 		_tabButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
 	
-		_tabButton.frame = CGRectMake(0.0, 0.0, 100.0, 26.0);
+		_tabButton.frame = CGRectMake(0.0, 0.0, kTabWidth, 26.0);
         
         _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         _activityIndicator.frame = CGRectMake(5, 2, 20, 20);
@@ -63,7 +63,7 @@
 		[_closeButton setTitle:@"x" forState:UIControlStateNormal];
         [_closeButton setAccessibilityLabel:@"close tab"];
 		[_closeButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-		_closeButton.frame = CGRectMake(79.0, -1.0, 25.0, 25.0);
+		_closeButton.frame = CGRectMake(kTabWidth - 21.0, -1.0, 25.0, 25.0);
 		_closeButton.titleLabel.font = [UIFont systemFontOfSize:18];
 	
         _tabTitleFrame = CGRectMake(3, 0, 80, 22);
@@ -222,7 +222,7 @@
 -(void) incrementOffset {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-	self.frame = CGRectOffset(self.frame, -100.0, 0.0);
+	self.frame = CGRectOffset(self.frame, -kTabWidth, 0.0);
 }
 
 -(void) hideText {
