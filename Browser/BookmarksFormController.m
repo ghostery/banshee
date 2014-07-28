@@ -203,7 +203,7 @@
     //Save the bookmark into the correct folder
     [defaults setObject:foldersArray forKey:FOLDERS_KEY];
     [defaults synchronize];
-    [bookmarksController setMode:'B'];
+    
 	//Reload all bC controllers on the navigation stack
     for (BookmarksController* bC in self.navigationController.viewControllers)
     {
@@ -213,12 +213,16 @@
             [bC.tableView reloadData];
         }
     }
-    if(self.mode != 'E')
+    
+    if(self.mode == 'A')
     {
         [bookmarksController switchToBrowser:sender];
     }
-    [bookmarksController.browserController dismissPopups];
-    [self.navigationController popViewControllerAnimated:YES];
+    else
+    {
+        self.mode = 'B';
+        [self.navigationController popViewControllerAnimated:YES];
+    }
     
 }
 
