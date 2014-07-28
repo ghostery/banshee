@@ -83,7 +83,9 @@ typedef enum ScrollDirection {
     [self registerForBrowserNotifications];
 }
 
--(UINavigationController*)createBookmarksController:(BOOL)isMainController {
+- (UINavigationController *)createBookmarksController:(BOOL)isMainController {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     BookmarksFormController *bookmarksFormController = [[BookmarksFormController alloc]
                                                         initWithNibName:@"BookmarksForm"
                                                         bundle:[NSBundle mainBundle]];
@@ -778,6 +780,8 @@ typedef enum ScrollDirection {
 }
 
 -(void) dismissPopups {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [_popupQuery dismissWithClickedButtonIndex:_popupQuery.cancelButtonIndex animated:NO];
     [_padPopover dismissPopoverAnimated:NO];
 }

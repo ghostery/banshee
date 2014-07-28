@@ -28,8 +28,6 @@
 	NSMutableArray *bookmarks;
     NSMutableArray *folders;
 	
-	IBOutlet UITableView *tableView;
-	
 	UIImage *bookmarkImage;
 	UIImage *folderImage;
 	IBOutlet UIToolbar *toolbar;
@@ -47,7 +45,7 @@
 @property(nonatomic, strong) NSMutableArray *bookmarks;
 @property(nonatomic, strong) NSMutableArray *folders;
 
-@property(nonatomic, strong) UITableView *tableView;
+@property(nonatomic, strong) IBOutlet UITableView *tableView;
 
 @property(nonatomic, strong) UIImage *bookmarkImage;
 @property(nonatomic, strong) UIImage *folderImage;
