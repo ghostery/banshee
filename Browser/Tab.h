@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
+#define kTabWidth 100.0
+
 @class BrowserViewController, FilterManager;
 
 @interface Tab : UIView <NSURLConnectionDelegate, UIWebViewDelegate, UIActionSheetDelegate>
