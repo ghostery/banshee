@@ -140,6 +140,28 @@
 }
 
 -(IBAction) enableEditMode:(id)sender {
+    if(self.mode == 'B')
+    {
+        for (UIBarButtonItem *item in editToolbar.items)
+        {
+            if([[item title] isEqualToString:@"New Folder"])
+            {
+                [item setEnabled:NO];
+                [item setTintColor:[UIColor clearColor]];
+            }
+        }
+    }
+    else
+    {
+        for (UIBarButtonItem *item in editToolbar.items)
+        {
+            if([[item title] isEqualToString:@"New Folder"])
+            {
+                [item setEnabled:YES];
+                [item setTintColor:nil];
+            }
+        }
+    }
 	self.mode = 'E';
 	toolbar.hidden = YES;
 	editToolbar.hidden = NO;
@@ -148,7 +170,7 @@
 }
 
 -(IBAction) finishEditMode:(id)sender{
-	if(self.folderIndex == BOOKMARKS_ROOT)
+	if(self.folderIndex == BOOKMARKS_ROOT || self.mode == 'V')
         self.mode = 'V';
     else
         self.mode = 'B';
@@ -334,6 +356,7 @@
         {
             self.folderIndex = [indexPath row];
             [folderController setMode:'E'];
+            [self setMode:'V'];
             [self.navigationController pushViewController:(UIViewController *)folderController animated:YES];
         }
         else
