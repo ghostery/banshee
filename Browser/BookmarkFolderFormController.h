@@ -13,12 +13,16 @@
 	BookmarksController *bookmarksController;
 	
 	IBOutlet UITextField *nameField;
+    
+    NSInteger folderIndex;
 	
 	char mode;
 }
 @property(nonatomic,strong) BookmarksController *bookmarksController;
 
 @property(nonatomic,strong) UITextField *nameField;
+
+@property(nonatomic,assign) NSInteger folderIndex;
 
 @property(nonatomic,assign) char mode;
 

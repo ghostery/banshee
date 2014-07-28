@@ -11,7 +11,7 @@
 
 @implementation BookmarkFolderFormController
 
-@synthesize nameField, mode, bookmarksController;
+@synthesize nameField, folderIndex, mode, bookmarksController;
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
@@ -30,12 +30,18 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    //Set the folder index to the bookmarkcontroller folder index
+    self.folderIndex = bookmarksController.folderIndex;
+    //Reset the folder index back to the bookmarks root, since we're navigating back to the folder root
+    bookmarksController.folderIndex = BOOKMARKS_ROOT;
+    //Disable edit mode in the bookmarks controller
+    [bookmarksController finishEditMode:self];
 	if (mode == 'A') {
 		self.navigationItem.title = @"New Bookmark Folder";
 		[nameField setText:@""];
 	} else if (mode == 'E') {
 		self.navigationItem.title = @"Edit Bookmark Folder";
-        NSDictionary* folderDict = (NSDictionary*)[bookmarksController.folders objectAtIndex:bookmarksController.folderIndex];
+        NSDictionary* folderDict = (NSDictionary*)[bookmarksController.folders objectAtIndex:self.folderIndex];
         NSString* folderTitle = (NSString*)[folderDict objectForKey:@"title"];
         [nameField setText:folderTitle];
 	}
@@ -59,9 +65,9 @@
             folderDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:nameField.text,@"title",bookmarksArray,@"bookmarks", nil];
             [foldersArray addObject:folderDict];
 	} else if (mode == 'E') {
-        folderDict = (NSMutableDictionary*)[[bookmarksController.folders objectAtIndex:bookmarksController.folderIndex] mutableCopy];
+        folderDict = (NSMutableDictionary*)[[bookmarksController.folders objectAtIndex:self.folderIndex] mutableCopy];
         [folderDict setObject:nameField.text forKey:@"title"];
-        [foldersArray setObject:folderDict atIndexedSubscript:bookmarksController.folderIndex];
+        [foldersArray setObject:folderDict atIndexedSubscript:self.folderIndex];
 	}
     
     [defaults setObject:foldersArray forKey:FOLDERS_KEY];
