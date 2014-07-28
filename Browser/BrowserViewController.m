@@ -623,6 +623,7 @@ typedef enum ScrollDirection {
 -(void) showBookmarksView:(id)sender {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
+    [self dismissPopups];
     [self.view bringSubviewToFront:self.bookmarksNavController.view];
     //Reload all bC controllers on the navigation stack
     for (BookmarksController* bC in self.bookmarksNavController.viewControllers)
