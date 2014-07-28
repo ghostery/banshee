@@ -50,7 +50,7 @@
 		[self.navigationItem setLeftBarButtonItem:nil];
 		
 		// load name and url
-        [bookmarksController reloadData];
+        [bookmarksController loadBookmarks];
         [urlField setText:[[bookmarksController.bookmarks objectAtIndex:bookmarksController.bookmarkIndex] valueForKey:@"URL"]];
 		[nameField setText:[[bookmarksController.bookmarks objectAtIndex:bookmarksController.bookmarkIndex] valueForKey:@"title"]];
         [parentField setHidden:YES];
@@ -209,7 +209,7 @@
     {
         if([bC isKindOfClass:[BookmarksController class]])
         {
-            [bC reloadData];
+            [bC loadBookmarks];
             [bC.tableView reloadData];
         }
     }

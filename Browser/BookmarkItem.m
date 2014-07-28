@@ -108,7 +108,7 @@
     
     [defaults setObject:bookmarksController.folders forKey:FOLDERS_KEY];
     [defaults synchronize];
-    [bookmarksController reloadData];
+    [bookmarksController loadBookmarks];
 }
 
 @end

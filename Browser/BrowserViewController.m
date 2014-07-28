@@ -630,7 +630,7 @@ typedef enum ScrollDirection {
     {
         if([bC isKindOfClass:[BookmarksController class]])
         {
-            [bC reloadData];
+            [bC loadBookmarks];
             [bC.tableView reloadData];
         }
     }

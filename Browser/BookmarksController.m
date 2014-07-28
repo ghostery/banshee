@@ -25,7 +25,7 @@
     if (self) {
         // Custom initialization.
         self.folderIndex = BOOKMARKS_ROOT;
-        [self reloadData];
+        [self loadBookmarks];
     }
     return self;
 }
@@ -75,6 +75,7 @@
 
 -(void) viewDidAppear:(BOOL)animated {
 	[tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:animated];
+    [self.tableView reloadData];
 }
 
 -(void) viewWillAppear:(BOOL)animated {
@@ -88,8 +89,8 @@
     } else {
         ((UIBarItem *)[[toolbar items] objectAtIndex:0]).enabled = YES;
     }
-    [self reloadData];
-    [tableView reloadData];
+    [self loadBookmarks];
+    [self.tableView reloadData];
 	[super viewWillAppear:animated];
 }
 
@@ -107,7 +108,22 @@
     return UIInterfaceOrientationPortrait;
 }
 
--(void)reloadData {
+-(void)reloadBookmarksData {
+    //Get the array of folder dictionaries from NSUSerDefaults
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    NSMutableArray* foldersArray = (NSMutableArray*)[defaults objectForKey:FOLDERS_KEY];
+    self.folders = [foldersArray mutableCopy];
+    //If this isn't a folder array, it must be a bookmark array, so return the bookmark array.
+    if (self.folderIndex != BOOKMARKS_ROOT) {
+        NSMutableDictionary* folderDict = [foldersArray objectAtIndex:self.folderIndex];
+        self.bookmarks = [[folderDict objectForKey:@"bookmarks"] mutableCopy];
+    }
+    else {
+        self.bookmarks = nil;
+    }
+}
+
+- (void) loadBookmarks {
     //Get the array of folder dictionaries from NSUSerDefaults
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSMutableArray* foldersArray = (NSMutableArray*)[defaults objectForKey:FOLDERS_KEY];
@@ -200,7 +216,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    [self reloadData];
+    [self loadBookmarks];
     if(self.bookmarks != nil && self.folderIndex != BOOKMARKS_ROOT)
         return [bookmarks count];
     else
@@ -350,7 +366,7 @@
 		
 	} else if (mode == 'E') {
         
-        [self reloadData];
+        [self loadBookmarks];
         
         if (self.folderIndex == BOOKMARKS_ROOT)
         {

@@ -16,7 +16,7 @@
 @class BrowserViewController;
 @class BookmarkItem;
 
-@interface BookmarksController : UIViewController {
+@interface BookmarksController : UIViewController <UITableViewDataSource, UITableViewDelegate> {
 	BrowserViewController *browserController;
 	BookmarksFormController *formController;
 	BookmarkFolderFormController *folderController;
@@ -59,7 +59,8 @@
 -(IBAction) finishEditMode:(id)sender;
 -(IBAction) addFolder:(id)sender;
 
--(void)reloadData;
+-(void) reloadBookmarksData;
+-(void) loadBookmarks;
 -(void) openBookmark:(NSIndexPath *) indexPath;
 
 @end
