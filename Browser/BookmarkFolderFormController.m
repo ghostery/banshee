@@ -51,7 +51,6 @@
     
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSMutableArray* foldersArray = (NSMutableArray*)[[defaults objectForKey:FOLDERS_KEY] mutableCopy];
-    NSArray *controllers = [self.navigationController viewControllers];
     NSMutableDictionary* folderDict = nil;
     
     if([[nameField.text stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" "]] length] == 0)

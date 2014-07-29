@@ -753,7 +753,6 @@ typedef enum ScrollDirection {
     
     // Set up bookmark controllers
 	UINavigationController *bookmarksNavController = [self createBookmarksController:NO];
-    BookmarksController* bookmarksController = (BookmarksController*)[[bookmarksNavController viewControllers] objectAtIndex:0];
     BookmarksFormController* bookmarksFormController = (BookmarksFormController*)[[bookmarksNavController viewControllers] objectAtIndex:1];
     [bookmarksFormController setMode:'A'];
     [[bookmarksFormController navigationItem] setHidesBackButton:YES animated:NO];

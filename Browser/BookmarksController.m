@@ -375,14 +375,8 @@
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
     if (mode == 'B') {
-        //Get the folder Dictionary
-        NSDictionary* folderDict = [self.folders objectAtIndex:folderIndex];
-        NSArray* bookmarksArray = [folderDict objectForKey:@"bookmarks"];
-        //Get the bookmark Dictionary
-        NSDictionary* bookmarkDict = [bookmarksArray objectAtIndex:[indexPath row]];
         //Open the URL from the bookmark in the folder
         [self openBookmark:indexPath];
-        
     } else if (mode == 'V') {
         //Create a new bookmark controller, set the mode, and folder index
         BookmarksController *nextBookmarkController = [[BookmarksController alloc] initWithNibName:@"Bookmarks" bundle:[NSBundle mainBundle]];
