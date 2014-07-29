@@ -865,41 +865,54 @@ typedef enum ScrollDirection {
 	Tab *toBeRemoved = (Tab *)[sender superview];
 	[[toBeRemoved tabButton] setEnabled:NO];
 	
-	BOOL removed = NO;
-	BOOL select = NO;
-	
-	for (id cTab in _tabs) {
-		if (select) {
-			[self switchTabFrom:_selectedTab ToTab:cTab];
-			select = NO;
-		}
-		if (removed) {
-			[cTab incrementOffset];
-		}
-		if ([cTab closeButton] == sender) {
-			removed = YES;
-			select = (_selectedTab == cTab);
-		}
+    [UIView animateWithDuration:0.20 animations:^{
+        CGRect newFrame = toBeRemoved.frame;
+        newFrame.origin.y += toBeRemoved.frame.size.height;
+        toBeRemoved.frame = newFrame;
+    } completion:^(BOOL finished) {
+        BOOL removed = NO;
+        BOOL select = NO;
         
-	}
+        for (id cTab in _tabs) {
+            if (select) {
+                [self switchTabFrom:_selectedTab ToTab:cTab];
+                select = NO;
+            }
+            if (removed) {
+                if (!finished) {
+                    [cTab incrementOffset];
+                } else {
+                    [UIView animateWithDuration:0.20 animations:^{
+                        [cTab incrementOffset];
+                    } completion:nil];
+                }
+            }
+            if ([cTab closeButton] == sender) {
+                removed = YES;
+                select = (_selectedTab == cTab);
+            }
+            
+        }
+        
+        if (toBeRemoved == [_tabs lastObject] && [_tabs lastObject] != [NSNull null] && [_tabs count] > 1) {
+            [self switchTabFrom:_selectedTab ToTab:[_tabs objectAtIndex:[_tabs count]-2]];
+        } else if ([_tabs count] == 0) {
+            self.webView = nil; // why?
+        }
+        [toBeRemoved removeFromSuperview];
+        [[toBeRemoved webView] removeFromSuperview];
+        [_tabs removeObject:toBeRemoved];
+        
+        
+        if ([_tabs count] == 0) {
+            [self addTab:nil];
+        }
+        [self loadTabs:[_selectedTab webView]];
+        
+        //scrolling
+        _tabsView.contentSize = CGSizeMake((kTabWidth * [_tabs count]) + 40.0, 23.0);
+    }];
     
-	if (toBeRemoved == [_tabs lastObject] && [_tabs lastObject] != [NSNull null] && [_tabs count] > 1) {
-		[self switchTabFrom:_selectedTab ToTab:[_tabs objectAtIndex:[_tabs count]-2]];
-	} else if ([_tabs count] == 0) {
-        self.webView = nil;
-    }
-	[toBeRemoved removeFromSuperview];
-	[[toBeRemoved webView] removeFromSuperview];
-	[_tabs removeObject: toBeRemoved];
-	
-	
-	if ([_tabs count] == 0) {
-		[self addTab:nil];
-	}
-	[self loadTabs:[_selectedTab webView]];
-	
-	//scrolling
-	_tabsView.contentSize = CGSizeMake((kTabWidth * [_tabs count]) + 40.0, 23.0);
 }
 
 -(IBAction) selectTab:(id)sender {
