@@ -811,7 +811,8 @@ typedef enum ScrollDirection {
 	
     Tab *rightMostTab = [_tabs lastObject];
     CGFloat rightMostTabEdge = (rightMostTab) ? rightMostTab.frame.origin.x + rightMostTab.frame.size.width : 0;
-    CGFloat initialX = (rightMostTabEdge >= 768) ? rightMostTabEdge + rightMostTab.frame.size.width : 768;
+    CGFloat tabWidth = rightMostTab.frame.size.width;
+    CGFloat initialX = (rightMostTabEdge < DEVICE_SIZE.width) ? DEVICE_SIZE.width + tabWidth : rightMostTabEdge + tabWidth;
     Tab *nTab = [[Tab alloc] initWithFrame:CGRectMake(initialX, 2.0, kTabWidth, 34.0)
                                  addTarget: self];
     
