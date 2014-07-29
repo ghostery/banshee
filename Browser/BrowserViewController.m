@@ -811,13 +811,30 @@ typedef enum ScrollDirection {
      [self stopLoading:sender];
      }*/
 	
-    Tab *nTab = [[Tab alloc] initWithFrame:CGRectMake((kTabWidth * [_tabs count]) + 2.0, 2.0, kTabWidth, 34.0) addTarget: self];
+    Tab *rightMostTab = [_tabs lastObject];
+    CGFloat rightMostTabEdge = (rightMostTab) ? rightMostTab.frame.origin.x + rightMostTab.frame.size.width : 0;
+    CGFloat tabWidth = rightMostTab.frame.size.width;
+    CGFloat initialX = (rightMostTabEdge < DEVICE_SIZE.width) ? DEVICE_SIZE.width + tabWidth : rightMostTabEdge + tabWidth;
+    Tab *nTab = [[Tab alloc] initWithFrame:CGRectMake(initialX, 2.0, kTabWidth, 34.0)
+                                 addTarget: self];
     
-	[self switchTabFrom:_selectedTab ToTab:nTab];
+    [self switchTabFrom:_selectedTab ToTab:nTab];
 	[_tabsView addSubview:_selectedTab];
 	
 	[_tabs addObject:_selectedTab];
 	[_selectedTab select];
+    
+    [UIView animateWithDuration:0.35 animations:^{
+        CGRect newFrame = nTab.frame;
+        newFrame.origin.x = (kTabWidth * ([_tabs count] - 1)) + 2.0;
+        nTab.frame = newFrame;
+    } completion:^(BOOL finished) {
+        if (!finished) {
+            CGRect newFrame = nTab.frame;
+            newFrame.origin.x = (kTabWidth * ([_tabs count] - 1)) + 2.0;
+            nTab.frame = newFrame;
+        }
+    }];
 	
 	//scrolling
 	_tabsView.contentSize = CGSizeMake((kTabWidth * [_tabs count]) + 5.0, 23.0);
@@ -850,41 +867,54 @@ typedef enum ScrollDirection {
 	Tab *toBeRemoved = (Tab *)[sender superview];
 	[[toBeRemoved tabButton] setEnabled:NO];
 	
-	BOOL removed = NO;
-	BOOL select = NO;
-	
-	for (id cTab in _tabs) {
-		if (select) {
-			[self switchTabFrom:_selectedTab ToTab:cTab];
-			select = NO;
-		}
-		if (removed) {
-			[cTab incrementOffset];
-		}
-		if ([cTab closeButton] == sender) {
-			removed = YES;
-			select = (_selectedTab == cTab);
-		}
+    [UIView animateWithDuration:0.20 animations:^{
+        CGRect newFrame = toBeRemoved.frame;
+        newFrame.origin.y += toBeRemoved.frame.size.height;
+        toBeRemoved.frame = newFrame;
+    } completion:^(BOOL finished) {
+        BOOL removed = NO;
+        BOOL select = NO;
         
-	}
+        for (id cTab in _tabs) {
+            if (select) {
+                [self switchTabFrom:_selectedTab ToTab:cTab];
+                select = NO;
+            }
+            if (removed) {
+                if (!finished) {
+                    [cTab incrementOffset];
+                } else {
+                    [UIView animateWithDuration:0.20 animations:^{
+                        [cTab incrementOffset];
+                    } completion:nil];
+                }
+            }
+            if ([cTab closeButton] == sender) {
+                removed = YES;
+                select = (_selectedTab == cTab);
+            }
+            
+        }
+        
+        if (toBeRemoved == [_tabs lastObject] && [_tabs lastObject] != [NSNull null] && [_tabs count] > 1) {
+            [self switchTabFrom:_selectedTab ToTab:[_tabs objectAtIndex:[_tabs count]-2]];
+        } else if ([_tabs count] == 0) {
+            self.webView = nil; // why?
+        }
+        [toBeRemoved removeFromSuperview];
+        [[toBeRemoved webView] removeFromSuperview];
+        [_tabs removeObject:toBeRemoved];
+        
+        
+        if ([_tabs count] == 0) {
+            [self addTab:nil];
+        }
+        [self loadTabs:[_selectedTab webView]];
+        
+        //scrolling
+        _tabsView.contentSize = CGSizeMake((kTabWidth * [_tabs count]) + 40.0, 23.0);
+    }];
     
-	if (toBeRemoved == [_tabs lastObject] && [_tabs lastObject] != [NSNull null] && [_tabs count] > 1) {
-		[self switchTabFrom:_selectedTab ToTab:[_tabs objectAtIndex:[_tabs count]-2]];
-	} else if ([_tabs count] == 0) {
-        self.webView = nil;
-    }
-	[toBeRemoved removeFromSuperview];
-	[[toBeRemoved webView] removeFromSuperview];
-	[_tabs removeObject: toBeRemoved];
-	
-	
-	if ([_tabs count] == 0) {
-		[self addTab:nil];
-	}
-	[self loadTabs:[_selectedTab webView]];
-	
-	//scrolling
-	_tabsView.contentSize = CGSizeMake((kTabWidth * [_tabs count]) + 40.0, 23.0);
 }
 
 -(IBAction) selectTab:(id)sender {
