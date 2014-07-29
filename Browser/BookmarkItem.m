@@ -111,4 +111,14 @@
     [bookmarksController loadBookmarks];
 }
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    [self.deleteConfirmation setFrame:CGRectMake(self.tableView.frame.size.width - self.deleteConfirmation.frame.size.width,
+                                                 self.deleteConfirmation.frame.origin.y,
+                                                 self.deleteConfirmation.frame.size.width,
+                                                 self.deleteConfirmation.frame.size.height)];
+}
+
 @end
