@@ -771,19 +771,22 @@ typedef enum ScrollDirection {
                                 permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
         
     } else {
-        [UIView transitionFromView:self.view
-                            toView:[bookmarksController view]
-                          duration:0.5
-                           options:(UIViewAnimationOptionTransitionCrossDissolve)
-                        completion:^(BOOL finished) {}];
+        [self presentViewController:bookmarksNavController animated:YES completion:nil];
     }
 }
 
 -(void) dismissPopups {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-    [_popupQuery dismissWithClickedButtonIndex:_popupQuery.cancelButtonIndex animated:NO];
-    [_padPopover dismissPopoverAnimated:NO];
+    if([self isPad])
+    {
+        [_popupQuery dismissWithClickedButtonIndex:_popupQuery.cancelButtonIndex animated:NO];
+        [_padPopover dismissPopoverAnimated:NO];
+    }
+    else
+    {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
 }
 
 // TABS
