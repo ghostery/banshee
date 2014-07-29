@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		71ED23B819447163002ACD24 /* BrowserDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 71ED23B5194470B2002ACD24 /* BrowserDelegate.m */; };
 		B572E55718D08D2A005E4834 /* Tab.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E54718D08D2A005E4834 /* Tab.m */; };
 		B572E55818D08D2A005E4834 /* BookmarksController.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E54818D08D2A005E4834 /* BookmarksController.m */; };
 		B572E55918D08D2A005E4834 /* BookmarksFormController.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E54A18D08D2A005E4834 /* BookmarksFormController.m */; };
@@ -35,7 +36,6 @@
 		FAC9B3B116F3863500E37710 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B3B016F3863500E37710 /* libxml2.2.dylib */; };
 		FAC9B3B516F38C6500E37710 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B3B416F38C6500E37710 /* CoreData.framework */; };
 		FAC9B3B916F38D3700E37710 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B3B816F38D3700E37710 /* SystemConfiguration.framework */; };
-		FADBB23518D37489003B6CE7 /* BrowserDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FADBB23418D37489003B6CE7 /* BrowserDelegate.m */; };
 		FAF75E9618A17A77007B317D /* BookmarkFoldersForm.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF75E8118A17A77007B317D /* BookmarkFoldersForm.xib */; };
 		FAF75E9718A17A77007B317D /* BookmarkItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF75E8218A17A77007B317D /* BookmarkItem.xib */; };
 		FAF75E9818A17A77007B317D /* BookmarksForm.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF75E8318A17A77007B317D /* BookmarksForm.xib */; };
@@ -60,6 +60,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		71ED23B4194470B2002ACD24 /* BrowserDelegate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BrowserDelegate.h; path = ../Browser/BrowserDelegate.h; sourceTree = "<group>"; };
+		71ED23B5194470B2002ACD24 /* BrowserDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserDelegate.m; path = ../Browser/BrowserDelegate.m; sourceTree = "<group>"; };
 		B572E54718D08D2A005E4834 /* Tab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Tab.m; path = ../Browser/Tab.m; sourceTree = "<group>"; };
 		B572E54818D08D2A005E4834 /* BookmarksController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BookmarksController.m; path = ../Browser/BookmarksController.m; sourceTree = "<group>"; };
 		B572E54918D08D2A005E4834 /* BookmarksFormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BookmarksFormController.h; path = ../Browser/BookmarksFormController.h; sourceTree = "<group>"; };
@@ -102,8 +104,6 @@
 		FAC9B3B016F3863500E37710 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
 		FAC9B3B416F38C6500E37710 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		FAC9B3B816F38D3700E37710 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		FADBB23318D37489003B6CE7 /* BrowserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserDelegate.h; sourceTree = "<group>"; };
-		FADBB23418D37489003B6CE7 /* BrowserDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowserDelegate.m; sourceTree = "<group>"; };
 		FAF75E8118A17A77007B317D /* BookmarkFoldersForm.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BookmarkFoldersForm.xib; sourceTree = "<group>"; };
 		FAF75E8218A17A77007B317D /* BookmarkItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BookmarkItem.xib; sourceTree = "<group>"; };
 		FAF75E8318A17A77007B317D /* BookmarksForm.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BookmarksForm.xib; sourceTree = "<group>"; };
@@ -232,13 +232,13 @@
 				B572E55318D08D2A005E4834 /* BookmarkImporter.m */,
 				B572E55418D08D2A005E4834 /* BookmarkItem.h */,
 				B572E55518D08D2A005E4834 /* BookmarkItem.m */,
+				71ED23B4194470B2002ACD24 /* BrowserDelegate.h */,
+				71ED23B5194470B2002ACD24 /* BrowserDelegate.m */,
 				B572E55618D08D2A005E4834 /* BookmarksController.h */,
-				FADBB23318D37489003B6CE7 /* BrowserDelegate.h */,
-				FADBB23418D37489003B6CE7 /* BrowserDelegate.m */,
 			);
 			name = Browser;
-			path = /Users/alex/Projects/banshee/Browser;
-			sourceTree = "<absolute>";
+			path = ../Browser;
+			sourceTree = SOURCE_ROOT;
 		};
 		FAF75E8018A17A59007B317D /* Browser Resources */ = {
 			isa = PBXGroup;
@@ -370,6 +370,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				71ED23B819447163002ACD24 /* BrowserDelegate.m in Sources */,
 				B572E55D18D08D2A005E4834 /* BookmarkImporter.m in Sources */,
 				B572E55918D08D2A005E4834 /* BookmarksFormController.m in Sources */,
 				B572E55E18D08D2A005E4834 /* BookmarkItem.m in Sources */,
@@ -381,7 +382,6 @@
 				FAC9B26E16F27BF800E37710 /* AppDelegate.m in Sources */,
 				B572E55B18D08D2A005E4834 /* UIMainView.m in Sources */,
 				B572E55818D08D2A005E4834 /* BookmarksController.m in Sources */,
-				FADBB23518D37489003B6CE7 /* BrowserDelegate.m in Sources */,
 				B572E55A18D08D2A005E4834 /* BrowserViewController.m in Sources */,
 				FAC9B27716F27BF800E37710 /* ViewController.m in Sources */,
 				FAF75EED18A17BFD007B317D /* JSTools.js in Sources */,
