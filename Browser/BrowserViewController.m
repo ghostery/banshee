@@ -809,13 +809,29 @@ typedef enum ScrollDirection {
      [self stopLoading:sender];
      }*/
 	
-    Tab *nTab = [[Tab alloc] initWithFrame:CGRectMake((kTabWidth * [_tabs count]) + 2.0, 2.0, kTabWidth, 34.0) addTarget: self];
+    Tab *rightMostTab = [_tabs lastObject];
+    CGFloat rightMostTabEdge = (rightMostTab) ? rightMostTab.frame.origin.x + rightMostTab.frame.size.width : 0;
+    CGFloat initialX = (rightMostTabEdge >= 768) ? rightMostTabEdge + rightMostTab.frame.size.width : 768;
+    Tab *nTab = [[Tab alloc] initWithFrame:CGRectMake(initialX, 2.0, kTabWidth, 34.0)
+                                 addTarget: self];
     
-	[self switchTabFrom:_selectedTab ToTab:nTab];
+    [self switchTabFrom:_selectedTab ToTab:nTab];
 	[_tabsView addSubview:_selectedTab];
 	
 	[_tabs addObject:_selectedTab];
 	[_selectedTab select];
+    
+    [UIView animateWithDuration:0.35 animations:^{
+        CGRect newFrame = nTab.frame;
+        newFrame.origin.x = (kTabWidth * ([_tabs count] - 1)) + 2.0;
+        nTab.frame = newFrame;
+    } completion:^(BOOL finished) {
+        if (!finished) {
+            CGRect newFrame = nTab.frame;
+            newFrame.origin.x = (kTabWidth * ([_tabs count] - 1)) + 2.0;
+            nTab.frame = newFrame;
+        }
+    }];
 	
 	//scrolling
 	_tabsView.contentSize = CGSizeMake((kTabWidth * [_tabs count]) + 5.0, 23.0);
