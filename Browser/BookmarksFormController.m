@@ -7,16 +7,14 @@
 
 #import "BookmarksController.h"
 #import "BookmarksFormController.h"
-#import "AppDelegate.h"
 #import "BrowserViewController.h"
 
 @class BrowserViewController;
 @class BookmarksController;
-@class AppDelegate;
 
 @implementation BookmarksFormController
 
-@synthesize parentField, nameField, urlField, arrowLabel, cancelButton, doneButton, mode, defaultUrlFieldText;
+@synthesize parentField, nameField, urlField, arrowLabel, cancelButton, doneButton, mode, defaultUrlFieldText, browserController;
 
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -39,8 +37,6 @@
 - (void) viewWillAppear:(BOOL)animated {
 	NSArray *vControllers = [self.navigationController viewControllers];
 	BookmarksController *bookmarksController = [vControllers objectAtIndex:([vControllers count] - 2)];
-	BrowserViewController *browserController = [bookmarksController browserController];
-    
     
     //Edit mode
 	if (mode == 'E') {
@@ -122,8 +118,7 @@
 - (IBAction) folderSelect:(id)sender {
 	BookmarksController *nextBookmarkController = [[BookmarksController alloc] init];
     [[NSBundle mainBundle] loadNibNamed:@"Bookmarks" owner:nextBookmarkController options:nil];
-    AppDelegate* delegate =(AppDelegate *)[[UIApplication sharedApplication] delegate];
-    [nextBookmarkController setBrowserController:delegate.viewController];
+    [nextBookmarkController setBrowserController:self.browserController];
     [nextBookmarkController setMode:'P'];
     [nextBookmarkController setFolderIndex:BOOKMARKS_ROOT];
 	[self.navigationController pushViewController:nextBookmarkController animated:YES];

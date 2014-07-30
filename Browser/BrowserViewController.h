@@ -13,7 +13,7 @@
 #define kFinishedLoadingNotification @"kFinishedLoadingNotification"
 
 //reference: http://stackoverflow.com/a/18085584/347339
-#define DEVICE_SIZE [[[[UIApplication sharedApplication] keyWindow] rootViewController].view convertRect:[[UIScreen mainScreen] bounds] fromView:nil].size
+#define DEVICE_SIZE [[UIScreen mainScreen] bounds].size
 
 @class Tab, BookmarksController, BookmarksFormController, Reachability;
 
