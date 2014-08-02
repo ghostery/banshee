@@ -26,20 +26,18 @@ Since libxml is not a framework but rather a dylib you will also have to add it 
 
 The recommended way to integrate the browser code is to make your view controller a subclass of the browser controller. Which should look something like this:
 
+    #import <banshee/BrowserViewController.h> // only necessary if using banshee cocoapod
+
     @interface ViewController : BrowserViewController
 
 
 ### AppDelegate
 
-Your app delegate needs to inherit from the browser delegate as so:
+In the app delegate you should place this code in your `didFinishLaunchingWithOptions`:
 
-    #import "BrowserDelegate.h"
+    [self.window setRootViewController:[[ViewController alloc] init]];
 
-    @interface AppDelegate : BrowserDelegate <UIApplicationDelegate>
-
-The browser code does reference the app delegate, so you must have an AppDelegate Task. In the app delegate you should place this code in your `didFinishLaunchingWithOptions`:
-
-    self.viewController = [[BrowserViewController alloc] init];
+Note: These instructions only work if you create an empty project file. If you create a different type of project like a "single page" app, you will have to use a different approach since story board files are pulled in via plist file.
 
 ## License
 

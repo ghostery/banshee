@@ -7,7 +7,10 @@
 
 #import <UIKit/UIKit.h>
 
+@class BrowserViewController;
+
 @interface BookmarksFormController : UIViewController {
+    BrowserViewController *browserController;
 	IBOutlet UIButton *parentField;
 	IBOutlet UITextField *nameField;
 	IBOutlet UITextField *urlField;
@@ -17,6 +20,8 @@
     NSString *defaultUrlFieldText;
 	char mode;
 }
+
+@property(nonatomic, strong) BrowserViewController *browserController;
 @property(nonatomic, strong) UIButton *parentField;
 @property(nonatomic, strong) UITextField *nameField;
 @property(nonatomic, strong) UITextField *urlField;

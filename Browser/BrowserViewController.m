@@ -89,6 +89,7 @@ typedef enum ScrollDirection {
     BookmarksFormController *bookmarksFormController = [[BookmarksFormController alloc]
                                                         initWithNibName:@"BookmarksForm"
                                                         bundle:[NSBundle mainBundle]];
+    [bookmarksFormController setBrowserController:self];
 	BookmarkFolderFormController *bookmarkFolderFormController = [[BookmarkFolderFormController alloc]
 																  initWithNibName:@"BookmarkFoldersForm"
 																  bundle:[NSBundle mainBundle]];
