@@ -326,13 +326,7 @@ typedef enum ScrollDirection {
         
         // show bottom toolbar when scrolling up fast
         if (scrollDirection == ScrollDirectionUp && scrollView.contentOffset.y - self.lastScrollContentOffset < -20 && _bottomBar.alpha == 0.0) {
-                [UIView animateWithDuration: 0.5
-                                      delay: 0.0
-                                    options: UIViewAnimationOptionCurveEaseOut
-                                 animations:^{
-                                     _bottomBar.alpha = 1.0;
-                                 }
-                                 completion:^(BOOL finished){
+                [self toggleBottomBarWithCompletion:^(BOOL finished){
                                      if (finished) {
                                          [_selectedTab webView].frame = CGRectMake([_selectedTab webView].frame.origin.x, [_selectedTab webView].frame.origin.y, [_selectedTab webView].frame.size.width, minWebViewSize);
                                      }
@@ -344,29 +338,12 @@ typedef enum ScrollDirection {
             if (scrollDirection == ScrollDirectionDown && _bottomBar.alpha == 1.0) {
                 [_selectedTab webView].frame = CGRectMake([_selectedTab webView].frame.origin.x, [_selectedTab webView].frame.origin.y, [_selectedTab webView].frame.size.width, maxWebViewSize);
                 
-                [UIView animateWithDuration: 1.0
-                                      delay: 0.0
-                                    options: UIViewAnimationOptionCurveEaseIn
-                                 animations:^{
-                                     _bottomBar.alpha = 0.0;
-                                 }
-                                 completion:^(BOOL finished){
-                                     if (finished) {
-                                     }
-                                 }];
+                [self toggleBottomBarWithCompletion:nil];
             }
         
         // show bottom toolbar
         } else if (_bottomBar.alpha == 0.0)  {
-
-            
-            [UIView animateWithDuration: 0.5
-                                  delay: 0.0
-                                options: UIViewAnimationOptionCurveEaseOut
-                             animations:^{
-                                 _bottomBar.alpha = 1.0;
-                             }
-                             completion:^(BOOL finished){
+            [self toggleBottomBarWithCompletion:^(BOOL finished){
                                  if (finished) {
                                      [_selectedTab webView].frame = CGRectMake([_selectedTab webView].frame.origin.x, [_selectedTab webView].frame.origin.y, [_selectedTab webView].frame.size.width, minWebViewSize);
                                      if (scrollView.contentOffset.y > 0) {
@@ -388,27 +365,23 @@ typedef enum ScrollDirection {
     self.lastScrollContentOffset = scrollView.contentOffset.y;
 }
 
-- (void)showHideView
+- (void)toggleBottomBarWithCompletion:(void (^)(BOOL finished))completion
 {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
+    float alpha = 0.0;
+    //UIViewAnimationCurve *options = UIViewAnimationCurveEaseO
     
+    if (_bottomBar.alpha == 0.0) {
+        alpha = 1.0;
+    }
     // Fade out the view right away
     [UIView animateWithDuration:1.0
                           delay: 0.0
-                        options: UIViewAnimationOptionCurveEaseIn
+                        options: UIViewAnimationOptionCurveEaseInOut
                      animations:^{
-                         _bottomBar.alpha = 0.0;
+                         _bottomBar.alpha = alpha;
                      }
-                     completion:^(BOOL finished){
-                         // Wait one second and then fade in the view
-                         [UIView animateWithDuration:1.0
-                                               delay: 1.0
-                                             options:UIViewAnimationOptionCurveEaseOut
-                                          animations:^{
-                                              _bottomBar.alpha = 1.0;
-                                          }
-                                          completion:nil];
-                     }];
+                     completion: completion];
 }
 
 
