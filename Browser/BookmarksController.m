@@ -17,6 +17,7 @@
 @synthesize browserController, formController, folderController;
 @synthesize mode, bookmarks, folders, folderImage, bookmarkImage;
 @synthesize toolbar, editToolbar, folderIndex, bookmarkIndex;
+@synthesize bookmarksSeedResourceName;
 
 // The designated initializer.  Override if you create the controller programmatically
 // and want to perform customization that is not appropriate for viewDidLoad.
@@ -41,16 +42,46 @@
     //Check to see if the folders dict is nil, if it is, create a new folder withe the default structure.
     if (foldersDict == nil)
     {
+        NSString *fname = nil;
+        fname = [[NSBundle mainBundle] pathForResource:BOOKMARKS_SEED_RESOURCE_NAME ofType:@"strings"];
+        NSDictionary *seedBookmarks = [NSDictionary dictionaryWithContentsOfFile:fname];
         
-        NSMutableArray* folderArray = [[NSMutableArray alloc] init];
-        NSMutableArray* bookmarksArray = [[NSMutableArray alloc] init];
-        NSDictionary* defaultBookmark = [NSDictionary dictionaryWithObjectsAndKeys:@"Reddit", @"title",
-                                         @"http://www.reddit.com",@"URL",nil];
-        [bookmarksArray addObject:defaultBookmark];
-        foldersDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Default", @"title",
-                       bookmarksArray, @"bookmarks",nil];
-        [folderArray addObject:foldersDict];
-        [defaults setObject:folderArray forKey:FOLDERS_KEY];
+        NSMutableDictionary *foldersDict = [[NSMutableDictionary alloc] init];
+        
+        NSEnumerator *enumerator = [seedBookmarks keyEnumerator];
+        NSString *key;
+        NSArray *bookmarkComponents;
+        NSString *url;
+        NSDictionary *bookmark;
+        NSDictionary *folder;
+        NSString *folderName;
+        NSString *bookmarkName;
+        
+        
+        while ((key = [enumerator nextObject])) {
+            bookmarkComponents = [key componentsSeparatedByString:@"/"];
+            url = [seedBookmarks objectForKey:key];
+
+            if ([bookmarkComponents count] == 2) {
+                folderName = [bookmarkComponents objectAtIndex:0];
+                bookmarkName = [bookmarkComponents objectAtIndex:1];
+                
+                bookmark = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   bookmarkName, @"title",url,@"URL",nil];
+                
+                folder = [foldersDict objectForKey:folderName];
+                if (folder) {
+                    [(NSMutableArray *)[folder objectForKey:@"bookmarks"] addObject:bookmark];
+                } else {
+                    folder = [NSDictionary dictionaryWithObjectsAndKeys:folderName, @"title",
+                              [NSMutableArray arrayWithObject:bookmark], @"bookmarks",nil];
+                    [foldersDict setObject:folder forKey:folderName];
+                }
+
+            }
+        } 
+
+        [defaults setObject:[foldersDict allValues] forKey:FOLDERS_KEY];
         [defaults synchronize];
     }
     

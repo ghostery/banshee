@@ -15,6 +15,7 @@
 		B572E55C18D08D2A005E4834 /* BookmarkFolderFormController.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E55118D08D2A005E4834 /* BookmarkFolderFormController.m */; };
 		B572E55E18D08D2A005E4834 /* BookmarkItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E55518D08D2A005E4834 /* BookmarkItem.m */; };
 		B5A210C218D091F700D65141 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A210C118D091F700D65141 /* Reachability.m */; };
+		FA157C3019941ACB0002C146 /* bookmarks.strings in Resources */ = {isa = PBXBuildFile; fileRef = FA157C2F19941ACB0002C146 /* bookmarks.strings */; };
 		FA3CD2AD1993D98800B3ACF0 /* right.png in Resources */ = {isa = PBXBuildFile; fileRef = FA3CD2AB1993D98800B3ACF0 /* right.png */; };
 		FA3CD2AE1993D98800B3ACF0 /* left.png in Resources */ = {isa = PBXBuildFile; fileRef = FA3CD2AC1993D98800B3ACF0 /* left.png */; };
 		FAA4557418A19A2E00B1BDF4 /* gsearch.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA4557118A19A2E00B1BDF4 /* gsearch.png */; };
@@ -71,6 +72,7 @@
 		B572E55618D08D2A005E4834 /* BookmarksController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarksController.h; sourceTree = "<group>"; };
 		B5A210C018D091F700D65141 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = ../Browser/Reachability.h; sourceTree = "<group>"; };
 		B5A210C118D091F700D65141 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = ../Browser/Reachability.m; sourceTree = "<group>"; };
+		FA157C2F19941ACB0002C146 /* bookmarks.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = bookmarks.strings; sourceTree = "<group>"; };
 		FA3CD2AB1993D98800B3ACF0 /* right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = right.png; sourceTree = "<group>"; };
 		FA3CD2AC1993D98800B3ACF0 /* left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = left.png; sourceTree = "<group>"; };
 		FAA4557118A19A2E00B1BDF4 /* gsearch.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gsearch.png; sourceTree = "<group>"; };
@@ -178,6 +180,14 @@
 			path = Logging;
 			sourceTree = "<group>";
 		};
+		FA157C2E19941AB90002C146 /* Bookmarks */ = {
+			isa = PBXGroup;
+			children = (
+				FA157C2F19941ACB0002C146 /* bookmarks.strings */,
+			);
+			name = Bookmarks;
+			sourceTree = "<group>";
+		};
 		FAA4557718A19B2700B1BDF4 /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
@@ -268,6 +278,7 @@
 		FAF75E8018A17A59007B317D /* Browser Resources */ = {
 			isa = PBXGroup;
 			children = (
+				FA157C2E19941AB90002C146 /* Bookmarks */,
 				0E54DB6F197DAECA005BF033 /* Views */,
 				0E54DB6E197DAEA7005BF033 /* Web */,
 				FAF75ED618A17BFD007B317D /* Images */,
@@ -357,6 +368,7 @@
 				FAF75EA718A17A77007B317D /* Bookmarks.xib in Resources */,
 				FAC9B26816F27BF800E37710 /* InfoPlist.strings in Resources */,
 				FAF75EEA18A17BFD007B317D /* iphone_delete_button.png in Resources */,
+				FA157C3019941ACB0002C146 /* bookmarks.strings in Resources */,
 				FAA4557B18A19F1E00B1BDF4 /* configure.png in Resources */,
 				FAF75EA418A17A77007B317D /* launch.html in Resources */,
 				FAA4557518A19A2E00B1BDF4 /* magglass.png in Resources */,

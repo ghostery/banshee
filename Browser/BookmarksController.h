@@ -10,6 +10,7 @@
 #define FOLDERS_KEY @"BookmarksFolders"
 #define BOOKMARKS_ROOT -1
 #define MAX_BOOKMARKS 1000
+#define BOOKMARKS_SEED_RESOURCE_NAME @"bookmarks"
 
 @class BookmarksFormController;
 @class BookmarkFolderFormController;
@@ -24,10 +25,12 @@
 	char mode;
     NSInteger folderIndex;
     NSInteger bookmarkIndex;
-	
+    
 	NSMutableArray *bookmarks;
     NSMutableArray *folders;
 	
+    NSString *bookmarksSeedResourceName;
+    
 	UIImage *bookmarkImage;
 	UIImage *folderImage;
 	IBOutlet UIToolbar *toolbar;
@@ -44,6 +47,8 @@
 
 @property(nonatomic, strong) NSMutableArray *bookmarks;
 @property(nonatomic, strong) NSMutableArray *folders;
+
+@property(nonatomic, strong) NSString *bookmarksSeedResourceName;
 
 @property(nonatomic, strong) IBOutlet UITableView *tableView;
 
