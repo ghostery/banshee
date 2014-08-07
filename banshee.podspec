@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "banshee"
-  s.version          = "0.1.4"
+  s.version          = "0.1.5"
   s.summary          = "An iOS browser built on top of UIWebView."
   s.homepage         = "https://github.com/acatighera/banshee"
   s.screenshots      = "https://d1k68i4h6ifyxa.cloudfront.net/screens/banshee_screen1.png"
