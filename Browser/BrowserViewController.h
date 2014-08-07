@@ -76,6 +76,8 @@
 -(IBAction) showBookmarks:(id)sender;
 -(IBAction) scrollToTop:(id)sender;
 
+-(void) toggleBottomBarWithCompletion:(void (^)(BOOL finished))completion;
+
 -(NSArray *) actionSheetButtons;
 -(IBAction) showActionSheet:(id)sender;
 -(void) actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex;
