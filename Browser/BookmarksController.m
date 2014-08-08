@@ -28,6 +28,7 @@
     if (self) {
         // Custom initialization.
         self.folderIndex = BOOKMARKS_ROOT;
+        self.bookmarksSeedResourceName = BOOKMARKS_SEED_RESOURCE_NAME;
         [self loadBookmarks];
     }
     return self;
@@ -43,7 +44,7 @@
     if (foldersDict == nil)
     {
         NSString *fname = nil;
-        fname = [[NSBundle mainBundle] pathForResource:BOOKMARKS_SEED_RESOURCE_NAME ofType:@"strings"];
+        fname = [[NSBundle mainBundle] pathForResource:bookmarksSeedResourceName ofType:@"strings"];
         NSDictionary *seedBookmarks = [NSDictionary dictionaryWithContentsOfFile:fname];
         
         NSMutableDictionary *foldersDict = [[NSMutableDictionary alloc] init];
