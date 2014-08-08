@@ -280,6 +280,17 @@
         return [folders count];
 }
 
+// get images for bookmarks
+-(NSString *) getBookmarkImageURLFromUrlString:(NSString *) urlString {
+    NSString *encodedURL = [urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+    return [NSString stringWithFormat:@"http://www.google.com/s2/favicons?domain=%@", encodedURL];
+}
+
+-(UIImage *) getBookmarkImageFromUrlString:(NSString *) urlString {
+    NSString *bookmarkImageUrl = [self getBookmarkImageURLFromUrlString:urlString];
+    NSData *bookmarkImageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:bookmarkImageUrl]];
+    return ([bookmarkImageData length] > 0) ? [UIImage imageWithData:bookmarkImageData] : bookmarkImage;
+}
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)localTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -318,7 +329,8 @@
         NSDictionary* bookmarkDict = [bookmarksArray objectAtIndex:[indexPath row]];
         [cell.cellLabel setText:[bookmarkDict valueForKey:@"title"]];
         LogInfo(@"Cell Label : %@", cell.cellLabel.text);
-        cell.cellImage.image = bookmarkImage;
+        cell.cellImage.image = [self getBookmarkImageFromUrlString:[bookmarkDict objectForKey:@"URL"]];
+
     }
     
     if (self.mode == 'E') {
@@ -328,7 +340,8 @@
             NSArray* bookmarksArray = [folderDict objectForKey:@"bookmarks"];
             NSDictionary* bookmarkDict = [bookmarksArray objectAtIndex:[indexPath row]];
             [cell.cellLabel setText:[bookmarkDict valueForKey:@"title"]];
-            cell.cellImage.image = bookmarkImage;
+            cell.cellImage.image = [self getBookmarkImageFromUrlString:[bookmarkDict objectForKey:@"URL"]];
+
             [cell enableEdit];
         }
         else
@@ -354,7 +367,7 @@
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-	((BookmarkItem *)cell).cellLabel.font = [UIFont italicSystemFontOfSize:17.0];
+	((BookmarkItem *)cell).cellLabel.font = [UIFont italicSystemFontOfSize:14.0];
     
 }
 

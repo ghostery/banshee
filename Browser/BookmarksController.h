@@ -66,4 +66,8 @@
 -(void) loadBookmarks;
 -(void) openBookmark:(NSIndexPath *) indexPath;
 
+
+-(NSString *) getBookmarkImageURLFromUrlString:(NSString *) urlString;
+-(UIImage *) getBookmarkImageFromUrlString:(NSString *) urlString;
+
 @end
