@@ -1,0 +1,9 @@
+/* 
+  bookmarks.strings
+  TestBrowser
+
+  Created by Alexandru Catighera on 8/7/14.
+  Copyright (c) 2014 Alexandru Catighera. All rights reserved.
+*/
+
+"Default/Reddit" = "http://www.reddit.com";

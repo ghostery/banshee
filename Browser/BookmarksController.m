@@ -17,6 +17,7 @@
 @synthesize browserController, formController, folderController;
 @synthesize mode, bookmarks, folders, folderImage, bookmarkImage;
 @synthesize toolbar, editToolbar, folderIndex, bookmarkIndex;
+@synthesize bookmarksSeedResourceName;
 
 // The designated initializer.  Override if you create the controller programmatically
 // and want to perform customization that is not appropriate for viewDidLoad.
@@ -27,6 +28,7 @@
     if (self) {
         // Custom initialization.
         self.folderIndex = BOOKMARKS_ROOT;
+        self.bookmarksSeedResourceName = BOOKMARKS_SEED_RESOURCE_NAME;
         [self loadBookmarks];
     }
     return self;
@@ -41,16 +43,46 @@
     //Check to see if the folders dict is nil, if it is, create a new folder withe the default structure.
     if (foldersDict == nil)
     {
+        NSString *fname = nil;
+        fname = [[NSBundle mainBundle] pathForResource:bookmarksSeedResourceName ofType:@"strings"];
+        NSDictionary *seedBookmarks = [NSDictionary dictionaryWithContentsOfFile:fname];
         
-        NSMutableArray* folderArray = [[NSMutableArray alloc] init];
-        NSMutableArray* bookmarksArray = [[NSMutableArray alloc] init];
-        NSDictionary* defaultBookmark = [NSDictionary dictionaryWithObjectsAndKeys:@"Reddit", @"title",
-                                         @"http://www.reddit.com",@"URL",nil];
-        [bookmarksArray addObject:defaultBookmark];
-        foldersDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Default", @"title",
-                       bookmarksArray, @"bookmarks",nil];
-        [folderArray addObject:foldersDict];
-        [defaults setObject:folderArray forKey:FOLDERS_KEY];
+        NSMutableDictionary *foldersDict = [[NSMutableDictionary alloc] init];
+        
+        NSEnumerator *enumerator = [seedBookmarks keyEnumerator];
+        NSString *key;
+        NSArray *bookmarkComponents;
+        NSString *url;
+        NSDictionary *bookmark;
+        NSDictionary *folder;
+        NSString *folderName;
+        NSString *bookmarkName;
+        
+        
+        while ((key = [enumerator nextObject])) {
+            bookmarkComponents = [key componentsSeparatedByString:@"/"];
+            url = [seedBookmarks objectForKey:key];
+
+            if ([bookmarkComponents count] == 2) {
+                folderName = [bookmarkComponents objectAtIndex:0];
+                bookmarkName = [bookmarkComponents objectAtIndex:1];
+                
+                bookmark = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   bookmarkName, @"title",url,@"URL",nil];
+                
+                folder = [foldersDict objectForKey:folderName];
+                if (folder) {
+                    [(NSMutableArray *)[folder objectForKey:@"bookmarks"] addObject:bookmark];
+                } else {
+                    folder = [NSDictionary dictionaryWithObjectsAndKeys:folderName, @"title",
+                              [NSMutableArray arrayWithObject:bookmark], @"bookmarks",nil];
+                    [foldersDict setObject:folder forKey:folderName];
+                }
+
+            }
+        } 
+
+        [defaults setObject:[foldersDict allValues] forKey:FOLDERS_KEY];
         [defaults synchronize];
     }
     
@@ -249,6 +281,17 @@
         return [folders count];
 }
 
+// get images for bookmarks
+-(NSString *) getBookmarkImageURLFromUrlString:(NSString *) urlString {
+    NSString *encodedURL = [urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+    return [NSString stringWithFormat:@"http://www.google.com/s2/favicons?domain=%@", encodedURL];
+}
+
+-(UIImage *) getBookmarkImageFromUrlString:(NSString *) urlString {
+    NSString *bookmarkImageUrl = [self getBookmarkImageURLFromUrlString:urlString];
+    NSData *bookmarkImageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:bookmarkImageUrl]];
+    return ([bookmarkImageData length] > 0) ? [UIImage imageWithData:bookmarkImageData] : bookmarkImage;
+}
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)localTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -287,7 +330,8 @@
         NSDictionary* bookmarkDict = [bookmarksArray objectAtIndex:[indexPath row]];
         [cell.cellLabel setText:[bookmarkDict valueForKey:@"title"]];
         LogInfo(@"Cell Label : %@", cell.cellLabel.text);
-        cell.cellImage.image = bookmarkImage;
+        cell.cellImage.image = [self getBookmarkImageFromUrlString:[bookmarkDict objectForKey:@"URL"]];
+
     }
     
     if (self.mode == 'E') {
@@ -297,7 +341,8 @@
             NSArray* bookmarksArray = [folderDict objectForKey:@"bookmarks"];
             NSDictionary* bookmarkDict = [bookmarksArray objectAtIndex:[indexPath row]];
             [cell.cellLabel setText:[bookmarkDict valueForKey:@"title"]];
-            cell.cellImage.image = bookmarkImage;
+            cell.cellImage.image = [self getBookmarkImageFromUrlString:[bookmarkDict objectForKey:@"URL"]];
+
             [cell enableEdit];
         }
         else
@@ -323,7 +368,7 @@
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-	((BookmarkItem *)cell).cellLabel.font = [UIFont italicSystemFontOfSize:17.0];
+	((BookmarkItem *)cell).cellLabel.font = [UIFont italicSystemFontOfSize:14.0];
     
 }
 
