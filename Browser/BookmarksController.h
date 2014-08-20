@@ -69,5 +69,5 @@
 
 -(NSString *) getBookmarkImageURLFromUrlString:(NSString *) urlString;
 -(UIImage *) getBookmarkImageFromUrlString:(NSString *) urlString;
-
+-(void) setBookmarkImageForCellWithURL:(NSArray *) args;
 @end

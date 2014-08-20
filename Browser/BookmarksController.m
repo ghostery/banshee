@@ -293,6 +293,12 @@
     return ([bookmarkImageData length] > 0) ? [UIImage imageWithData:bookmarkImageData] : bookmarkImage;
 }
 
+-(void) setBookmarkImageForCellWithURL:(NSArray *) args {
+    BookmarkItem *cell = [args objectAtIndex:0];
+    NSString *urlString = [args objectAtIndex:1];
+    cell.cellImage.image = [self getBookmarkImageFromUrlString:urlString];
+}
+
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)localTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
@@ -330,8 +336,8 @@
         NSDictionary* bookmarkDict = [bookmarksArray objectAtIndex:[indexPath row]];
         [cell.cellLabel setText:[bookmarkDict valueForKey:@"title"]];
         LogInfo(@"Cell Label : %@", cell.cellLabel.text);
-        cell.cellImage.image = [self getBookmarkImageFromUrlString:[bookmarkDict objectForKey:@"URL"]];
-
+        // load bookmark icon async
+        [self performSelectorInBackground:@selector(setBookmarkImageForCellWithURL:) withObject:@[cell, [bookmarkDict objectForKey:@"URL"]] ];
     }
     
     if (self.mode == 'E') {
