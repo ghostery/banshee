@@ -15,6 +15,9 @@
 		B572E55C18D08D2A005E4834 /* BookmarkFolderFormController.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E55118D08D2A005E4834 /* BookmarkFolderFormController.m */; };
 		B572E55E18D08D2A005E4834 /* BookmarkItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E55518D08D2A005E4834 /* BookmarkItem.m */; };
 		B5A210C218D091F700D65141 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A210C118D091F700D65141 /* Reachability.m */; };
+		B5E88BDA19A68C5D0021ED10 /* BrowserMainWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E88BD919A68C5D0021ED10 /* BrowserMainWindow.m */; };
+		B5E88C1F19A697490021ED10 /* JSTools.js in Sources */ = {isa = PBXBuildFile; fileRef = FAF75EE118A17BFD007B317D /* JSTools.js */; };
+		B5E88C2019A698DF0021ED10 /* JSTools.js in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EE118A17BFD007B317D /* JSTools.js */; };
 		FA157C3019941ACB0002C146 /* bookmarks.strings in Resources */ = {isa = PBXBuildFile; fileRef = FA157C2F19941ACB0002C146 /* bookmarks.strings */; };
 		FA3CD2AD1993D98800B3ACF0 /* right.png in Resources */ = {isa = PBXBuildFile; fileRef = FA3CD2AB1993D98800B3ACF0 /* right.png */; };
 		FA3CD2AE1993D98800B3ACF0 /* left.png in Resources */ = {isa = PBXBuildFile; fileRef = FA3CD2AC1993D98800B3ACF0 /* left.png */; };
@@ -72,6 +75,8 @@
 		B572E55618D08D2A005E4834 /* BookmarksController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarksController.h; sourceTree = "<group>"; };
 		B5A210C018D091F700D65141 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = ../Browser/Reachability.h; sourceTree = "<group>"; };
 		B5A210C118D091F700D65141 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = ../Browser/Reachability.m; sourceTree = "<group>"; };
+		B5E88BD819A68C5D0021ED10 /* BrowserMainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserMainWindow.h; sourceTree = "<group>"; };
+		B5E88BD919A68C5D0021ED10 /* BrowserMainWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowserMainWindow.m; sourceTree = "<group>"; };
 		FA157C2F19941ACB0002C146 /* bookmarks.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = bookmarks.strings; sourceTree = "<group>"; };
 		FA3CD2AB1993D98800B3ACF0 /* right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = right.png; sourceTree = "<group>"; };
 		FA3CD2AC1993D98800B3ACF0 /* left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = left.png; sourceTree = "<group>"; };
@@ -266,6 +271,8 @@
 				B572E54718D08D2A005E4834 /* Tab.m */,
 				B572E54E18D08D2A005E4834 /* UIMainView.h */,
 				B572E54F18D08D2A005E4834 /* UIMainView.m */,
+				B5E88BD819A68C5D0021ED10 /* BrowserMainWindow.h */,
+				B5E88BD919A68C5D0021ED10 /* BrowserMainWindow.m */,
 				B5A210C018D091F700D65141 /* Reachability.h */,
 				B5A210C118D091F700D65141 /* Reachability.m */,
 				B572E54B18D08D2A005E4834 /* BrowserViewController.h */,
@@ -356,6 +363,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5E88C2019A698DF0021ED10 /* JSTools.js in Resources */,
 				FAF75EA518A17A77007B317D /* MainWindow-iPad.xib in Resources */,
 				FAA4557D18A19F7A00B1BDF4 /* bookmarks.png in Resources */,
 				FAF75EE918A17BFD007B317D /* gray-pixel.png in Resources */,
@@ -403,9 +411,11 @@
 				FAC9B26E16F27BF800E37710 /* AppDelegate.m in Sources */,
 				B572E55B18D08D2A005E4834 /* UIMainView.m in Sources */,
 				B572E55818D08D2A005E4834 /* BookmarksController.m in Sources */,
+				B5E88BDA19A68C5D0021ED10 /* BrowserMainWindow.m in Sources */,
 				B572E55A18D08D2A005E4834 /* BrowserViewController.m in Sources */,
 				FAC9B27716F27BF800E37710 /* ViewController.m in Sources */,
 				B572E55C18D08D2A005E4834 /* BookmarkFolderFormController.m in Sources */,
+				B5E88C1F19A697490021ED10 /* JSTools.js in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -489,7 +499,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TestBrowser/TestBrowser-Prefix.pch";
 				INFOPLIST_FILE = "TestBrowser/TestBrowser-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -501,7 +511,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TestBrowser/TestBrowser-Prefix.pch";
 				INFOPLIST_FILE = "TestBrowser/TestBrowser-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
