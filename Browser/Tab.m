@@ -66,7 +66,7 @@
 		_closeButton.frame = CGRectMake(kTabWidth - 21.0, -1.0, 25.0, 25.0);
 		_closeButton.titleLabel.font = [UIFont systemFontOfSize:18];
 	
-        _tabTitleFrame = CGRectMake(3, 0, 80, 22);
+        _tabTitleFrame = CGRectMake(5, 1, 80, 22);
         _tabTitle = [[UILabel alloc] initWithFrame:_tabTitleFrame];
         _tabTitle.font = [UIFont systemFontOfSize:11];
         _tabTitle.text = @"New Tab";
