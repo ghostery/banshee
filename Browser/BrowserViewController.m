@@ -592,7 +592,7 @@ typedef enum ScrollDirection {
 
 -(IBAction) showBookmarks:(id)sender {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
-    
+
     [self showBookmarksView:sender];
 }
 
@@ -601,12 +601,14 @@ typedef enum ScrollDirection {
     
     [self dismissPopups];
     [self.view bringSubviewToFront:self.bookmarksNavController.view];
+    self.bookmarksNavController.view.frame = CGRectMake(0, 0, self.bookmarksNavController.view.frame.size.width, [[UIScreen mainScreen] bounds].size.height);
     //Reload all bC controllers on the navigation stack
     for (BookmarksController* bC in self.bookmarksNavController.viewControllers)
     {
         if([bC isKindOfClass:[BookmarksController class]])
         {
             [bC loadBookmarks];
+            [bC setBrowserController:self];
             [bC.tableView reloadData];
         }
     }

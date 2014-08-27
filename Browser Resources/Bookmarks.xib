@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -14,12 +14,12 @@
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="1">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+        <view contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" id="1">
+            <rect key="frame" x="0.0" y="0.0" width="487" height="801"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="4">
-                    <rect key="frame" x="0.0" y="0.0" width="320" height="437"/>
+                <tableView contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="4">
+                    <rect key="frame" x="0.0" y="0.0" width="487" height="757"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <connections>
@@ -27,8 +27,8 @@
                         <outlet property="delegate" destination="-1" id="10"/>
                     </connections>
                 </tableView>
-                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="7">
-                    <rect key="frame" x="0.0" y="436" width="320" height="44"/>
+                <toolbar clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7">
+                    <rect key="frame" x="0.0" y="757" width="487" height="44"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <items>
                         <barButtonItem title="Edit" id="8">
@@ -38,8 +38,8 @@
                         </barButtonItem>
                     </items>
                 </toolbar>
-                <toolbar hidden="YES" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="32" userLabel="EditToolbar">
-                    <rect key="frame" x="0.0" y="436" width="320" height="44"/>
+                <toolbar hidden="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="32" userLabel="EditToolbar">
+                    <rect key="frame" x="0.0" y="757" width="487" height="44"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <items>
                         <barButtonItem systemItem="done" id="33">
@@ -57,7 +57,18 @@
                 </toolbar>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="7" secondAttribute="trailing" id="7Kb-sY-f2G"/>
+                <constraint firstAttribute="trailing" secondItem="32" secondAttribute="trailing" id="FFU-GQ-8xF"/>
+                <constraint firstAttribute="bottom" secondItem="7" secondAttribute="bottom" id="GhJ-H8-qxi"/>
+                <constraint firstItem="7" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="NGO-1o-VQb"/>
+                <constraint firstAttribute="bottom" secondItem="4" secondAttribute="bottom" constant="44" id="RjN-Hc-4MQ"/>
+                <constraint firstItem="4" firstAttribute="top" secondItem="1" secondAttribute="top" id="TsY-Tf-6RP"/>
+                <constraint firstItem="32" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="VBO-ov-Ywg"/>
+                <constraint firstAttribute="bottom" secondItem="32" secondAttribute="bottom" id="arJ-4Q-Jkm"/>
+                <constraint firstAttribute="trailing" secondItem="4" secondAttribute="trailing" id="gfG-ff-K93"/>
+                <constraint firstItem="4" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="vTa-Wg-DNH"/>
+            </constraints>
         </view>
     </objects>
 </document>

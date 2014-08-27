@@ -100,11 +100,11 @@
 	
 	formController = [browserController bookmarksFormController];
 	
-    if ([self respondsToSelector:@selector(setPreferredContentSize:)]) {
+    /*if ([self respondsToSelector:@selector(setPreferredContentSize:)]) {
         self.preferredContentSize = CGSizeMake(320.0, 480.0);
     } else {
         self.contentSizeForViewInPopover = CGSizeMake(320.0, 480.0);
-    }
+    }*/
     [super viewDidLoad];
 }
 
@@ -124,11 +124,14 @@
         folderImage = [UIImage imageNamed:@"folder.png"];
         bookmarkImage = [UIImage imageNamed:@"bookmark.png"];
     }
+
+
     /*if (mode == 'P') {
         ((UIBarItem *)[[toolbar items] objectAtIndex:0]).enabled = NO;
     } else {
         ((UIBarItem *)[[toolbar items] objectAtIndex:0]).enabled = YES;
     }*/
+    ((UIBarItem *)[[toolbar items] objectAtIndex:0]).enabled = YES;
     [self loadBookmarks];
     [self.tableView reloadData];
 }
