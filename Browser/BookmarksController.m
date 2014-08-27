@@ -124,11 +124,11 @@
         folderImage = [UIImage imageNamed:@"folder.png"];
         bookmarkImage = [UIImage imageNamed:@"bookmark.png"];
     }
-    if (mode == 'P') {
+    /*if (mode == 'P') {
         ((UIBarItem *)[[toolbar items] objectAtIndex:0]).enabled = NO;
     } else {
         ((UIBarItem *)[[toolbar items] objectAtIndex:0]).enabled = YES;
-    }
+    }*/
     [self loadBookmarks];
     [self.tableView reloadData];
 }

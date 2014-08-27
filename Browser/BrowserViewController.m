@@ -632,7 +632,8 @@ typedef enum ScrollDirection {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
     // hide add bookmark for local html files
-    if ([[[_selectedTab webView] request].URL isFileURL]) {
+    NSURL *url = [[self webView].request URL];
+    if ([url isFileURL] || [[url absoluteString] isEqualToString:@"about:blank"]) {
         return [NSArray arrayWithObjects:@"Clear Cookies", @"Clear Cache", nil];
     } else {
         return [NSArray arrayWithObjects:@"Add Bookmark", @"Clear Cookies", @"Clear Cache", nil];
@@ -684,7 +685,8 @@ typedef enum ScrollDirection {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
     // skip add bookmarks if we are loading a local file
-    if ([[[_selectedTab webView] request].URL isFileURL]) {
+    NSURL *url = [[self webView].request URL];
+    if ([url isFileURL] || [[url absoluteString] isEqualToString:@"about:blank"]) {
         buttonIndex += 1;
     }
     // Add Bookmark
