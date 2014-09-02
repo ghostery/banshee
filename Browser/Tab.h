@@ -14,8 +14,12 @@
 
 @interface Tab : UIView <NSURLConnectionDelegate, UIWebViewDelegate, UIActionSheetDelegate>
 
+@property (assign) NSUInteger loadingCount;
+
 @property(nonatomic,strong) UIButton *tabButton;
-//@property(nonatomic,strong) UILabel *tabTitle;
+@property (nonatomic, strong) UILabel *tabTitle;
+@property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
+@property (nonatomic, assign) CGRect tabTitleFrame;
 @property(nonatomic,strong) UIWebView *webView;
 @property(nonatomic,strong) UIButton *closeButton;
 

@@ -17,10 +17,7 @@
  Counter that increments when webViewDidStartLoad: is called and decrements 
  when webViewDidFinishLoad: is called.
  */
-@property (assign) NSUInteger loadingCount;
-@property (nonatomic, strong) UILabel *tabTitle;
-@property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
-@property (nonatomic, assign) CGRect tabTitleFrame;
+
 
 @end
 
