@@ -51,6 +51,23 @@ typedef enum ScrollDirection {
     return self;
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder{
+    if ((self = [super initWithCoder:aDecoder])){
+        NSString *nibNameOrNil;
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+            nibNameOrNil = @"MainWindow";
+        } else {
+            nibNameOrNil = @"MainWindow-iPad";
+        }
+        
+        [self setView:
+         [[[NSBundle mainBundle] loadNibNamed:nibNameOrNil
+                                        owner:self
+                                      options:nil] objectAtIndex:0]];
+    }
+    return self;
+}
+
 - (void)viewDidLoad
 {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
