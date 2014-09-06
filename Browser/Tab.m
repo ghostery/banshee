@@ -460,7 +460,7 @@
 {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-    if (_actionSheetVisible || _webView != [_viewController webView] || ![[_viewController bookmarksNavController] visibleViewController]) {
+    if (_actionSheetVisible || _webView != [_viewController webView] || !(_viewController.isViewLoaded && _viewController.view.window)) {
         return;
     }
     CGPoint pt;
