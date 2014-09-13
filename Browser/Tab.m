@@ -531,7 +531,7 @@
     [sheet addButtonWithTitle:@"Save Page as Bookmark"];
     [sheet addButtonWithTitle:@"Open Page in Safari"];
     
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+    if ([_viewController isPad]) {
         sheet.cancelButtonIndex = -1;
     } else {
         sheet.cancelButtonIndex = [sheet addButtonWithTitle:@"Cancel"];
@@ -562,7 +562,9 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
-    
+    if (buttonIndex == -1) {
+        return;
+    }
     NSURL *url = [NSURL URLWithString:[actionSheet title]];
     NSString *clickedButton = [actionSheet buttonTitleAtIndex:buttonIndex];
     if ([clickedButton isEqualToString:@"Open Link"]) {
