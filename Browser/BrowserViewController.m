@@ -11,8 +11,8 @@
 #import "BookmarksFormController.h"
 #import "BookmarkFolderFormController.h"
 #import "UIMainView.h"
-#import "BrowserDelegate.h"
 #import "Reachability.h"
+#import "Logging.h"
 
 #import <CoreFoundation/CoreFoundation.h>
 
@@ -25,20 +25,21 @@ typedef enum ScrollDirection {
     ScrollDirectionCrazy,
 } ScrollDirection;
 
-@interface BrowserViewController ()
-
-@end
-
-@implementation BrowserViewController {
-
+@interface BrowserViewController () {
+    
     BOOL localWiFiRef;
     SCNetworkReachabilityRef reachabilityRef;
 }
 
-@synthesize addressBar, addressBarButtonsView, addressItem, searchItem, activityIndicator, topBar, bottomBar, refreshButton, forwardButton, backButton, navBar, oldAddressText, addTab, selectedTab, tabs, tabsView, webViewTemplate, bookmarksController, bookmarksFormController,  bookmarkButton, bugListNavBar, stopButton,  moreButton, reloadOnPageLoad,  initialPageLoad, progressBar, gotoUrl, contentSize, barItemPopoverPresenter, padPopover, popupQuery,  saveScrollPosition, customButton, customButton2, userAgent;
+@end
+
+@implementation BrowserViewController
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     if (nibNameOrNil == nil) {
         if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
             nibNameOrNil = @"MainWindow";
@@ -50,34 +51,41 @@ typedef enum ScrollDirection {
     return self;
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder{
+    if ((self = [super initWithCoder:aDecoder])){
+        NSString *nibNameOrNil;
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+            nibNameOrNil = @"MainWindow";
+        } else {
+            nibNameOrNil = @"MainWindow-iPad";
+        }
+        
+        [self setView:
+         [[[NSBundle mainBundle] loadNibNamed:nibNameOrNil
+                                        owner:self
+                                      options:nil] objectAtIndex:0]];
+    }
+    return self;
+}
+
 - (void)viewDidLoad
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [super viewDidLoad];
     
     //set background for toolbar in top bar
     if ([self isPad]) {
         UIImage *img = [UIImage imageNamed:@"gray-pixel.png"];
-        [bottomBar setBackgroundImage:img forToolbarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
+        [_bottomBar setBackgroundImage:img forToolbarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
     }
     
     //size statusbar
     [(UIMainView *)[self view] sizeStatusBar];
     // Set up bookmark controllers
-	BookmarksFormController *bookmarksFormController = [[BookmarksFormController alloc]
-                                                        initWithNibName:@"BookmarksForm"
-                                                        bundle:[NSBundle mainBundle]];
-	BookmarkFolderFormController *bookmarkFolderFormController = [[BookmarkFolderFormController alloc]
-																  initWithNibName:@"BookmarkFoldersForm"
-																  bundle:[NSBundle mainBundle]];
-	
-	BookmarksController *bookmarksController = [[BookmarksController alloc] initWithNibName:@"Bookmarks" bundle:[NSBundle mainBundle]];
-	UINavigationController *bookmarksNavController = [[UINavigationController alloc] initWithRootViewController:bookmarksController];
-	
-	[self setBookmarksFormController:bookmarksFormController];
-	[bookmarksController setBrowserController:self];
-	[bookmarkFolderFormController setBookmarksController:bookmarksController];
-	[bookmarksController setFolderController:bookmarkFolderFormController];
-	[self setBookmarksController:bookmarksNavController];
+    [self createBookmarksController:YES];
+    [self.view addSubview:self.bookmarksNavController.view];
+    self.bookmarksNavController.view.alpha = 0.0f; //Hide the bookmarks controller
     
     // Tweak address bar view so text doesn't overflow
     UIView *addressBarStatusView = [[ UIView  alloc ]  initWithFrame:
@@ -86,14 +94,43 @@ typedef enum ScrollDirection {
 	[self.addressBar setRightViewMode: UITextFieldViewModeUnlessEditing];
 	self.oldAddressText = [NSMutableString stringWithString:@""];
     
-    selectedTab.currentURLString = @"";
+    _selectedTab.currentURLString = @"";
     
     [self registerForKeyboardNotifications];
+    [self registerForBrowserNotifications];
+}
+
+- (UINavigationController *)createBookmarksController:(BOOL)isMainController {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
     
+    BookmarksFormController *bookmarksFormController = [[BookmarksFormController alloc]
+                                                        initWithNibName:@"BookmarksForm"
+                                                        bundle:[NSBundle mainBundle]];
+    [bookmarksFormController setBrowserController:self];
+	BookmarkFolderFormController *bookmarkFolderFormController = [[BookmarkFolderFormController alloc]
+																  initWithNibName:@"BookmarkFoldersForm"
+																  bundle:[NSBundle mainBundle]];
+	BookmarksController *bookmarksController = [[BookmarksController alloc] initWithNibName:@"Bookmarks" bundle:[NSBundle mainBundle]];
+	UINavigationController *bookmarksNavController = [[UINavigationController alloc] initWithRootViewController:bookmarksController];
+	[bookmarksController setBrowserController:self];
+	[bookmarkFolderFormController setBookmarksController:bookmarksController];
+	[bookmarksController setFolderController:bookmarkFolderFormController];
+    if(isMainController) //Creating the main bookmarks page which persists by hiding/unhiding
+    {
+        [self setBookmarksNavController:bookmarksNavController];
+        [self setBookmarksFormController:bookmarksFormController];
+    }
+    else //Creating a temporary bookmark controller for the popup with a form controller on the top of the nav stack
+    {
+        [bookmarksNavController pushViewController:bookmarksFormController animated:NO];
+    }
+    return bookmarksNavController;
 }
 
 - (void)registerForKeyboardNotifications
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWasShown:)
                                                  name:UIKeyboardDidShowNotification object:nil];
@@ -105,20 +142,71 @@ typedef enum ScrollDirection {
 }
 
 - (void)keyboardWasShown:(NSNotification *)aNotification {
-    if (![self isPad] && [selectedTab currentURL] == nil && ![addressBar isFirstResponder]) {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    if (![self isPad] && [_selectedTab currentURL] == nil && ![_addressBar isFirstResponder]) {
         [self scrollToTop:aNotification];
-        [[selectedTab webView] stringByEvaluatingJavaScriptFromString:@"document.getElementById('contain').style.top = '-15px'"];
+        [[_selectedTab webView] stringByEvaluatingJavaScriptFromString:@"document.getElementById('contain').style.top = '-15px'"];
     }
 }
 
 - (void)keyboardWasHidden:(NSNotification*)aNotification {
-    if (![self isPad] && [selectedTab currentURL] == nil && ![addressBar isFirstResponder]) {
-        [[selectedTab webView] stringByEvaluatingJavaScriptFromString:@"document.getElementById('contain').style.top = '15%'"];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    if (![self isPad] && [_selectedTab currentURL] == nil && ![_addressBar isFirstResponder]) {
+        [[_selectedTab webView] stringByEvaluatingJavaScriptFromString:@"document.getElementById('contain').style.top = '15%'"];
         [self scrollToTop:aNotification];
     }
 }
 
+- (void)registerForBrowserNotifications
+{
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kStartedLoadingNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kFinishedLoadingNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(startedLoadingNotification:)
+                                                 name:kStartedLoadingNotification
+                                               object:_selectedTab];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(finishedLoadingNotification:)
+                                                 name:kFinishedLoadingNotification
+                                               object:_selectedTab];
+    
+}
+
+- (void)startedLoadingNotification:(NSNotification *)notification {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [self displayAsLoading];
+}
+
+- (void)finishedLoadingNotification:(NSNotification *)notification {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [self displayAsNotLoading];
+}
+
+- (void)displayAsLoading {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [_stopButton setHidden:NO];
+    [_refreshButton setHidden:YES];
+}
+
+- (void)displayAsNotLoading {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [_stopButton setHidden:YES];
+    [_refreshButton setHidden:NO];
+}
+
 -(void) saveOpenTabs {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    //Core Data Fix
+    /*
     NSManagedObjectContext *managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSError *error;
     int orderCount = 0;
@@ -132,9 +220,14 @@ typedef enum ScrollDirection {
     if (![managedObjectContext save:&error]) {
         NSLog(@"Error inserting %@ - error:%@",[self tabs],error);
     }
+     */
 }
 
 -(void) openSavedTabs {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    //Core Data Fix
+    /*
     NSManagedObjectContext *managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSError *error = nil;
@@ -147,17 +240,22 @@ typedef enum ScrollDirection {
     
     for (NSManagedObject *tab in tabFetchResults) {
         [self addTabWithAddress:[tab valueForKey:@"url"]];
-        [selectedTab setTitle:[tab valueForKey:@"title"]];
+        [_selectedTab setTitle:[tab valueForKey:@"title"]];
         
         [managedObjectContext deleteObject:tab];
     }
     if (![managedObjectContext save:&error]) {
         NSLog(@"Error deleting %@ - error:%@",tabFetchResults,error);
     }
+     */
 
 }
 
 -(void) deleteSavedTabs {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    //Core Data Fix
+    /*
     NSManagedObjectContext *managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSError *error = nil;
@@ -171,10 +269,13 @@ typedef enum ScrollDirection {
     if (![managedObjectContext save:&error]) {
         NSLog(@"Error deleting %@ - error:%@",tabFetchResults,error);
     }
+    */
     
 }
 
 - (void) viewDidAppear:(BOOL)animated {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [super viewDidAppear:animated];
     //create initial tab
     if ([self.tabs count] == 0) {
@@ -184,16 +285,22 @@ typedef enum ScrollDirection {
 }
 
 - (void) viewWillAppear:(BOOL)animated {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     //[refreshButton setHidden:YES];
     [super viewWillAppear:animated];
 }
 
 -(void) viewWillDisappear:(BOOL)animated {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	[self.navigationController setNavigationBarHidden:NO animated:animated];
 }
 
 - (void)didReceiveMemoryWarning
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
@@ -201,28 +308,32 @@ typedef enum ScrollDirection {
 // Scrolling
 
 -(IBAction)scrollToTop:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     if (![self isPad]) {
-        BOOL animated = ![sender isKindOfClass:[NSNotification class]];
-        [[[self webView] scrollView] setContentOffset:CGPointMake(0, - topBar.frame.size.height) animated:NO];
+//        BOOL animated = ![sender isKindOfClass:[NSNotification class]];
+        [[[self webView] scrollView] setContentOffset:CGPointMake(0, - _topBar.frame.size.height) animated:NO];
         [[[self webView] scrollView] setContentInset:UIEdgeInsetsMake(-[[self webView] scrollView].contentOffset.y, 0, 0, 0)];
     }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
-    ScrollDirection scrollDirection;
-    int minWebViewSize = webViewTemplate.frame.size.height;
-    int maxWebViewSize = minWebViewSize + bottomBar.frame.size.height;
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    ScrollDirection scrollDirection = ScrollDirectionNone;
+    int minWebViewSize = _webViewTemplate.frame.size.height;
+    int maxWebViewSize = minWebViewSize + _bottomBar.frame.size.height;
     if (self.lastScrollContentOffset > scrollView.contentOffset.y)
         scrollDirection = ScrollDirectionUp;
     else if (self.lastScrollContentOffset < scrollView.contentOffset.y)
         scrollDirection = ScrollDirectionDown;
     
-    if (saveScrollPosition) {
-        selectedTab.scrollPosition = scrollView.contentOffset.y;
+    if (_saveScrollPosition) {
+        _selectedTab.scrollPosition = scrollView.contentOffset.y;
     }
     if(![self isPad]) {
         UIView *statusBarView = [(UIMainView *)self.view statusBarView];
-        if (scrollView.contentOffset.y <= -topBar.frame.size.height) {
+        if (scrollView.contentOffset.y <= -_topBar.frame.size.height) {
             // noop
         } else if (scrollView.contentOffset.y < -statusBarView.frame.size.height) {
             [[[self webView] scrollView] setContentInset:UIEdgeInsetsMake(-scrollView.contentOffset.y, 0, 0, 0)];
@@ -231,52 +342,29 @@ typedef enum ScrollDirection {
         }
         
         // show bottom toolbar when scrolling up fast
-        if (scrollDirection == ScrollDirectionUp && scrollView.contentOffset.y - self.lastScrollContentOffset < -20 && bottomBar.alpha == 0.0) {
-                [UIView animateWithDuration: 0.5
-                                      delay: 0.0
-                                    options: UIViewAnimationOptionCurveEaseOut
-                                 animations:^{
-                                     bottomBar.alpha = 1.0;
-                                 }
-                                 completion:^(BOOL finished){
+        if (scrollDirection == ScrollDirectionUp && scrollView.contentOffset.y - self.lastScrollContentOffset < -20 && _bottomBar.alpha == 0.0) {
+                [self toggleBottomBarWithCompletion:^(BOOL finished){
                                      if (finished) {
-                                         [selectedTab webView].frame = CGRectMake([selectedTab webView].frame.origin.x, [selectedTab webView].frame.origin.y, [selectedTab webView].frame.size.width, minWebViewSize);
+                                         [_selectedTab webView].frame = CGRectMake([_selectedTab webView].frame.origin.x, [_selectedTab webView].frame.origin.y, [_selectedTab webView].frame.size.width, minWebViewSize);
                                      }
                                  }];
-                topBar.frame=CGRectMake(0,0, topBar.frame.size.width, topBar.frame.size.height);
+                _topBar.frame=CGRectMake(0,0, _topBar.frame.size.width, _topBar.frame.size.height);
     
             
         } else if (scrollView.contentOffset.y > 0 && scrollView.contentOffset.y + scrollView.frame.size.height < scrollView.contentSize.height) {
-            if (scrollDirection == ScrollDirectionDown && bottomBar.alpha == 1.0) {
-                [selectedTab webView].frame = CGRectMake([selectedTab webView].frame.origin.x, [selectedTab webView].frame.origin.y, [selectedTab webView].frame.size.width, maxWebViewSize);
+            if (scrollDirection == ScrollDirectionDown && _bottomBar.alpha == 1.0) {
+                [_selectedTab webView].frame = CGRectMake([_selectedTab webView].frame.origin.x, [_selectedTab webView].frame.origin.y, [_selectedTab webView].frame.size.width, maxWebViewSize);
                 
-                [UIView animateWithDuration: 1.0
-                                      delay: 0.0
-                                    options: UIViewAnimationOptionCurveEaseIn
-                                 animations:^{
-                                     bottomBar.alpha = 0.0;
-                                 }
-                                 completion:^(BOOL finished){
-                                     if (finished) {
-                                     }
-                                 }];
+                [self toggleBottomBarWithCompletion:nil];
             }
         
         // show bottom toolbar
-        } else if (bottomBar.alpha == 0.0)  {
-
-            
-            [UIView animateWithDuration: 0.5
-                                  delay: 0.0
-                                options: UIViewAnimationOptionCurveEaseOut
-                             animations:^{
-                                 bottomBar.alpha = 1.0;
-                             }
-                             completion:^(BOOL finished){
+        } else if (_bottomBar.alpha == 0.0)  {
+            [self toggleBottomBarWithCompletion:^(BOOL finished){
                                  if (finished) {
-                                     [selectedTab webView].frame = CGRectMake([selectedTab webView].frame.origin.x, [selectedTab webView].frame.origin.y, [selectedTab webView].frame.size.width, minWebViewSize);
+                                     [_selectedTab webView].frame = CGRectMake([_selectedTab webView].frame.origin.x, [_selectedTab webView].frame.origin.y, [_selectedTab webView].frame.size.width, minWebViewSize);
                                      if (scrollView.contentOffset.y > 0) {
-                                         CGPoint bottomOffset = CGPointMake(0, scrollView.contentSize.height - [selectedTab webView].frame.size.height);
+                                         CGPoint bottomOffset = CGPointMake(0, scrollView.contentSize.height - [_selectedTab webView].frame.size.height);
                                          [scrollView setContentOffset:bottomOffset animated:NO];
                                      }
                                  }
@@ -286,33 +374,31 @@ typedef enum ScrollDirection {
     }
     
     //topbar logic
-    if(![self isPad] && scrollView.contentOffset.y>=-topBar.frame.size.height && (scrollView.contentOffset.y <= 0 || scrollDirection == ScrollDirectionDown))
+    if(![self isPad] && scrollView.contentOffset.y>=-_topBar.frame.size.height && (scrollView.contentOffset.y <= 0 || scrollDirection == ScrollDirectionDown))
     {
-        topBar.frame=CGRectMake(0,-topBar.frame.size.height-scrollView.contentOffset.y, topBar.frame.size.width, topBar.frame.size.height);
+        _topBar.frame=CGRectMake(0,-_topBar.frame.size.height-scrollView.contentOffset.y, _topBar.frame.size.width, _topBar.frame.size.height);
     }
     
     self.lastScrollContentOffset = scrollView.contentOffset.y;
 }
 
-- (void)showHideView
+- (void)toggleBottomBarWithCompletion:(void (^)(BOOL finished))completion
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    float alpha = 0.0;
+    //UIViewAnimationCurve *options = UIViewAnimationCurveEaseO
+    
+    if (_bottomBar.alpha == 0.0) {
+        alpha = 1.0;
+    }
     // Fade out the view right away
     [UIView animateWithDuration:1.0
                           delay: 0.0
-                        options: UIViewAnimationOptionCurveEaseIn
+                        options: UIViewAnimationOptionCurveEaseInOut
                      animations:^{
-                         bottomBar.alpha = 0.0;
+                         _bottomBar.alpha = alpha;
                      }
-                     completion:^(BOOL finished){
-                         // Wait one second and then fade in the view
-                         [UIView animateWithDuration:1.0
-                                               delay: 1.0
-                                             options:UIViewAnimationOptionCurveEaseOut
-                                          animations:^{
-                                              bottomBar.alpha = 1.0;
-                                          }
-                                          completion:nil];
-                     }];
+                     completion: completion];
 }
 
 
@@ -320,51 +406,57 @@ typedef enum ScrollDirection {
 // Web methods
 
 - (void) currentWebViewDidStartLoading:(UIWebView *) webView  {
-    if (addressBar.editing) {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    if (_addressBar.editing) {
         [webView stopLoading];
         return;
     }
     
     
     Tab *tab = nil;
-    for (id cTab in tabs) {
+    for (id cTab in _tabs) {
         if ([cTab webView] == webView) {
             tab = cTab;
         }
     }
-    if (tab == selectedTab) {
+    if (tab == _selectedTab) {
         
-        if (initialPageLoad) {
-            [refreshButton setHidden:true];
-            [stopButton setHidden:false];
+        if (_initialPageLoad) {
+            [_refreshButton setHidden:YES];
+            [_stopButton setHidden:NO];
         }
         
     }
-    if (progressBar.progress < 0.95) {
-        [progressBar setProgress: progressBar.progress + 0.05];
+    if (_progressBar.progress < 0.95) {
+        [_progressBar setProgress:_progressBar.progress + 0.05];
     }
     [self setInitialPageLoad:NO];
 }
 
--(void) currentWebViewDidFinishFinalLoad:(UIWebView *) webView {
-    [progressBar setProgress:1.0 animated:NO];
-    [progressBar setHidden:YES];
+- (void)currentWebViewDidFinishFinalLoad:(UIWebView *) webView {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-    [stopButton setHidden:YES];
+    [_progressBar setProgress:1.0 animated:NO];
+    [_progressBar setHidden:YES];
+    
+    [_stopButton setHidden:YES];
     
     NSURL *url = [webView.request URL];
     if ([url isFileURL] || [[url absoluteString] isEqualToString:@"about:blank"]) {
-        [refreshButton setHidden:YES];
+        [_refreshButton setHidden:YES];
     } else {
-        [refreshButton setHidden:NO];
+        [_refreshButton setHidden:NO];
     }
-    if (saveScrollPosition && [selectedTab scrollPosition] > 0) {
-        [[[self webView] scrollView] setContentOffset:CGPointMake(0, [selectedTab scrollPosition]) animated:NO];
+    if (_saveScrollPosition && [_selectedTab scrollPosition] > 0) {
+        [[[self webView] scrollView] setContentOffset:CGPointMake(0, [_selectedTab scrollPosition]) animated:NO];
     }
     [self loadTabs:webView];
 }
 
--(void) gotoAddress:(id) sender withRequestObj:(NSURLRequest *)request inTab:(Tab *)tab {
+- (void)gotoAddress:(id)sender withRequestObj:(NSURLRequest *)request inTab:(Tab *)tab {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // Clear detected bugs
     tab.currentURLString = @"";
     [self setInitialPageLoad:YES];
@@ -373,33 +465,33 @@ typedef enum ScrollDirection {
     [[self webView] stopLoading];
     //[[self webView] loadHTMLString:@"<html><head></head><body></body></html>" baseURL:[NSURL URLWithString:@"about:blank" ]];
     
-    saveScrollPosition = [[[request URL] host] isEqualToString:@"duckduckgo.com"] || [[[request URL] host] isEqualToString:@"www.duckduckgo.com"];
+    _saveScrollPosition = [[[request URL] host] isEqualToString:@"duckduckgo.com"] || [[[request URL] host] isEqualToString:@"www.duckduckgo.com"];
     
     if (![self isPad]) {
         [self scrollToTop:nil];
     }
 	
-	[oldAddressText setString:[addressBar text]];
+	[_oldAddressText setString:[_addressBar text]];
 	
 	// Load the request in the UIWebView.
     if ([self checkNetworkStatus]) {
         //[[self webView] loadRequest:requestObj];
         
         NSMutableURLRequest *mRequest = [request mutableCopy];
-        NSString *d = [self isPad] ? @"iPad" : @"iPhone";
+        NSString *deviceString = [self isPad] ? @"iPad" : @"iPhone";
         if (!self.userAgent) {
             self.userAgent = [[tab webView] stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
         }
-        [mRequest setValue:[NSString stringWithFormat:self.userAgent, d] forHTTPHeaderField:@"User-Agent"];
+        [mRequest setValue:[NSString stringWithFormat:self.userAgent, deviceString] forHTTPHeaderField:@"User-Agent"];
         
-        if ( [[[request URL] host] isEqualToString:@"itunes.apple.com"]) {
+        if ([[[request URL] host] isEqualToString:@"itunes.apple.com"]) {
             [[UIApplication sharedApplication] openURL: mRequest.URL ];
         } else {
-            [progressBar setHidden:NO];
-            [progressBar setProgress:0.1 animated:NO];
+            [_progressBar setHidden:NO];
+            [_progressBar setProgress:0.1 animated:NO];
             tab.urlConnection = nil;
             tab.urlConnection = [[NSURLConnection alloc] initWithRequest:mRequest delegate:tab];
-            if (sender != refreshButton) {
+            if (sender != _refreshButton) {
                 [tab updateHistory];
             }
         }
@@ -413,49 +505,58 @@ typedef enum ScrollDirection {
                                                  otherButtonTitles:@"Okay", nil];
 
         [netAlert show];*/
-        [progressBar setHidden:YES];
+        [_progressBar setHidden:YES];
         [self cannotConnect:nil];
         
     }
     
-    [addressBar resignFirstResponder];
+    [_addressBar resignFirstResponder];
 }
 
 -(IBAction) didStartEditingAddressBar:(id)sender {
-    if ([[addressBar text] length] > 0) {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    if ([[_addressBar text] length] > 0) {
         [self performSelector:@selector(selectAllAddressText) withObject:nil afterDelay:0.0];
     }
-    [addressBarButtonsView setHidden:YES];
+    [_addressBarButtonsView setHidden:YES];
 }
 
 -(void) selectAllAddressText {
-    [addressBar setSelectedTextRange:[addressBar textRangeFromPosition:addressBar.beginningOfDocument toPosition:addressBar.endOfDocument]];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [_addressBar setSelectedTextRange:[_addressBar textRangeFromPosition:_addressBar.beginningOfDocument toPosition:_addressBar.endOfDocument]];
 }
 
 -(IBAction) gotoAddress:(id) sender {
-    [addressBarButtonsView setHidden:NO];
-    [stopButton setHidden:NO];
-    [refreshButton setHidden:YES];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-    NSString *inputText = [[addressBar text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    gotoUrl = [NSURL URLWithString:inputText];
-    if (gotoUrl != nil && (!([[gotoUrl scheme] isEqualToString:@"http"] || [[gotoUrl scheme] isEqualToString:@"https"]))) {
-        gotoUrl = [NSURL URLWithString: [@"http://" stringByAppendingString: [gotoUrl absoluteString]]];
+    [_addressBarButtonsView setHidden:NO];
+    [_stopButton setHidden:NO];
+    [_refreshButton setHidden:YES];
+    
+    NSString *inputText = [[_addressBar text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    _gotoUrl = [NSURL URLWithString:inputText];
+    if (_gotoUrl != nil && (!([[_gotoUrl scheme] isEqualToString:@"http"] || [[_gotoUrl scheme] isEqualToString:@"https"]))) {
+        _gotoUrl = [NSURL URLWithString: [@"http://" stringByAppendingString:[_gotoUrl absoluteString]]];
     }
-    NSURLRequest *request = [NSURLRequest requestWithURL:gotoUrl];
+    NSURLRequest *request = [NSURLRequest requestWithURL:_gotoUrl];
     if ([inputText rangeOfString:@"."].location != NSNotFound && [NSURLConnection canHandleRequest:request]){
-        [self gotoAddress:sender withRequestObj:request inTab:selectedTab];
+        [self gotoAddress:sender withRequestObj:request inTab:_selectedTab];
     } else {
         [self searchWeb:sender];
     }
 }
 
 -(IBAction) didEndEditingAddressBar:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
     
 }
 
 -(IBAction) searchWeb:(id) sender {
-	NSString *searchQuery = [addressBar text];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+	NSString *searchQuery = [_addressBar text];
     NSString *encodedSearchQuery = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
                                                                                                          NULL,
                                                                                                          (CFStringRef)searchQuery,
@@ -466,97 +567,125 @@ typedef enum ScrollDirection {
     
     // Load the request in the UIWebView.
     if ([self checkNetworkStatus]) {
-        [self gotoAddress:sender withRequestObj:[NSURLRequest requestWithURL:[NSURL URLWithString:urlString]] inTab:selectedTab];
+        [self gotoAddress:sender withRequestObj:[NSURLRequest requestWithURL:[NSURL URLWithString:urlString]] inTab:_selectedTab];
     } else {
         [self cannotConnect:nil];
-        [progressBar setHidden:YES];
+        [_progressBar setHidden:YES];
         
     }
 	//Load the request in the UIWebView.
-	[addressBar resignFirstResponder];
+	[_addressBar resignFirstResponder];
 }
 
 -(void) cannotConnect:(UIWebView *) cnWebView {
-    [stopButton setHidden:NO];
-    [refreshButton setHidden:YES];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [_stopButton setHidden:NO];
+    [_refreshButton setHidden:YES];
     NSURL *ucUrl = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"unable_to_connect" ofType:@"html"] isDirectory:NO];
     NSString *ucContentString = [NSString stringWithContentsOfURL:ucUrl encoding:NSUTF8StringEncoding error:nil];
     [[self webView] loadHTMLString:ucContentString baseURL:nil];
 }
 
 -(IBAction) goBack:(id)sender {
-	
-    [selectedTab goBack];
+	LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [_selectedTab goBack];
     self.reloadOnPageLoad = YES;
 }
 
 -(IBAction) goForward:(id)sender {
-	
-    [selectedTab goForward];
+	LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [_selectedTab goForward];
 	//[[self webView] stringByEvaluatingJavaScriptFromString:@"history.forward();"];
 }
 
 -(IBAction) cancel:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	//[self contractBar: sender];
 }
 
 -(IBAction) showBookmarks:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+
     [self showBookmarksView:sender];
 }
 
 -(void) showBookmarksView:(id)sender {
-
-    [UIView transitionFromView:self.view
-                        toView:[bookmarksController view]
-                      duration:0.5
-                       options:(UIViewAnimationOptionTransitionCrossDissolve)
-                    completion:^(BOOL finished) {}];
-	
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [self dismissPopups];
+    [self.view bringSubviewToFront:self.bookmarksNavController.view];
+    self.bookmarksNavController.view.frame = CGRectMake(0, 0, self.bookmarksNavController.view.frame.size.width, [[UIScreen mainScreen] bounds].size.height);
+    //Reload all bC controllers on the navigation stack
+    for (BookmarksController* bC in self.bookmarksNavController.viewControllers)
+    {
+        if([bC isKindOfClass:[BookmarksController class]])
+        {
+            [bC loadBookmarks];
+            [bC setBrowserController:self];
+            [bC.tableView reloadData];
+        }
+    }
+    [UIView animateWithDuration:0.25 animations:^{
+         self.bookmarksNavController.view.alpha =1.0f;
+    }];
 }
 
 -(IBAction) stopLoading:(id)sender {
-	[stopButton setHidden:true];
-    [refreshButton setHidden:false];
-    [progressBar setHidden:YES];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+	[_stopButton setHidden:YES];
+    [_refreshButton setHidden:NO];
+    [_progressBar setHidden:YES];
     
 	//[activityIndicator stopAnimating];
-    if ([tabs count] > 0) {        
-        [[selectedTab webView] stopLoading];
+    if ([_tabs count] > 0) {
+        [[_selectedTab webView] stopLoading];
     }
 }
 
 -(NSArray *) actionSheetButtons {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // hide add bookmark for local html files
-    if ([[[selectedTab webView] request].URL isFileURL]) {
-        return [NSArray arrayWithObjects:@"Clear Cookies", @"Clear Cache", @"Import Bookmarks", nil];
+    NSURL *url = [[self webView].request URL];
+    if ([url isFileURL] || [[url absoluteString] isEqualToString:@"about:blank"]) {
+        return [NSArray arrayWithObjects:@"Clear Cookies", @"Clear Cache", nil];
     } else {
-        return [NSArray arrayWithObjects:@"Add Bookmark", @"Clear Cookies", @"Clear Cache", @"Import Bookmarks", nil];
+        return [NSArray arrayWithObjects:@"Add Bookmark", @"Clear Cookies", @"Clear Cache", nil];
     }
 }
 
 -(IBAction)showActionSheet:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	// Hide popover for ipad
 	if ([self isPad] ) {
         
-		if (padPopover.popoverVisible) {
-			[padPopover dismissPopoverAnimated:YES];
+		if (_padPopover.popoverVisible) {
+			[_padPopover dismissPopoverAnimated:YES];
 		}
         
-		if (popupQuery.visible || barItemPopoverPresenter == moreButton) {
-			barItemPopoverPresenter = nil;
-			[popupQuery dismissWithClickedButtonIndex:nil animated:YES];
+		if (_popupQuery.visible) {
+			_barItemPopoverPresenter = nil;
+			[_popupQuery dismissWithClickedButtonIndex:_popupQuery.cancelButtonIndex animated:YES];
 		} else {
             [self generatePopupQuery];
-			barItemPopoverPresenter = moreButton;
-			[popupQuery showFromBarButtonItem:moreButton animated:YES];
+			_barItemPopoverPresenter = _moreButton;
+			[_popupQuery showFromBarButtonItem:_moreButton animated:YES];
 		}
 	} else {
         [self generatePopupQuery];
-		[popupQuery showInView:self.view];
+		[_popupQuery showInView:self.view];
 	}
 }
 
 -(void) generatePopupQuery {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     UIActionSheet *pQuery= [[UIActionSheet alloc] initWithTitle:nil
                                                        delegate:self
                                               cancelButtonTitle:nil
@@ -568,12 +697,15 @@ typedef enum ScrollDirection {
     
     pQuery.cancelButtonIndex = [pQuery addButtonWithTitle:@"Cancel"];
     
-    self.popupQuery = pQuery;
+    _popupQuery = pQuery;
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // skip add bookmarks if we are loading a local file
-    if ([[[selectedTab webView] request].URL isFileURL]) {
+    NSURL *url = [[self webView].request URL];
+    if ([url isFileURL] || [[url absoluteString] isEqualToString:@"about:blank"]) {
         buttonIndex += 1;
     }
     // Add Bookmark
@@ -597,57 +729,76 @@ typedef enum ScrollDirection {
     
     
     // Import Bookmarks
-    else if (buttonIndex == 3) {
+    /*else if (buttonIndex == 3) {
         [self addTab:actionSheet];
         NSString *urlAddress = @"";
         //[[self webView] loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"import_bookmark_howto" ofType:@"html"]isDirectory:NO]]];
         NSString *path = [[NSBundle mainBundle] pathForResource:@"import_bookmark_howto" ofType:@"html"];
         NSData *launchData = [NSData dataWithContentsOfFile:path];
         [[self webView] loadData:launchData MIMEType:@"text/html" textEncodingName:@"utf-8" baseURL:nil];
-        [addressBar setText:urlAddress];
-    }
+        [_addressBar setText:urlAddress];
+    }*/
 
 }
 
 -(void) addBookmarkFromSheet:(UIActionSheet *) sheet {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [sheet dismissWithClickedButtonIndex:0 animated:YES];
+    
+    // Set up bookmark controllers
+	UINavigationController *bookmarksNavController = [self createBookmarksController:NO];
+    BookmarksFormController* bookmarksFormController = (BookmarksFormController*)[[bookmarksNavController viewControllers] objectAtIndex:1];
     [bookmarksFormController setMode:'A'];
     [[bookmarksFormController navigationItem] setHidesBackButton:YES animated:NO];
-    [bookmarksController pushViewController:bookmarksFormController animated:NO];
+    
     if ([self isPad]) {
-        if (padPopover == nil) {
+        if (_padPopover == nil) {
             UIPopoverController *ppop = [[UIPopoverController alloc]
-                                         initWithContentViewController:bookmarksController];
+                                         initWithContentViewController:bookmarksNavController];
             self.padPopover = ppop;
             
         } else {
-            [self.padPopover setContentViewController:bookmarksController animated:YES];
+            [self.padPopover setContentViewController:bookmarksNavController animated:YES];
         }
-        [self.padPopover presentPopoverFromBarButtonItem: bookmarkButton
+        [self.padPopover presentPopoverFromBarButtonItem:_bookmarkButton
                                 permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
         
     } else {
-        [UIView transitionFromView:self.view
-                            toView:[bookmarksController view]
-                          duration:0.5
-                           options:(UIViewAnimationOptionTransitionCrossDissolve)
-                        completion:^(BOOL finished) {}];
+        [self presentViewController:bookmarksNavController animated:YES completion:nil];
+    }
+}
+
+-(void) dismissPopups {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    if([self isPad])
+    {
+        [_popupQuery dismissWithClickedButtonIndex:_popupQuery.cancelButtonIndex animated:NO];
+        [_padPopover dismissPopoverAnimated:NO];
+    }
+    else
+    {
+        [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
 // TABS
 
 -(IBAction) addTab:(id)sender {
-    if (tabsView.hidden) {
-        [self toggleTabsView:sender];
-    }
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+//    if (_tabsView.hidden) {
+//        [self toggleTabsView:sender];
+//    }
     [self addTabWithAddress:@""];
 }
 
 -(void) addTabWithAddress:(NSString *)urlAddress {
-
-	if ([tabs count] == 0) {
-		tabs = [[NSMutableArray alloc] initWithCapacity:8];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+	if ([_tabs count] == 0) {
+		_tabs = [[NSMutableArray alloc] initWithCapacity:8];
 	}
 	// reset navbar
 	//[self contractBar:sender];
@@ -655,101 +806,143 @@ typedef enum ScrollDirection {
      [self stopLoading:sender];
      }*/
 	
-    Tab *nTab = [[Tab alloc] initWithFrame:CGRectMake((100.0 * [tabs count]) + 2.0, 2.0, 100.0, 34.0) addTarget: self];
+    Tab *rightMostTab = [_tabs lastObject];
+    CGFloat rightMostTabEdge = (rightMostTab) ? rightMostTab.frame.origin.x + rightMostTab.frame.size.width : 0;
+    CGFloat tabWidth = rightMostTab.frame.size.width;
+    CGFloat initialX = (rightMostTabEdge < DEVICE_SIZE.width) ? DEVICE_SIZE.width + tabWidth : rightMostTabEdge + tabWidth;
+    Tab *nTab = [[Tab alloc] initWithFrame:CGRectMake(initialX, 2.0, kTabWidth, 34.0)
+                                 addTarget: self];
     
-	[self switchTabFrom:selectedTab ToTab:nTab];
-	[tabsView addSubview:selectedTab];
+    [self switchTabFrom:_selectedTab ToTab:nTab];
+	[_tabsView addSubview:_selectedTab];
 	
-	[tabs addObject:selectedTab];
-	[selectedTab select];
+	[_tabs addObject:_selectedTab];
+	[_selectedTab select];
+    
+    [UIView animateWithDuration:0.35 animations:^{
+        CGRect newFrame = nTab.frame;
+        newFrame.origin.x = (kTabWidth * ([_tabs count] - 1)) + 2.0;
+        nTab.frame = newFrame;
+    } completion:^(BOOL finished) {
+        if (!finished) {
+            CGRect newFrame = nTab.frame;
+            newFrame.origin.x = (kTabWidth * ([_tabs count] - 1)) + 2.0;
+            nTab.frame = newFrame;
+        }
+    }];
 	
 	//scrolling
-	tabsView.contentSize = CGSizeMake(((100.0) * [tabs count]) + 5.0, 23.0);
-    if (tabsView.frame.size.width < tabsView.contentSize.width) {
-        tabsView.contentOffset = CGPointMake(tabsView.contentSize.width - tabsView.frame.size.width,0);
+	_tabsView.contentSize = CGSizeMake((kTabWidth * [_tabs count]) + 5.0, 23.0);
+    if (_tabsView.frame.size.width < _tabsView.contentSize.width) {
+        _tabsView.contentOffset = CGPointMake(_tabsView.contentSize.width - _tabsView.frame.size.width,0);
     }
     
-	tabsView.clipsToBounds = YES;
-	tabsView.showsHorizontalScrollIndicator = NO;
+	_tabsView.clipsToBounds = YES;
+	_tabsView.showsHorizontalScrollIndicator = NO;
 	
     if ([urlAddress isEqualToString:@""]) {
         NSString *path = [[NSBundle mainBundle] pathForResource:@"launch" ofType:@"html"];
         NSData *launchData = [NSData dataWithContentsOfFile:path];
         [[self webView] loadData:launchData MIMEType:@"text/html" textEncodingName:@"utf-8" baseURL:nil];
-        if (![addressBar isFirstResponder])  {
-            [addressBar setText:urlAddress];
+        if (![_addressBar isFirstResponder])  {
+            [_addressBar setText:urlAddress];
         }
         
     } else {
-        [self gotoAddress:nil withRequestObj:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:urlAddress]] inTab:selectedTab];
+        [self gotoAddress:nil withRequestObj:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:urlAddress]] inTab:_selectedTab];
     }
     
-	[self loadTabs:[selectedTab webView]];
+	[self loadTabs:[_selectedTab webView]];
 }
 
 -(IBAction) removeTab:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	[sender setEnabled:NO];
 	Tab *toBeRemoved = (Tab *)[sender superview];
 	[[toBeRemoved tabButton] setEnabled:NO];
 	
-	BOOL removed = false;
-	BOOL select = false;
-	
-	for (id cTab in tabs) {
-		if (select) {
-			[self switchTabFrom:selectedTab ToTab:cTab];
-			select = false;
-		}
-		if (removed) {
-			[cTab incrementOffset];
-		}
-		if ([cTab closeButton] == sender) {
-			removed = YES;
-			select = (selectedTab == cTab);
-		}
+    [UIView animateWithDuration:0.20 animations:^{
+        CGRect newFrame = toBeRemoved.frame;
+        newFrame.origin.y += toBeRemoved.frame.size.height;
+        toBeRemoved.frame = newFrame;
+    } completion:^(BOOL finished) {
+        BOOL removed = NO;
+        BOOL select = NO;
         
-	}
+        for (id cTab in _tabs) {
+            if (select) {
+                [self switchTabFrom:_selectedTab ToTab:cTab];
+                select = NO;
+            }
+            if (removed) {
+                if (!finished) {
+                    [cTab incrementOffset];
+                } else {
+                    [UIView animateWithDuration:0.20 animations:^{
+                        [cTab incrementOffset];
+                    } completion:nil];
+                }
+            }
+            if ([cTab closeButton] == sender) {
+                removed = YES;
+                select = (_selectedTab == cTab);
+            }
+            
+        }
+        
+        if (toBeRemoved == [_tabs lastObject] && [_tabs lastObject] != [NSNull null] && [_tabs count] > 1) {
+            [self switchTabFrom:_selectedTab ToTab:[_tabs objectAtIndex:[_tabs count]-2]];
+        } else if ([_tabs count] == 0) {
+            self.webView = nil; // why?
+        }
+        [toBeRemoved removeFromSuperview];
+        [[toBeRemoved webView] removeFromSuperview];
+        [_tabs removeObject:toBeRemoved];
+        
+        
+        if ([_tabs count] == 0) {
+            [self addTab:nil];
+        }
+        [self loadTabs:[_selectedTab webView]];
+        
+        //scrolling
+        _tabsView.contentSize = CGSizeMake((kTabWidth * [_tabs count]) + 40.0, 23.0);
+    }];
     
-	if (toBeRemoved == [tabs lastObject] && [tabs lastObject] != [NSNull null] && [tabs count] > 1) {
-		[self switchTabFrom:selectedTab ToTab:[tabs objectAtIndex:[tabs count]-2]];
-	} else if ([tabs count] == 0) {
-        self.webView = nil;
-    }
-	[toBeRemoved removeFromSuperview];
-	[[toBeRemoved webView] removeFromSuperview];
-	[tabs removeObject: toBeRemoved];
-	
-	
-	if ([tabs count] == 0) {
-		[self addTab:nil];
-	}
-	[self loadTabs:[selectedTab webView]];
-	
-	//scrolling
-	tabsView.contentSize = CGSizeMake(((100.0) * [tabs count]) + 40.0, 23.0);
 }
 
 -(IBAction) selectTab:(id)sender {
-	for (id cTab in tabs) {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+	for (id cTab in _tabs) {
 		if ([cTab tabButton] == sender) {
-			[self switchTabFrom:selectedTab ToTab:cTab];
+			[self switchTabFrom:_selectedTab ToTab:cTab];
+            if ([_selectedTab isLoading]) {
+                [self displayAsLoading];
+            } else {
+                [self displayAsNotLoading];
+            }
+            [self registerForBrowserNotifications];
 		}
 	}
-	[self loadTabs:[selectedTab webView]];
+	[self loadTabs:[_selectedTab webView]];
 }
 
 -(void) switchTabFrom:(Tab *)fromTab ToTab:(Tab *)toTab {
-	if ([tabs count] > 0) {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+	if ([_tabs count] > 0) {
 		[fromTab deselect];
 
 	}
 	[toTab select];
-	selectedTab = toTab;
+	_selectedTab = toTab;
     if (![toTab loading]) {
         [[self progressBar] setHidden:YES];
         [[self stopButton] setHidden:YES];
         [[self refreshButton] setHidden:NO];
-        [[self addressBar] setText:[selectedTab currentURLString]];
+        [[self addressBar] setText:[_selectedTab currentURLString]];
     } else {
         [[self progressBar] setHidden:NO];
         [[self stopButton] setHidden:NO];
@@ -809,21 +1002,27 @@ typedef enum ScrollDirection {
 // WEBVIEW
 
 -(UIWebView *) webView {
-    return [selectedTab webView];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    return [_selectedTab webView];
 }
 
 -(UIWebView *) setWebView:(UIWebView *)newWebView {
-	[selectedTab setWebView:newWebView];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+	[_selectedTab setWebView:newWebView];
 	return newWebView;
 }
 
 
 -(void) loadTabs:(UIWebView *)webView {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     Tab *tab = nil;
 	
     [[self view] sendSubviewToBack:webView];
     
-	for (id cTab in tabs) {
+	for (id cTab in _tabs) {
 		if ([cTab webView] == webView) {
 			tab = cTab;
 		} else {
@@ -831,34 +1030,34 @@ typedef enum ScrollDirection {
         }
 	}
 	
-	if (tab == selectedTab) {
+	if (tab == _selectedTab) {
         if ([webView request] == nil || [[webView request].URL isFileURL]) {
-            if (![addressBar isFirstResponder]) {
-                [addressBar setText: @""];
+            if (![_addressBar isFirstResponder]) {
+                [_addressBar setText: @""];
             }
             
         } else {
             NSString *addressText = tab.currentURLString;
             if (![addressText isEqualToString:@"about:blank"] && [addressText rangeOfString:@"https://duckduckgo.com"].location == NSNotFound) {
-                if (![addressBar isFirstResponder]) {
-                    [addressBar setText: addressText];
+                if (![_addressBar isFirstResponder]) {
+                    [_addressBar setText:addressText];
                 }
-                [refreshButton setHidden:[tab loading]];
+                [_refreshButton setHidden:[tab loading]];
             }
             
         }
         
-		if([selectedTab canGoForward]) {
-			forwardButton.enabled = TRUE;
+		if([_selectedTab canGoForward]) {
+			_forwardButton.enabled = TRUE;
 		}
-		else if(![selectedTab canGoForward]) {
-			forwardButton.enabled = FALSE;
+		else if(![_selectedTab canGoForward]) {
+			_forwardButton.enabled = FALSE;
 		}
-		if([selectedTab canGoBack]) {
-			backButton.enabled = TRUE;
+		if([_selectedTab canGoBack]) {
+			_backButton.enabled = TRUE;
 		}
-		else if(![selectedTab canGoBack]) {
-			backButton.enabled = FALSE;
+		else if(![_selectedTab canGoBack]) {
+			_backButton.enabled = FALSE;
 		}
         
 	}
@@ -870,6 +1069,8 @@ typedef enum ScrollDirection {
 // Orientation
 
 - (NSUInteger) supportedInterfaceOrientations {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // Return a bitmask of supported orientations. If you need more,
     // use bitwise or (see the commented return).
     return UIInterfaceOrientationMaskAll;
@@ -877,23 +1078,29 @@ typedef enum ScrollDirection {
 }
 
 - (UIInterfaceOrientation) preferredInterfaceOrientationForPresentation {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // Return the orientation you'd prefer - this is what it launches to. The
     // user can still rotate. You don't have to implement this method, in which
     // case it launches in the current orientation
-    return UIDeviceOrientationPortrait;
+    return UIInterfaceOrientationPortrait;
 }
 
 
 // Reachability
 - (BOOL) checkNetworkStatus
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     Reachability *reachability = [Reachability reachabilityForInternetConnection];
-    NetworkStatus *netstat = [reachability currentReachabilityStatus];
+    NetworkStatus netstat = [reachability currentReachabilityStatus];
     return netstat != NotReachable;
 }
 
 // HARDWARE
 - (BOOL) isPad {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 #ifdef UI_USER_INTERFACE_IDIOM
     return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
 #else

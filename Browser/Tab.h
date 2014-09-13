@@ -8,41 +8,18 @@
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
+#define kTabWidth 100.0
+
 @class BrowserViewController, FilterManager;
 
-@interface Tab : UIView <NSURLConnectionDelegate, UIWebViewDelegate, UIActionSheetDelegate>{
-	UIButton *tabButton;
-	UILabel *tabTitle;
-	UIWebView *webView;
-	UIButton *closeButton;
-	    
-    NSString *currentURLString;
-    NSURL *currentURL;
-    NSString *connectionURLString;
-    NSURLConnection *urlConnection;
-    NSHTTPURLResponse *response;
-    NSMutableData *pageData;
-    
-    NSMutableArray *history;
-    int traverse;
-    int history_position;
-    
-    int scrollPosition;
-    
-    BOOL loading;
-    BOOL current;
-    BOOL actionSheetVisible;
-    
-    double loadStartTime;
-    double loadEndTime;
-    NSString *pageInfoJS;
-    
-    BrowserViewController *viewController;
-	
-}
+@interface Tab : UIView <NSURLConnectionDelegate, UIWebViewDelegate, UIActionSheetDelegate>
+
+@property (assign) NSUInteger loadingCount;
 
 @property(nonatomic,strong) UIButton *tabButton;
-@property(nonatomic,strong) UILabel *tabTitle;
+@property (nonatomic, strong) UILabel *tabTitle;
+@property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
+@property (nonatomic, assign) CGRect tabTitleFrame;
 @property(nonatomic,strong) UIWebView *webView;
 @property(nonatomic,strong) UIButton *closeButton;
 
@@ -55,10 +32,11 @@
 
 @property(nonatomic,strong) NSMutableArray *history;
 @property(nonatomic,assign) int traverse;
-@property(nonatomic,assign) int history_position;
+@property(nonatomic,assign) NSInteger history_position;
 
 @property(nonatomic,assign) int scrollPosition;
 
+@property(nonatomic,assign) BOOL isLoading;
 @property(nonatomic,assign) BOOL loading;
 @property(nonatomic,assign) BOOL current;
 @property(nonatomic,assign) BOOL actionSheetVisible;

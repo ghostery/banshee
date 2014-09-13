@@ -5,8 +5,8 @@
 //  Copyright 2011 Evidon. All rights reserved.
 //
 
+#import "Logging.h"
 #import "BookmarksController.h"
-#import "BrowserDelegate.h"
 #import "BrowserViewController.h"
 #import	"BookmarkItem.h"
 #import "BookmarksFormController.h"
@@ -14,23 +14,80 @@
 
 @implementation BookmarksController
 
-@synthesize browserController, formController, folderController, managedObjectContext, mode, bookmarks, folderImage, bookmarkImage, toolbar, editToolbar, tableView, currentFolder;
+@synthesize browserController, formController, folderController;
+@synthesize mode, bookmarks, folders, folderImage, bookmarkImage;
+@synthesize toolbar, editToolbar, folderIndex, bookmarkIndex;
+@synthesize bookmarksSeedResourceName;
 
-// The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-/*
+// The designated initializer.  Override if you create the controller programmatically
+// and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization.
+        self.folderIndex = BOOKMARKS_ROOT;
+        self.bookmarksSeedResourceName = BOOKMARKS_SEED_RESOURCE_NAME;
+        [self loadBookmarks];
     }
     return self;
 }
-*/
-
 
 - (void)viewDidLoad {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    //Load the Folders dictionary from the key in user defaults storage.
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary* foldersDict = [defaults objectForKey:FOLDERS_KEY];
+    //Check to see if the folders dict is nil, if it is, create a new folder withe the default structure.
+    if (foldersDict == nil)
+    {
+        NSString *fname = nil;
+        fname = [[NSBundle mainBundle] pathForResource:bookmarksSeedResourceName ofType:@"strings"];
+        NSDictionary *seedBookmarks = [NSDictionary dictionaryWithContentsOfFile:fname];
+        
+        NSMutableDictionary *foldersDict = [[NSMutableDictionary alloc] init];
+        
+        NSEnumerator *enumerator = [seedBookmarks keyEnumerator];
+        NSString *key;
+        NSArray *bookmarkComponents;
+        NSString *url;
+        NSDictionary *bookmark;
+        NSDictionary *folder;
+        NSString *folderName;
+        NSString *bookmarkName;
+        
+        
+        while ((key = [enumerator nextObject])) {
+            bookmarkComponents = [key componentsSeparatedByString:@"/"];
+            url = [seedBookmarks objectForKey:key];
+
+            if ([bookmarkComponents count] == 2) {
+                folderName = [bookmarkComponents objectAtIndex:0];
+                bookmarkName = [bookmarkComponents objectAtIndex:1];
+                
+                bookmark = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   bookmarkName, @"title",url,@"URL",nil];
+                
+                folder = [foldersDict objectForKey:folderName];
+                if (folder) {
+                    [(NSMutableArray *)[folder objectForKey:@"bookmarks"] addObject:bookmark];
+                } else {
+                    folder = [NSDictionary dictionaryWithObjectsAndKeys:folderName, @"title",
+                              [NSMutableArray arrayWithObject:bookmark], @"bookmarks",nil];
+                    [foldersDict setObject:folder forKey:folderName];
+                }
+
+            }
+        } 
+
+        [defaults setObject:[foldersDict allValues] forKey:FOLDERS_KEY];
+        [defaults synchronize];
+    }
+    
 	// nav
-	UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone 
+	UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
 																				target:self 
 																				action:@selector(switchToBrowser:)];
 	[self.navigationItem setRightBarButtonItem:doneButton];
@@ -43,119 +100,150 @@
 	
 	formController = [browserController bookmarksFormController];
 	
-	self.contentSizeForViewInPopover = CGSizeMake(320.0, 480.0);
+    /*if ([self respondsToSelector:@selector(setPreferredContentSize:)]) {
+        self.preferredContentSize = CGSizeMake(320.0, 480.0);
+    } else {
+        self.contentSizeForViewInPopover = CGSizeMake(320.0, 480.0);
+    }*/
     [super viewDidLoad];
 }
 
 -(void) viewDidAppear:(BOOL)animated {
-	[tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:animated];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+	[_tableView deselectRowAtIndexPath:[_tableView indexPathForSelectedRow] animated:animated];
+    [self.tableView reloadData];
 }
 
 -(void) viewWillAppear:(BOOL)animated {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [super viewWillAppear:animated];
     // load bookmark related images
     if (folderImage == nil || bookmarkImage == nil) {
         folderImage = [UIImage imageNamed:@"folder.png"];
         bookmarkImage = [UIImage imageNamed:@"bookmark.png"];
     }
-    if (mode == 'P') {
+
+
+    /*if (mode == 'P') {
         ((UIBarItem *)[[toolbar items] objectAtIndex:0]).enabled = NO;
     } else {
         ((UIBarItem *)[[toolbar items] objectAtIndex:0]).enabled = YES;
-    }
-    
-    self.bookmarks = [self reloadBookmarks];
-    [tableView reloadData];
-	[super viewWillAppear:animated];
+    }*/
+    ((UIBarItem *)[[toolbar items] objectAtIndex:0]).enabled = YES;
+    [self loadBookmarks];
+    [self.tableView reloadData];
 }
 
 
 - (NSUInteger) supportedInterfaceOrientations {
     // Return a bitmask of supported orientations. If you need more,
     // use bitwise or (see the commented return).
-    return UIInterfaceOrientationMaskPortrait;
-    // return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+    return UIInterfaceOrientationMaskAll;
 }
 
 - (UIInterfaceOrientation) preferredInterfaceOrientationForPresentation {
     // Return the orientation you'd prefer - this is what it launches to. The
     // user can still rotate. You don't have to implement this method, in which
     // case it launches in the current orientation
-    return UIDeviceOrientationPortrait;
+    return UIInterfaceOrientationPortrait;
 }
 
-- (NSMutableArray *) reloadBookmarks {
-	if (managedObjectContext == nil) 
-	{ 
-        managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
-        NSLog(@"After managedObjectContext: %@",  managedObjectContext);
-	}
-	
-	// Create DB query request for bookmark folders
-	
-	NSFetchRequest *request = [[NSFetchRequest alloc] init];
-	NSEntityDescription *folderEntity = [NSEntityDescription entityForName:@"Folder" inManagedObjectContext:managedObjectContext];
-    NSPredicate *predicateF = nil;
-    if (mode != 'P') {
-        predicateF = [NSPredicate predicateWithFormat:(currentFolder != nil) ? [NSString stringWithFormat:@"Parent.name == '%@'", [currentFolder valueForKey:@"name"]] : @"Parent == nil"];
-    }
-	[request setEntity:folderEntity];
-    [request setPredicate:predicateF];
-    NSMutableArray *folderFetchResults = [[managedObjectContext executeFetchRequest:request error:nil] mutableCopy];
+-(void)reloadBookmarksData {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-	// Create DB query request for bookmarks
-	
-	NSEntityDescription *entity = [NSEntityDescription entityForName:@"Bookmark" inManagedObjectContext:managedObjectContext];
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"Folder.name == %@", ((currentFolder == nil) ? nil : [currentFolder valueForKey:@"name"])];
-	[request setEntity:entity];
-	[request setPredicate:predicate];
-	NSArray *bookmarkFetchResults = [managedObjectContext executeFetchRequest:request error:nil];
-	
-	if (mode != 'P') {
-		[folderFetchResults addObjectsFromArray:bookmarkFetchResults];
-	} else {
-        [folderFetchResults insertObject:@"Bookmarks" atIndex:0];
+    //Get the array of folder dictionaries from NSUSerDefaults
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    NSMutableArray* foldersArray = (NSMutableArray*)[defaults objectForKey:FOLDERS_KEY];
+    self.folders = [foldersArray mutableCopy];
+    //If this isn't a folder array, it must be a bookmark array, so return the bookmark array.
+    if (self.folderIndex != BOOKMARKS_ROOT) {
+        NSMutableDictionary* folderDict = [foldersArray objectAtIndex:self.folderIndex];
+        self.bookmarks = [[folderDict objectForKey:@"bookmarks"] mutableCopy];
     }
-	
-	return folderFetchResults;
+    else {
+        self.bookmarks = nil;
+    }
+}
+
+- (void) loadBookmarks {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    //Get the array of folder dictionaries from NSUSerDefaults
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    NSMutableArray* foldersArray = (NSMutableArray*)[defaults objectForKey:FOLDERS_KEY];
+    self.folders = [foldersArray mutableCopy];
+    //If this isn't a folder array, it must be a bookmark array, so return the bookmark array.
+    if (self.folderIndex != BOOKMARKS_ROOT) {
+        NSMutableDictionary* folderDict = [foldersArray objectAtIndex:self.folderIndex];
+        self.bookmarks = [[folderDict objectForKey:@"bookmarks"] mutableCopy];
+    }
+    else {
+        self.bookmarks = nil;
+    }
 }
 
 - (IBAction)switchToBrowser:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	if (mode == 'E') {
 		[self finishEditMode:sender];
 	}
-	
-	if ([browserController isPad]) {
-		[[browserController padPopover] dismissPopoverAnimated:YES];
-	} else {
-		[UIView transitionFromView:[self.navigationController view]
-							toView: [browserController view]
-						  duration:0.5
-						   options:(UIViewAnimationOptionTransitionCrossDissolve)
-						completion:^(BOOL finished) {}];
-	}
-	
-	
-	[self.navigationController popToRootViewControllerAnimated:NO];
+    //[self.navigationController popToRootViewControllerAnimated:NO];
+	[UIView animateWithDuration:0.25 animations:^{
+        [self.navigationController view].alpha =0.0f;
+        [browserController dismissPopups];
+    }];
 }
 
--(void) openBookmark:(NSIndexPath *) indexPath{	
-	[[browserController addressBar] setText:[[bookmarks objectAtIndex:[indexPath row]] valueForKey:@"url"]];
+-(void) openBookmark:(NSIndexPath *) indexPath{
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+	[[browserController addressBar] setText:[[bookmarks objectAtIndex:[indexPath row]] valueForKey:@"URL"]];
 	[browserController gotoAddress:nil];
 	[self switchToBrowser:nil];
 }
 
 -(IBAction) enableEditMode:(id)sender {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    if(self.mode == 'B')
+    {
+        for (UIBarButtonItem *item in editToolbar.items)
+        {
+            if([[item title] isEqualToString:@"New Folder"])
+            {
+                [item setEnabled:NO];
+                [item setTintColor:[UIColor clearColor]];
+            }
+        }
+    }
+    else
+    {
+        for (UIBarButtonItem *item in editToolbar.items)
+        {
+            if([[item title] isEqualToString:@"New Folder"])
+            {
+                [item setEnabled:YES];
+                [item setTintColor:nil];
+            }
+        }
+    }
 	self.mode = 'E';
 	toolbar.hidden = YES;
 	editToolbar.hidden = NO;
 	[self.navigationItem setRightBarButtonItem:nil];
-	
-	[tableView reloadData];
-	
+	[_tableView reloadData];
 }
 
 -(IBAction) finishEditMode:(id)sender{
-	self.mode = 'V';
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+	if(self.folderIndex == BOOKMARKS_ROOT || self.mode == 'V')
+        self.mode = 'V';
+    else
+        self.mode = 'B';
 	toolbar.hidden = NO;
 	editToolbar.hidden = YES;
 	
@@ -165,10 +253,14 @@
 																				action:@selector(switchToBrowser:)];
 	[self.navigationItem setRightBarButtonItem:doneButton];
 	
-	[tableView reloadData];
+	[_tableView reloadData];
 }
--(IBAction) addFolder:(id)sender{
+
+- (IBAction) addFolder:(id)sender{
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	[folderController setMode:'A'];
+    [folderController setBookmarksController:self];
 	[self.navigationController pushViewController:(UIViewController *)folderController animated:YES];
 }
 
@@ -176,23 +268,43 @@
 #pragma mark Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // Return the number of sections.
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    // Return the number of rows in the section.
-	/*if (showAllBugs) {
-		return [[[[NSURLCache sharedURLCache] filterManager] bugArray] count];
-	} else {
-		return [detectedBugs count];
-	}*/
-	return [bookmarks count];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [self loadBookmarks];
+    if(self.bookmarks != nil && self.folderIndex != BOOKMARKS_ROOT)
+        return [bookmarks count];
+    else
+        return [folders count];
 }
 
+// get images for bookmarks
+-(NSString *) getBookmarkImageURLFromUrlString:(NSString *) urlString {
+    NSString *encodedURL = [urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+    return [NSString stringWithFormat:@"http://www.google.com/s2/favicons?domain=%@", encodedURL];
+}
+
+-(UIImage *) getBookmarkImageFromUrlString:(NSString *) urlString {
+    NSString *bookmarkImageUrl = [self getBookmarkImageURLFromUrlString:urlString];
+    NSData *bookmarkImageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:bookmarkImageUrl]];
+    return ([bookmarkImageData length] > 0) ? [UIImage imageWithData:bookmarkImageData] : bookmarkImage;
+}
+
+-(void) setBookmarkImageForCellWithURL:(NSArray *) args {
+    BookmarkItem *cell = [args objectAtIndex:0];
+    NSString *urlString = [args objectAtIndex:1];
+    cell.cellImage.image = [self getBookmarkImageFromUrlString:urlString];
+}
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)localTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
     
     static NSString *CellIdentifier = @"BookmarkItem";
     
@@ -207,44 +319,66 @@
 			}
 		}
 	}
-    
-	NSManagedObject *item= [bookmarks objectAtIndex:[indexPath row]];
-	cell.bookmarksController = self;
+    cell.bookmarksController = self;
 	cell.tableView = localTableView;
 	cell.indexPath = indexPath;
-	if (![item isEqual:@"Bookmarks"] && [[[item entity] name] isEqualToString:@"Bookmark"]) {
-		cell.cellImage.image = bookmarkImage;
-	} else {
-		cell.cellImage.image = folderImage;
-	}
-    if ([item isEqual:@"Bookmarks"]) {
-        [cell.cellLabel setText:@"Bookmarks"];
-    } else {
-        [cell.cellLabel setText:[item valueForKey:@"name"]];
+    
+    //Load contents of each folder dictionary into a cell if in the Bookmarks root
+    if (self.mode == 'V' || self.mode == 'P')
+    {
+        NSDictionary* folderDict = [self.folders objectAtIndex:[indexPath row]];
+        [cell.cellLabel setText:[folderDict valueForKey:@"title"]];
+        cell.cellImage.image = folderImage;
     }
-	
-	if (self.mode == 'E') {
-		[cell enableEdit];
-	} else if (self.mode == 'V') {
-		[cell disableEdit];
-	}
+    
+    //Load contents of each bookmark dictionary into a cell if in a Folder
+    if (self.mode == 'B')
+    {
+        NSDictionary* folderDict = [self.folders objectAtIndex:self.folderIndex];
+        NSArray* bookmarksArray = [folderDict objectForKey:@"bookmarks"];
+        NSDictionary* bookmarkDict = [bookmarksArray objectAtIndex:[indexPath row]];
+        [cell.cellLabel setText:[bookmarkDict valueForKey:@"title"]];
+        LogInfo(@"Cell Label : %@", cell.cellLabel.text);
+        // load bookmark icon async
+        [self performSelectorInBackground:@selector(setBookmarkImageForCellWithURL:) withObject:@[cell, [bookmarkDict objectForKey:@"URL"]] ];
+    }
+    
+    if (self.mode == 'E') {
+        if(self.folderIndex != BOOKMARKS_ROOT)
+        {
+            NSDictionary* folderDict = [self.folders objectAtIndex:self.folderIndex];
+            NSArray* bookmarksArray = [folderDict objectForKey:@"bookmarks"];
+            NSDictionary* bookmarkDict = [bookmarksArray objectAtIndex:[indexPath row]];
+            [cell.cellLabel setText:[bookmarkDict valueForKey:@"title"]];
+            cell.cellImage.image = [self getBookmarkImageFromUrlString:[bookmarkDict objectForKey:@"URL"]];
 
+            [cell enableEdit];
+        }
+        else
+        {
+            NSDictionary* folderDict = [self.folders objectAtIndex:[indexPath row]];
+            [cell.cellLabel setText:[folderDict valueForKey:@"title"]];
+            cell.cellImage.image = folderImage;
+            if ([self.folders count] > 1)
+            {
+                [cell enableEdit];
+            }
+            else
+            {
+                [cell disableEdit];
+            }
+        }
+	} else {
+        [cell disableEdit];
+    }
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-	/*NSMutableArray *bugs = showAllBugs ? [[[NSURLCache sharedURLCache] filterManager] bugArray] : detectedBugs;
-	NSManagedObject *bug = [bugs objectAtIndex:[indexPath indexAtPosition:1]];
-	NSNumber *block = [bug valueForKey:@"block"];
-	if (block.boolValue) {
-		cell.textLabel.font = [UIFont italicSystemFontOfSize:19.0];
-		cell.textLabel.textColor = [UIColor colorWithRed:0.2 green:0.0 blue:0.0 alpha:0.7];
-	} else {
-		cell.textLabel.font = [UIFont boldSystemFontOfSize:19.0];
-		cell.textLabel.textColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1];
-	}*/
-	//cell.selectionStyle = UITableViewCellSelectionStyleNone;
-	((BookmarkItem *)cell).cellLabel.font = [UIFont italicSystemFontOfSize:17.0];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+	((BookmarkItem *)cell).cellLabel.font = [UIFont italicSystemFontOfSize:14.0];
+    
 }
 
 
@@ -292,53 +426,56 @@
 #pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	/*NSMutableArray *bugs = showAllBugs ? [[[NSURLCache sharedURLCache] filterManager] bugArray] : detectedBugs;
-	NSManagedObject *bug = [bugs objectAtIndex:[indexPath indexAtPosition:1]];
-	NSNumber *block = [bug valueForKey:@"block"];
-	
-	selectedManagedObject = [bugs objectAtIndex:[indexPath row]];
-	if (selectedIndexPath) {
-		[selectedIndexPath release];
-	}
-	selectedIndexPath = [indexPath copy];
-	
-	if (block.boolValue) {
-		[blockButton setTitle:@"Unblock"];
-	} else {
-		[blockButton setTitle:@"Block"];
-	}*/
-	NSManagedObject *item = [bookmarks objectAtIndex:[indexPath row]];
-	if (mode == 'V') {
-		if ([[[item entity] name] isEqualToString:@"Folder"]) {
-			BookmarksController *nextBookmarkController = [[BookmarksController alloc] initWithNibName:@"Bookmarks" bundle:[NSBundle mainBundle]];
-			[nextBookmarkController setMode:[self mode]];
-			[nextBookmarkController setCurrentFolder:item];
-			[nextBookmarkController setManagedObjectContext:managedObjectContext];
-			[nextBookmarkController setBrowserController:browserController];
-            [nextBookmarkController setFolderController:[self folderController]];
-			[self.navigationController pushViewController:nextBookmarkController animated:YES];
-		} else {
-			[self openBookmark:indexPath];
-		}
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    if (mode == 'B') {
+        //Open the URL from the bookmark in the folder
+        [self openBookmark:indexPath];
+    } else if (mode == 'V') {
+        //Create a new bookmark controller, set the mode, and folder index
+        BookmarksController *nextBookmarkController = [[BookmarksController alloc] initWithNibName:@"Bookmarks" bundle:[NSBundle mainBundle]];
+        [nextBookmarkController setMode:'B'];
+        [nextBookmarkController setFolderIndex:[indexPath row]];
+        [nextBookmarkController setBrowserController:browserController];
+        [nextBookmarkController setFolderController:[self folderController]];
+        [self.navigationController pushViewController:nextBookmarkController animated:YES];
 		
 	} else if (mode == 'E') {
-		if ([[[item entity] name] isEqualToString:@"Folder"]) {
-			[folderController setMode:'E'];
-			[folderController setFolder:item];
-			[self.navigationController pushViewController:(UIViewController *)folderController animated:YES];
-		} else {
-			[formController setMode:'E'];
-			[self.navigationController pushViewController:formController animated:YES];
-		}
+        
+        [self loadBookmarks];
+        
+        if (self.folderIndex == BOOKMARKS_ROOT)
+        {
+            self.folderIndex = [indexPath row];
+            [folderController setMode:'E'];
+            [self setMode:'V'];
+            [self.navigationController pushViewController:(UIViewController *)folderController animated:YES];
+        }
+        else
+        {
+            [formController setMode:'E'];
+            [self setBookmarkIndex:[indexPath row]];
+            [self.navigationController pushViewController:formController animated:YES];
+        }
+        
+	} else if (self.mode == 'P') {
+        NSArray *vControllers = self.navigationController.viewControllers;
+		[[vControllers objectAtIndex:([vControllers count] - 3) ] setFolderIndex:[indexPath row]];
+        [self.navigationController popViewControllerAnimated:YES];
+        
+    }
+}
 
-	} else if (mode == 'P') {
-		NSArray *vControllers = self.navigationController.viewControllers;
-		[[vControllers objectAtIndex:([vControllers count] - 2) ] setSelectedFolder:item];
-		[self.navigationController popViewControllerAnimated:YES];
-	}
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    if ([tableView numberOfRowsInSection:0] < 2 && folderIndex == BOOKMARKS_ROOT) return NO;
+    return YES;
 }
 
 - (void)didReceiveMemoryWarning {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
     
@@ -346,6 +483,8 @@
 }
 
 - (void)viewDidUnload {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;

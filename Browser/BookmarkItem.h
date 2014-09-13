@@ -6,7 +6,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <CoreData/CoreData.h>
 
 @class BookmarksController;
 
@@ -40,6 +39,5 @@
 
 -(IBAction) deleteCircleClick:(id)sender;
 -(IBAction) deleteItem:(id)sender;
-- (void) deleteItemFromDB:(NSManagedObject *) dbItem;
 
 @end

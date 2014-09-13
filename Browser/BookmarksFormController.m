@@ -7,7 +7,6 @@
 
 #import "BookmarksController.h"
 #import "BookmarksFormController.h"
-#import "BrowserDelegate.h"
 #import "BrowserViewController.h"
 
 @class BrowserViewController;
@@ -15,30 +14,11 @@
 
 @implementation BookmarksFormController
 
-@synthesize parentField, nameField, urlField, cancelButton, doneButton, managedObjectContext, mode, selectedFolder, defaultUrlFieldText;
-
-// The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-/*
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization.
-    }
-    return self;
-}
-*/
-
+@synthesize parentField, nameField, urlField, arrowLabel, cancelButton, doneButton, mode, defaultUrlFieldText, browserController;
 
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
-	//set up DB
-	if (managedObjectContext == nil) 
-	{ 
-        managedObjectContext = [(BrowserDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
-        NSLog(@"After managedObjectContext: %@",  managedObjectContext);
-	}
-	
 	if (!mode) {
 		mode = 'A';
 	}
@@ -46,15 +26,19 @@
 	doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(saveBookmark:)];
 	cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(switchToBrowser:)];
 	
-	self.contentSizeForViewInPopover = CGSizeMake(320.0, 480.0);
+	if ([self respondsToSelector:@selector(setPreferredContentSize:)]) {
+        self.preferredContentSize = CGSizeMake(320.0, 480.0);
+    } else {
+        self.contentSizeForViewInPopover = CGSizeMake(320.0, 480.0);
+    }
 	[super viewDidLoad];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
 	NSArray *vControllers = [self.navigationController viewControllers];
 	BookmarksController *bookmarksController = [vControllers objectAtIndex:([vControllers count] - 2)];
-	BrowserViewController *browserController = [bookmarksController browserController];
-
+    
+    //Edit mode
 	if (mode == 'E') {
 		// adjust nav
 		self.navigationItem.title = @"Edit Bookmark";
@@ -62,22 +46,19 @@
 		[self.navigationItem setLeftBarButtonItem:nil];
 		
 		// load name and url
-        [bookmarksController reloadBookmarks];
-		NSMutableArray *bookmarks = [bookmarksController bookmarks];
-		NSIndexPath *selectedIndexPath = [[bookmarksController tableView] indexPathForSelectedRow];
-		NSManagedObject *bookmark = [bookmarks objectAtIndex:[selectedIndexPath row]];
-		[urlField setText:[bookmark valueForKey:@"url"]];
-		[nameField setText:[bookmark valueForKey:@"name"]];
-        if (selectedFolder == nil) {
-            selectedFolder = [bookmark valueForKey:@"Folder"];
-        }
-        
+        [bookmarksController loadBookmarks];
+        [urlField setText:[[bookmarksController.bookmarks objectAtIndex:bookmarksController.bookmarkIndex] valueForKey:@"URL"]];
+		[nameField setText:[[bookmarksController.bookmarks objectAtIndex:bookmarksController.bookmarkIndex] valueForKey:@"title"]];
+        [parentField setHidden:YES];
+        [arrowLabel setHidden:YES];
 		
-	} else if (mode == 'A') {
+	} else if (mode == 'A') { //Add Bookmark mode
 		// adjust nav
 		self.navigationItem.title = @"Add Bookmark";
 		[self.navigationItem setRightBarButtonItem:doneButton];
 		[self.navigationItem setLeftBarButtonItem:cancelButton];
+        [parentField setHidden:NO];
+        [arrowLabel setHidden:NO];
 		
         if (defaultUrlFieldText != nil) {
             [urlField setText:defaultUrlFieldText];
@@ -93,10 +74,25 @@
         }
 		
 	}
-	if (selectedFolder != nil && ![selectedFolder isEqual:@"Bookmarks"]) {
-		[parentField setTitle:[selectedFolder valueForKey:@"name"] forState:UIControlStateNormal];
-	} else {
-        [parentField setTitle:@"Bookmarks" forState:UIControlStateNormal];
+
+    if (bookmarksController.folders != nil && [bookmarksController.folders count] > 0) {
+        NSDictionary* folderDict = nil;
+        NSString* title;
+        
+        if(bookmarksController.folderIndex != BOOKMARKS_ROOT)
+        {
+            folderDict = [bookmarksController.folders objectAtIndex:bookmarksController.folderIndex];
+            title = [folderDict objectForKey:@"title"];
+        }
+        else
+        {
+            folderDict = [bookmarksController.folders objectAtIndex:0];
+            title = [folderDict objectForKey:@"title"];
+        }
+        
+        [parentField setTitle:title forState:UIControlStateNormal];
+        [parentField setTitle:title forState:UIControlStateSelected];
+        [parentField setTitle:title forState:UIControlStateHighlighted];
     }
 	[nameField becomeFirstResponder];
 }
@@ -112,7 +108,7 @@
     // Return the orientation you'd prefer - this is what it launches to. The
     // user can still rotate. You don't have to implement this method, in which
     // case it launches in the current orientation
-    return UIDeviceOrientationPortrait;
+    return UIInterfaceOrientationPortrait;
 }
 
 - (IBAction) switchToBrowser:(id)sender {
@@ -120,34 +116,113 @@
 }
 
 - (IBAction) folderSelect:(id)sender {
+    NSArray *vControllers = [self.navigationController viewControllers];
+	BookmarksController *bookmarksController = [vControllers objectAtIndex:([vControllers count] - 2)];
+    
 	BookmarksController *nextBookmarkController = [[BookmarksController alloc] init];
     [[NSBundle mainBundle] loadNibNamed:@"Bookmarks" owner:nextBookmarkController options:nil];
-	[nextBookmarkController setMode:'P'];
-	[nextBookmarkController setManagedObjectContext:managedObjectContext];
+    [nextBookmarkController setBrowserController:self.browserController];
+    [nextBookmarkController setMode:'P'];
+    [nextBookmarkController setFolderController:[bookmarksController folderController]];
+    [nextBookmarkController setFolderIndex:BOOKMARKS_ROOT];
 	[self.navigationController pushViewController:nextBookmarkController animated:YES];
 }
 
 - (IBAction) saveBookmark:(id)sender {
-	NSArray *vControllers = [self.navigationController viewControllers];
+    
+    NSArray *vControllers = [self.navigationController viewControllers];
 	BookmarksController *bookmarksController = [vControllers objectAtIndex:([vControllers count] - 2)];
-	NSManagedObject *bookmark = nil;
-	if (mode == 'A') {
-		 bookmark = [NSEntityDescription insertNewObjectForEntityForName:@"Bookmark" inManagedObjectContext:managedObjectContext];
-	} else if (mode == 'E') {
-		NSMutableArray *bookmarks = [bookmarksController bookmarks];
-		NSIndexPath *selectedIndexPath = [[bookmarksController tableView] indexPathForSelectedRow];
-		bookmark = [bookmarks objectAtIndex:[selectedIndexPath row]];
-	}
-	
-	[bookmark setValue:nameField.text forKey:@"name"];
-	[bookmark setValue:urlField.text forKey:@"url"];
-	[bookmark setValue:([selectedFolder isEqual:@"Bookmarks"] ? nil : selectedFolder) forKey:@"Folder"];
-
-	[managedObjectContext save:nil];
-
-	[bookmarksController reloadBookmarks];
-	[[bookmarksController tableView] reloadData];
-	[bookmarksController switchToBrowser:sender];
+    
+    //New Code to save bookmark - NSUserDefaults
+    
+    //Load the Folders dictionary from the key in user defaults storage.
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    NSMutableArray* foldersArray = [[defaults objectForKey:FOLDERS_KEY] mutableCopy];
+    
+    //Create a bookmarks Dictionary
+    NSMutableDictionary* bookmarkDict = [[NSMutableDictionary alloc] init];
+    [bookmarkDict setObject:nameField.text forKey:@"title"];
+    [bookmarkDict setObject:[urlField.text stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding] forKey:@"URL"];
+    
+    //Loop to check if the bookmarks have reached the max capacity and check if the bookmark exists
+    NSUInteger totalBookmarks = 0;
+    if(self.mode != 'E')
+    {
+        for (NSDictionary* folderDict in foldersArray)
+        {
+            //increment bookmarks counter
+            NSArray* bookmarkArray = (NSArray*)[folderDict objectForKey:@"bookmarks"];
+            totalBookmarks += [bookmarkArray count];
+            
+            //Return after proper alert message if the bookmark exists
+            for (NSDictionary* bookmarkDict in bookmarkArray)
+            {
+                if([[urlField.text stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]
+                    isEqualToString:[bookmarkDict objectForKey:@"URL"]])
+                {
+                    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Duplicate Bookmark"
+                                                                    message:[NSString stringWithFormat:@"This is in bookmark from folder  \"%@\"",[folderDict objectForKey:@"title"]]
+                                                                   delegate:self
+                                                          cancelButtonTitle:@"OK"
+                                                          otherButtonTitles:nil];
+                    [alert show];
+                    return;
+                }
+            }
+        }
+    }
+    
+    //Show alert if at max capacity and return
+    if(totalBookmarks >= MAX_BOOKMARKS)
+    {
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Unable to Add Bookmark"
+                                                        message:@"Bookmarks have reached max. capacity"
+                                                       delegate:self
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
+    
+    //Add the bookmark dictionary to the current folder's bookmark array
+    if(bookmarksController.folderIndex == BOOKMARKS_ROOT) bookmarksController.folderIndex = 0;
+    NSMutableDictionary* folderDict = (NSMutableDictionary*)[[foldersArray objectAtIndex:bookmarksController.folderIndex] mutableCopy];
+    NSMutableArray* bookmarksArray = [[folderDict objectForKey:@"bookmarks"] mutableCopy];
+    if(self.mode == 'E')
+    {
+        [bookmarksArray setObject:bookmarkDict atIndexedSubscript:bookmarksController.bookmarkIndex];
+    }
+    else
+    {
+        [bookmarksArray addObject:bookmarkDict];
+    }
+    [folderDict setObject:bookmarksArray forKey:@"bookmarks"];
+    [foldersArray setObject:folderDict atIndexedSubscript:bookmarksController.folderIndex];
+    
+    //Save the bookmark into the correct folder
+    [defaults setObject:foldersArray forKey:FOLDERS_KEY];
+    [defaults synchronize];
+    
+	//Reload all bC controllers on the navigation stack
+    for (BookmarksController* bC in self.navigationController.viewControllers)
+    {
+        if([bC isKindOfClass:[BookmarksController class]])
+        {
+            [bC loadBookmarks];
+            [bC.tableView reloadData];
+        }
+    }
+    
+    if(self.mode == 'A')
+    {
+        [bookmarksController switchToBrowser:sender];
+    }
+    else
+    {
+        self.mode = 'B';
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    
 }
 
 - (void)didReceiveMemoryWarning {

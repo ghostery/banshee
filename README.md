@@ -26,25 +26,19 @@ Since libxml is not a framework but rather a dylib you will also have to add it 
 
 The recommended way to integrate the browser code is to make your view controller a subclass of the browser controller. Which should look something like this:
 
+    #import <banshee/BrowserViewController.h> // only necessary if using banshee cocoapod
+
     @interface ViewController : BrowserViewController
 
 
 ### AppDelegate
 
-Your app delegate needs to inherit from the browser delegate as so:
-    #import "BrowserDelegate.h"
+In the app delegate you should place this code in your `didFinishLaunchingWithOptions`:
 
-    @interface AppDelegate : BrowserDelegate <UIApplicationDelegate>
+    self.window = [[BrowserMainWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    [self.window setRootViewController:[[ViewController alloc] init]];
 
-The browser code does reference the app delegate, so you must have an AppDelegate Task. In the app delegate you should place this code in your `didFinishLaunchingWithOptions`:
-
-    self.viewController = [[BrowserViewController alloc] init];
-
-## Misc
-
-  There is a `customButton` UIBarButtonitem which you can customize programmatically in your view controller. This button appears in the bottom toolbar on the right. You can also overwrite the click handler method `-(IBAction) customButtonClick:(id)sender`.
-
-  There are now 2 custom buttons.
+Note: These instructions only work if you create an empty project file. If you create a different type of project like a "single page" app, you will have to use a different approach since story board files are pulled in via plist file.
 
 ## License
 

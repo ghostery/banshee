@@ -10,8 +10,6 @@
 
 @implementation UIMainView
 
-@synthesize statusBarView, statusViewHeightConstraint, controller;
-
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -29,8 +27,8 @@
 - (UIView*)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
     if ([event type]==UIEventTypeTouches) {
         UIView *v=[super hitTest:point withEvent:event];
-        if (statusBarView==v) {
-            [controller scrollToTop:self];
+        if (_statusBarView==v) {
+            [_controller scrollToTop:self];
         } else {
             return v;
         }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -12,8 +12,6 @@
                 <outlet property="backButton" destination="9rt-QG-NlJ" id="6aC-Jd-p4L"/>
                 <outlet property="bookmarkButton" destination="LNT-s5-BBY" id="eLZ-bw-7EG"/>
                 <outlet property="bottomBar" destination="hZW-qO-rvv" id="U5f-MO-oJ0"/>
-                <outlet property="customButton" destination="KVO-MV-PU3" id="WO6-OS-xiu"/>
-                <outlet property="customButton2" destination="l0C-Hm-dEm" id="bUO-zq-Apj"/>
                 <outlet property="forwardButton" destination="hJx-zz-ow8" id="7NC-9q-X17"/>
                 <outlet property="moreButton" destination="BFd-HB-iTN" id="4M8-j6-3at"/>
                 <outlet property="progressBar" destination="183" id="184"/>
@@ -61,43 +59,30 @@
                             </constraints>
                             <items>
                                 <barButtonItem style="plain" systemItem="flexibleSpace" id="l6j-iK-U6V"/>
-                                <barButtonItem enabled="NO" image="arrow-left.png" width="28" style="plain" id="9rt-QG-NlJ" userLabel="Back">
+                                <barButtonItem enabled="NO" image="left.png" width="28" style="plain" id="9rt-QG-NlJ" userLabel="Back">
                                     <inset key="imageInsets" minX="0.0" minY="2" maxX="0.0" maxY="-1"/>
                                     <connections>
                                         <action selector="goBack:" destination="-1" id="IYq-kP-pfY"/>
                                     </connections>
                                 </barButtonItem>
                                 <barButtonItem style="plain" systemItem="flexibleSpace" id="6s0-B2-FP1"/>
-                                <barButtonItem enabled="NO" image="arrow-right.png" width="43" style="plain" id="hJx-zz-ow8" userLabel="Forward">
+                                <barButtonItem enabled="NO" image="right.png" width="43" style="plain" id="hJx-zz-ow8" userLabel="Forward">
                                     <inset key="imageInsets" minX="0.0" minY="1" maxX="0.0" maxY="-1"/>
                                     <connections>
                                         <action selector="goForward:" destination="-1" id="0rp-TK-dkY"/>
                                     </connections>
                                 </barButtonItem>
                                 <barButtonItem style="plain" systemItem="flexibleSpace" id="3MH-u4-8zd"/>
-                                <barButtonItem image="configure.png" style="plain" id="BFd-HB-iTN" userLabel="More">
+                                <barButtonItem style="plain" systemItem="action" id="BFd-HB-iTN" userLabel="More">
                                     <connections>
                                         <action selector="showActionSheet:" destination="-1" id="D8I-NO-dFe"/>
                                     </connections>
                                 </barButtonItem>
                                 <barButtonItem style="plain" systemItem="flexibleSpace" id="Fsw-lv-dyq"/>
-                                <barButtonItem image="bookmarks.png" style="plain" id="LNT-s5-BBY" userLabel="Bookmarks">
-                                    <inset key="imageInsets" minX="0.0" minY="0.0" maxX="-5" maxY="0.0"/>
+                                <barButtonItem style="plain" systemItem="bookmarks" id="LNT-s5-BBY" userLabel="Bookmarks">
+                                    <inset key="imageInsets" minX="0.0" minY="0.0" maxX="-5" maxY="-7"/>
                                     <connections>
                                         <action selector="showBookmarks:" destination="-1" id="Vvq-aC-fzd"/>
-                                    </connections>
-                                </barButtonItem>
-                                <barButtonItem style="plain" systemItem="flexibleSpace" id="aal-KA-OyH"/>
-                                <barButtonItem title="Item2" style="plain" id="l0C-Hm-dEm" userLabel="Custom2">
-                                    <inset key="imageInsets" minX="0.0" minY="0.0" maxX="-1" maxY="0.0"/>
-                                    <connections>
-                                        <action selector="customButtonClick2:" destination="-1" id="j48-TT-SG8"/>
-                                    </connections>
-                                </barButtonItem>
-                                <barButtonItem style="plain" systemItem="flexibleSpace" id="Hmv-GA-Yfc"/>
-                                <barButtonItem title="Item" style="plain" id="KVO-MV-PU3" userLabel="Custom">
-                                    <connections>
-                                        <action selector="customButtonClick:" destination="-1" id="ZRJ-vr-H1a"/>
                                     </connections>
                                 </barButtonItem>
                             </items>
@@ -173,12 +158,12 @@
                                 <constraint firstAttribute="height" constant="1" id="AGc-cW-Lev"/>
                             </constraints>
                         </view>
-                        <scrollView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" restorationIdentifier="2222" bounces="NO" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hib-bh-wWG">
-                            <rect key="frame" x="0.0" y="40" width="716" height="23"/>
+                        <scrollView clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="2222" bounces="NO" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hib-bh-wWG">
+                            <rect key="frame" x="9" y="38" width="716" height="24"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jQR-GJ-1lz" userLabel="Border Line">
-                                    <rect key="frame" x="0.0" y="22" width="716" height="1"/>
+                                    <rect key="frame" x="0.0" y="24" width="716" height="1"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                     <color key="backgroundColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     <constraints>
@@ -188,34 +173,34 @@
                             </subviews>
                             <color key="backgroundColor" red="0.96847098210000004" green="0.96847098210000004" blue="0.96847098210000004" alpha="1" colorSpace="calibratedRGB"/>
                             <constraints>
-                                <constraint firstAttribute="bottom" secondItem="jQR-GJ-1lz" secondAttribute="bottom" id="Fyv-ij-7ZM"/>
-                                <constraint firstAttribute="height" constant="23" id="Ls0-Zq-Zdy"/>
-                                <constraint firstItem="jQR-GJ-1lz" firstAttribute="top" secondItem="hib-bh-wWG" secondAttribute="top" constant="22" id="rsy-qe-Fm4"/>
+                                <constraint firstAttribute="trailing" secondItem="jQR-GJ-1lz" secondAttribute="trailing" id="Emm-gQ-PZU"/>
+                                <constraint firstItem="jQR-GJ-1lz" firstAttribute="top" secondItem="hib-bh-wWG" secondAttribute="top" constant="24" id="HZO-wH-R0Z"/>
+                                <constraint firstAttribute="bottom" secondItem="jQR-GJ-1lz" secondAttribute="bottom" constant="-1" id="M1c-T9-ei9"/>
                             </constraints>
                         </scrollView>
                     </subviews>
                     <color key="backgroundColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstItem="jsC-vq-hdU" firstAttribute="top" secondItem="0v1-QK-7JK" secondAttribute="top" constant="7" id="5Xw-15-bdz"/>
-                        <constraint firstItem="hib-bh-wWG" firstAttribute="top" secondItem="hvD-c7-Tbf" secondAttribute="bottom" id="6c0-ZJ-eqP"/>
                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="62" id="7wR-5u-ew8"/>
-                        <constraint firstItem="wfS-T7-N2i" firstAttribute="leading" secondItem="hib-bh-wWG" secondAttribute="trailing" id="8JF-jz-Bry"/>
-                        <constraint firstItem="hib-bh-wWG" firstAttribute="leading" secondItem="0v1-QK-7JK" secondAttribute="leading" id="DdD-Do-GcP"/>
+                        <constraint firstItem="hib-bh-wWG" firstAttribute="leading" secondItem="Obc-6a-6xf" secondAttribute="leading" constant="9" id="LnQ-tk-RMu"/>
                         <constraint firstAttribute="bottom" secondItem="Obc-6a-6xf" secondAttribute="bottom" constant="-1" id="PNi-PO-AhV"/>
                         <constraint firstItem="hZW-qO-rvv" firstAttribute="leading" secondItem="jsC-vq-hdU" secondAttribute="trailing" id="SpB-Wz-j53"/>
-                        <constraint firstItem="jQR-GJ-1lz" firstAttribute="leading" secondItem="0v1-QK-7JK" secondAttribute="leading" id="W1T-iC-M8i"/>
+                        <constraint firstItem="jQR-GJ-1lz" firstAttribute="leading" secondItem="0v1-QK-7JK" secondAttribute="leading" constant="9" id="W1T-iC-M8i"/>
                         <constraint firstAttribute="trailing" secondItem="Obc-6a-6xf" secondAttribute="trailing" constant="-1" id="Xki-FB-Hez"/>
+                        <constraint firstItem="hib-bh-wWG" firstAttribute="top" secondItem="jsC-vq-hdU" secondAttribute="bottom" constant="1" id="YlE-ZV-dFD"/>
                         <constraint firstAttribute="trailing" secondItem="wfS-T7-N2i" secondAttribute="trailing" constant="1" id="ZuM-rk-NTC"/>
                         <constraint firstItem="hvD-c7-Tbf" firstAttribute="top" secondItem="0v1-QK-7JK" secondAttribute="top" constant="8" id="bQ5-Jw-Txq"/>
                         <constraint firstAttribute="height" constant="62" id="bet-vO-ERQ"/>
                         <constraint firstItem="Obc-6a-6xf" firstAttribute="leading" secondItem="0v1-QK-7JK" secondAttribute="leading" id="boc-uR-azz"/>
                         <constraint firstAttribute="trailing" secondItem="hZW-qO-rvv" secondAttribute="trailing" id="cag-JN-Klc"/>
                         <constraint firstItem="hZW-qO-rvv" firstAttribute="leading" secondItem="hvD-c7-Tbf" secondAttribute="trailing" constant="-1" id="fe7-vV-U6M"/>
+                        <constraint firstItem="Obc-6a-6xf" firstAttribute="top" secondItem="hib-bh-wWG" secondAttribute="bottom" id="jHI-uK-e5g"/>
                         <constraint firstItem="jsC-vq-hdU" firstAttribute="leading" secondItem="0v1-QK-7JK" secondAttribute="leading" constant="11" id="prX-ud-T3M"/>
                         <constraint firstItem="wfS-T7-N2i" firstAttribute="top" secondItem="hZW-qO-rvv" secondAttribute="bottom" id="pvF-rX-2xy"/>
+                        <constraint firstItem="wfS-T7-N2i" firstAttribute="leading" secondItem="hib-bh-wWG" secondAttribute="trailing" constant="-9" id="vmB-NA-GSg"/>
                         <constraint firstItem="hZW-qO-rvv" firstAttribute="top" secondItem="0v1-QK-7JK" secondAttribute="top" id="wfM-PY-ZuW"/>
-                        <constraint firstAttribute="bottom" secondItem="hib-bh-wWG" secondAttribute="bottom" constant="-1" id="whW-xA-9Ak"/>
-                        <constraint firstAttribute="trailing" secondItem="jQR-GJ-1lz" secondAttribute="trailing" constant="55" id="ymc-ch-3Ag"/>
+                        <constraint firstAttribute="trailing" secondItem="jQR-GJ-1lz" secondAttribute="trailing" constant="46" id="ymc-ch-3Ag"/>
                     </constraints>
                 </view>
                 <progressView hidden="YES" opaque="NO" contentMode="scaleToFill" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="183">
@@ -263,11 +248,9 @@
         </view>
     </objects>
     <resources>
-        <image name="arrow-left.png" width="20" height="20"/>
-        <image name="arrow-right.png" width="20" height="20"/>
-        <image name="bookmarks.png" width="40" height="40"/>
-        <image name="configure.png" width="40" height="40"/>
+        <image name="left.png" width="24" height="32"/>
         <image name="refresh.png" width="48" height="48"/>
+        <image name="right.png" width="24" height="32"/>
         <image name="tab_add.png" width="32" height="32"/>
     </resources>
 </document>

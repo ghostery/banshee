@@ -85,31 +85,40 @@
 
 -(IBAction) deleteItem:(id)sender {
 	NSArray *indexPaths = [NSArray arrayWithObject:indexPath];
-	NSManagedObject *bookmarkToDelete = [[bookmarksController bookmarks] objectAtIndex:[indexPath row]];
-	
-	[[bookmarksController bookmarks] removeObject:bookmarkToDelete];
-	[self deleteItemFromDB:bookmarkToDelete];
-	[[bookmarksController managedObjectContext] save:nil];
+    [self deleteFromBookmarks:[indexPath row]];
 	[tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:YES];
 	[tableView reloadData];
 }
 
-- (void) deleteItemFromDB:(NSManagedObject *) dbItem {
-    if ([[[dbItem entity] name] isEqualToString:@"Folder"]) {
-        NSFetchRequest *request = [[NSFetchRequest alloc] init];
-        NSEntityDescription *folderEntity = [NSEntityDescription entityForName:@"Folder" inManagedObjectContext:[bookmarksController managedObjectContext]];
-        NSPredicate *predicateF = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"Parent.name == '%@'", [dbItem valueForKey:@"name"]]];
-        [request setEntity:folderEntity];
-        [request setPredicate:predicateF];
-        for (id child in [[bookmarksController managedObjectContext] executeFetchRequest:request error:nil]) {
-            [self deleteItemFromDB:child];
-        }
-
+-(void)deleteFromBookmarks:(NSInteger)index {
+    
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    
+    if (bookmarksController.folderIndex == BOOKMARKS_ROOT)
+    {
+        [bookmarksController.folders removeObjectAtIndex:index];
     }
-    [[bookmarksController managedObjectContext] deleteObject:dbItem];
+    else
+    {
+        [bookmarksController.bookmarks removeObjectAtIndex:index];
+        NSMutableDictionary* folderDict = (NSMutableDictionary*)[[bookmarksController.folders objectAtIndex:bookmarksController.folderIndex] mutableCopy];
+        [folderDict setObject:bookmarksController.bookmarks forKey:@"bookmarks"];
+        [bookmarksController.folders setObject:folderDict atIndexedSubscript:bookmarksController.folderIndex];
+    }
+    
+    [defaults setObject:bookmarksController.folders forKey:FOLDERS_KEY];
+    [defaults synchronize];
+    [bookmarksController loadBookmarks];
 }
 
-
-
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    [self.deleteConfirmation setFrame:CGRectMake(self.tableView.frame.size.width - self.deleteConfirmation.frame.size.width,
+                                                 self.deleteConfirmation.frame.origin.y,
+                                                 self.deleteConfirmation.frame.size.width,
+                                                 self.deleteConfirmation.frame.size.height)];
+}
 
 @end
