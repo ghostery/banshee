@@ -512,10 +512,11 @@
         return;
     }
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:[url isEqualToString:@""] ? @"Menu" : url
-                                                       delegate:self cancelButtonTitle:@"Cancel"
-                                         destructiveButtonTitle:nil otherButtonTitles:nil];
-    
-    
+                                                       delegate:self 
+                                              cancelButtonTitle:nil
+                                         destructiveButtonTitle:nil 
+                                              otherButtonTitles:nil];
+
     // If a link was touched, add link-related buttons
     if ([tags rangeOfString:@",A,"].location != NSNotFound) {
         [sheet addButtonWithTitle:@"Open Link"];
@@ -530,6 +531,12 @@
     [sheet addButtonWithTitle:@"Save Page as Bookmark"];
     [sheet addButtonWithTitle:@"Open Page in Safari"];
     
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        sheet.cancelButtonIndex = -1;
+    } else {
+        sheet.cancelButtonIndex = [sheet addButtonWithTitle:@"Cancel"];
+    }
+
     [sheet showInView:_webView];
 }
 
