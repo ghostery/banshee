@@ -7,6 +7,7 @@
 
 #import "BookmarkFolderFormController.h"
 #import "BookmarksController.h"
+#import "BookmarksFormController.h"
 #import "BrowserViewController.h"
 
 @implementation BookmarkFolderFormController
@@ -67,6 +68,7 @@
         folderDict = (NSMutableDictionary*)[[bookmarksController.folders objectAtIndex:self.folderIndex] mutableCopy];
         [folderDict setObject:nameField.text forKey:@"title"];
         [foldersArray setObject:folderDict atIndexedSubscript:self.folderIndex];
+        self.folderIndex = [foldersArray count] - 1;
 	}
     
     [defaults setObject:foldersArray forKey:FOLDERS_KEY];
@@ -75,16 +77,20 @@
     //Reset the folder index back to the bookmarks root, since we're navigating back to the folder root
     bookmarksController.folderIndex = BOOKMARKS_ROOT;
 	//Reload all bC controllers on the navigation stack
-    for (BookmarksController* bC in self.navigationController.viewControllers)
+    BookmarksFormController *formController;
+    for (UIViewController* bC in self.navigationController.viewControllers)
     {
         if([bC isKindOfClass:[BookmarksController class]])
         {
-            [bC loadBookmarks];
-            [bC.tableView reloadData];
+            [(BookmarksController *) bC setFolderIndex:folderIndex];
+            [(BookmarksController *) bC loadBookmarks];
+            [((BookmarksController *) bC).tableView reloadData];
         }
     }
-	[self.navigationController popViewControllerAnimated:YES];
-    [bookmarksController.browserController dismissPopups];
+    
+    [self.navigationController popViewControllerAnimated:YES];
+    [[[self.navigationController viewControllers] lastObject] setMode:'P'];
+
 }
 
 - (void)didReceiveMemoryWarning {

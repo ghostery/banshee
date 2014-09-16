@@ -116,10 +116,14 @@
 }
 
 - (IBAction) folderSelect:(id)sender {
+    NSArray *vControllers = [self.navigationController viewControllers];
+	BookmarksController *bookmarksController = [vControllers objectAtIndex:([vControllers count] - 2)];
+    
 	BookmarksController *nextBookmarkController = [[BookmarksController alloc] init];
     [[NSBundle mainBundle] loadNibNamed:@"Bookmarks" owner:nextBookmarkController options:nil];
     [nextBookmarkController setBrowserController:self.browserController];
     [nextBookmarkController setMode:'P'];
+    [nextBookmarkController setFolderController:[bookmarksController folderController]];
     [nextBookmarkController setFolderIndex:BOOKMARKS_ROOT];
 	[self.navigationController pushViewController:nextBookmarkController animated:YES];
 }

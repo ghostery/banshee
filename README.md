@@ -35,6 +35,7 @@ The recommended way to integrate the browser code is to make your view controlle
 
 In the app delegate you should place this code in your `didFinishLaunchingWithOptions`:
 
+    self.window = [[BrowserMainWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [self.window setRootViewController:[[ViewController alloc] init]];
 
 Note: These instructions only work if you create an empty project file. If you create a different type of project like a "single page" app, you will have to use a different approach since story board files are pulled in via plist file.

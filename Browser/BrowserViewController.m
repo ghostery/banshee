@@ -51,6 +51,23 @@ typedef enum ScrollDirection {
     return self;
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder{
+    if ((self = [super initWithCoder:aDecoder])){
+        NSString *nibNameOrNil;
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+            nibNameOrNil = @"MainWindow";
+        } else {
+            nibNameOrNil = @"MainWindow-iPad";
+        }
+        
+        [self setView:
+         [[[NSBundle mainBundle] loadNibNamed:nibNameOrNil
+                                        owner:self
+                                      options:nil] objectAtIndex:0]];
+    }
+    return self;
+}
+
 - (void)viewDidLoad
 {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
@@ -592,7 +609,7 @@ typedef enum ScrollDirection {
 
 -(IBAction) showBookmarks:(id)sender {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
-    
+
     [self showBookmarksView:sender];
 }
 
@@ -601,12 +618,14 @@ typedef enum ScrollDirection {
     
     [self dismissPopups];
     [self.view bringSubviewToFront:self.bookmarksNavController.view];
+    self.bookmarksNavController.view.frame = CGRectMake(0, 0, self.bookmarksNavController.view.frame.size.width, [[UIScreen mainScreen] bounds].size.height);
     //Reload all bC controllers on the navigation stack
     for (BookmarksController* bC in self.bookmarksNavController.viewControllers)
     {
         if([bC isKindOfClass:[BookmarksController class]])
         {
             [bC loadBookmarks];
+            [bC setBrowserController:self];
             [bC.tableView reloadData];
         }
     }
@@ -632,7 +651,8 @@ typedef enum ScrollDirection {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
     // hide add bookmark for local html files
-    if ([[[_selectedTab webView] request].URL isFileURL]) {
+    NSURL *url = [[self webView].request URL];
+    if ([url isFileURL] || [[url absoluteString] isEqualToString:@"about:blank"]) {
         return [NSArray arrayWithObjects:@"Clear Cookies", @"Clear Cache", nil];
     } else {
         return [NSArray arrayWithObjects:@"Add Bookmark", @"Clear Cookies", @"Clear Cache", nil];
@@ -684,7 +704,8 @@ typedef enum ScrollDirection {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
     // skip add bookmarks if we are loading a local file
-    if ([[[_selectedTab webView] request].URL isFileURL]) {
+    NSURL *url = [[self webView].request URL];
+    if ([url isFileURL] || [[url absoluteString] isEqualToString:@"about:blank"]) {
         buttonIndex += 1;
     }
     // Add Bookmark

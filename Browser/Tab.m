@@ -17,10 +17,7 @@
  Counter that increments when webViewDidStartLoad: is called and decrements 
  when webViewDidFinishLoad: is called.
  */
-@property (assign) NSUInteger loadingCount;
-@property (nonatomic, strong) UILabel *tabTitle;
-@property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
-@property (nonatomic, assign) CGRect tabTitleFrame;
+
 
 @end
 
@@ -66,10 +63,10 @@
 		_closeButton.frame = CGRectMake(kTabWidth - 21.0, -1.0, 25.0, 25.0);
 		_closeButton.titleLabel.font = [UIFont systemFontOfSize:18];
 	
-        _tabTitleFrame = CGRectMake(3, 0, 80, 22);
+        _tabTitleFrame = CGRectMake(5, 1, 80, 22);
         _tabTitle = [[UILabel alloc] initWithFrame:_tabTitleFrame];
         _tabTitle.font = [UIFont systemFontOfSize:11];
-        _tabTitle.text = @"Untitled";
+        _tabTitle.text = @"New Tab";
         
 		// append views
         [_tabButton addSubview:_tabTitle];
@@ -413,7 +410,7 @@
     NSString *tabTitle = [webView stringByEvaluatingJavaScriptFromString:@"document.title"];
 //    NSString *url = [webView stringByEvaluatingJavaScriptFromString:@"window.location.href"];
     if ([tabTitle length] == 0) {
-        _tabTitle.text = @"Untitled";
+        _tabTitle.text = @"New Tab";
 //        [self setTitle:@"Untitled"];
     } else {
 //        [self setTitle:tabTitle];
@@ -463,7 +460,7 @@
 {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-    if (_actionSheetVisible || _webView != [_viewController webView]) {
+    if (_actionSheetVisible || _webView != [_viewController webView] || !(_viewController.isViewLoaded && _viewController.view.window)) {
         return;
     }
     CGPoint pt;
@@ -515,10 +512,11 @@
         return;
     }
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:[url isEqualToString:@""] ? @"Menu" : url
-                                                       delegate:self cancelButtonTitle:@"Cancel"
-                                         destructiveButtonTitle:nil otherButtonTitles:nil];
-    
-    
+                                                       delegate:self 
+                                              cancelButtonTitle:nil
+                                         destructiveButtonTitle:nil 
+                                              otherButtonTitles:nil];
+
     // If a link was touched, add link-related buttons
     if ([tags rangeOfString:@",A,"].location != NSNotFound) {
         [sheet addButtonWithTitle:@"Open Link"];
@@ -533,6 +531,12 @@
     [sheet addButtonWithTitle:@"Save Page as Bookmark"];
     [sheet addButtonWithTitle:@"Open Page in Safari"];
     
+    if ([_viewController isPad]) {
+        sheet.cancelButtonIndex = -1;
+    } else {
+        sheet.cancelButtonIndex = [sheet addButtonWithTitle:@"Cancel"];
+    }
+
     [sheet showInView:_webView];
 }
 
@@ -558,7 +562,9 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     LogTrace(@"%s", __PRETTY_FUNCTION__);
-    
+    if (buttonIndex == -1) {
+        return;
+    }
     NSURL *url = [NSURL URLWithString:[actionSheet title]];
     NSString *clickedButton = [actionSheet buttonTitleAtIndex:buttonIndex];
     if ([clickedButton isEqualToString:@"Open Link"]) {
