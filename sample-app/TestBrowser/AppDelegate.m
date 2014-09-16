@@ -8,14 +8,15 @@
 
 #import "AppDelegate.h"
 #import "BrowserViewController.h"
+#import "BrowserMainWindow.h"
 
 @implementation AppDelegate
 
-@synthesize window;
+@synthesize window, viewController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window = [[BrowserMainWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.viewController = [[BrowserViewController alloc] init];
     

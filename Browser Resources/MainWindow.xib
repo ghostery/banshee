@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment defaultVersion="1792" identifier="iOS"/>
+        <deployment defaultVersion="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <objects>
@@ -12,8 +12,6 @@
                 <outlet property="addressBarButtonsView" destination="7y0-oe-UCm" id="jNs-Mc-yDF"/>
                 <outlet property="backButton" destination="22" id="86"/>
                 <outlet property="bottomBar" destination="18" id="JQP-nv-gPU"/>
-                <outlet property="customButton" destination="72" id="219"/>
-                <outlet property="customButton2" destination="74" id="9nu-BN-KYd"/>
                 <outlet property="forwardButton" destination="20" id="87"/>
                 <outlet property="moreButton" destination="71" id="167"/>
                 <outlet property="progressBar" destination="212" id="213"/>
@@ -197,43 +195,30 @@
                         <constraint firstAttribute="height" constant="44" id="tAZ-Hf-gOT"/>
                     </constraints>
                     <items>
-                        <barButtonItem enabled="NO" image="arrow-left.png" width="28" style="plain" id="22" userLabel="Back">
+                        <barButtonItem enabled="NO" image="left.png" width="28" style="plain" id="22" userLabel="Back">
                             <inset key="imageInsets" minX="0.0" minY="2" maxX="0.0" maxY="-1"/>
                             <connections>
                                 <action selector="goBack:" destination="-1" id="31"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="184"/>
-                        <barButtonItem enabled="NO" image="arrow-right.png" width="43" style="plain" id="20" userLabel="Forward">
+                        <barButtonItem enabled="NO" image="right.png" width="43" style="plain" id="20" userLabel="Forward">
                             <inset key="imageInsets" minX="0.0" minY="1" maxX="0.0" maxY="-1"/>
                             <connections>
                                 <action selector="goForward:" destination="-1" id="30"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="185"/>
-                        <barButtonItem image="configure.png" style="plain" id="71" userLabel="More">
+                        <barButtonItem style="plain" systemItem="action" id="71" userLabel="More">
                             <connections>
                                 <action selector="showActionSheet:" destination="-1" id="166"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="186"/>
-                        <barButtonItem image="bookmarks.png" style="plain" id="73" userLabel="Bookmarks">
+                        <barButtonItem style="plain" systemItem="bookmarks" id="73" userLabel="Bookmarks">
                             <inset key="imageInsets" minX="0.0" minY="0.0" maxX="-5" maxY="0.0"/>
                             <connections>
                                 <action selector="showBookmarks:" destination="-1" id="183"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="187"/>
-                        <barButtonItem title="Item2" style="plain" id="74" userLabel="Custom2">
-                            <inset key="imageInsets" minX="0.0" minY="0.0" maxX="-1" maxY="0.0"/>
-                            <connections>
-                                <action selector="customButtonClick2:" destination="-1" id="GmA-yo-4Ao"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="188"/>
-                        <barButtonItem title="Item" style="plain" id="72" userLabel="Custom">
-                            <connections>
-                                <action selector="customButtonClick:" destination="-1" id="225"/>
                             </connections>
                         </barButtonItem>
                     </items>
@@ -281,11 +266,9 @@
         </view>
     </objects>
     <resources>
-        <image name="arrow-left.png" width="20" height="20"/>
-        <image name="arrow-right.png" width="20" height="20"/>
-        <image name="bookmarks.png" width="40" height="40"/>
-        <image name="configure.png" width="40" height="40"/>
+        <image name="left.png" width="24" height="32"/>
         <image name="refresh.png" width="48" height="48"/>
+        <image name="right.png" width="24" height="32"/>
         <image name="tab_add.png" width="32" height="32"/>
     </resources>
 </document>

@@ -9,98 +9,181 @@
 #import "BrowserViewController.h"
 #import "BookmarksFormController.h"
 #import "UIMainView.h"
+#import "Logging.h"
+
+@interface Tab ()
+
+/**
+ Counter that increments when webViewDidStartLoad: is called and decrements 
+ when webViewDidFinishLoad: is called.
+ */
+
+
+@end
 
 @implementation Tab
 
-@synthesize tabButton, webView, closeButton, tabTitle, history, traverse, history_position, scrollPosition, currentURLString, currentURL, current, urlConnection, connectionURLString, actionSheetVisible, loadStartTime, loadEndTime, pageInfoJS, response, viewController, loading;
-
 -(id) initWithFrame:(CGRect)frame addTarget:(BrowserViewController *) vc {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	if ((self = [super initWithFrame:frame])) {
-        viewController = vc;
+        _viewController = vc;
         NSString *path = [[NSBundle mainBundle] pathForResource:@"page_info" ofType:@"js"];
-        pageInfoJS = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+        _pageInfoJS = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
         
         
 		// Create tab button
 		[self setTabButton:[UIButton buttonWithType:UIButtonTypeCustom]];
 	
 		// Style tab button
-		[[tabButton layer] setCornerRadius: 5.0f];
-		[[tabButton layer] setMasksToBounds:YES];
-		[[tabButton layer] setBorderWidth: 0.5f];
+		[[_tabButton layer] setCornerRadius: 5.0f];
+		[[_tabButton layer] setMasksToBounds:YES];
+		[[_tabButton layer] setBorderWidth: 0.5f];
 	
-		[tabButton setBackgroundColor:[UIColor grayColor]];
+		[_tabButton setBackgroundColor:[UIColor grayColor]];
 	
-		tabButton.titleLabel.font = [UIFont systemFontOfSize: 11];
-		[tabButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+		_tabButton.titleLabel.font = [UIFont systemFontOfSize:11];
+		[_tabButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
 
-		tabButton.contentEdgeInsets = UIEdgeInsetsMake(0.0, 8.0, 0.0, 0.0);
-		tabButton.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-		tabButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+		_tabButton.contentEdgeInsets = UIEdgeInsetsMake(0.0, 8.0, 0.0, 0.0);
+		_tabButton.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+		_tabButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
 	
-		tabButton.frame = CGRectMake(0.0, 0.0, 100.0, 26.0);
+		_tabButton.frame = CGRectMake(0.0, 0.0, kTabWidth, 26.0);
+        
+        _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        _activityIndicator.frame = CGRectMake(5, 2, 20, 20);
 	
 		// Create close tab button
 		[self setCloseButton:[UIButton buttonWithType:UIButtonTypeCustom]];
 	
-		[closeButton setTitle:@"x" forState:UIControlStateNormal];
-        [closeButton setAccessibilityLabel:@"close tab"];
-		[closeButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-		closeButton.frame = CGRectMake(79.0, -1.0, 25.0, 25.0);
-		closeButton.titleLabel.font = [UIFont systemFontOfSize: 18];
+		[_closeButton setTitle:@"x" forState:UIControlStateNormal];
+        [_closeButton setAccessibilityLabel:@"close tab"];
+		[_closeButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+		_closeButton.frame = CGRectMake(kTabWidth - 21.0, -1.0, 25.0, 25.0);
+		_closeButton.titleLabel.font = [UIFont systemFontOfSize:18];
 	
+        _tabTitleFrame = CGRectMake(5, 1, 80, 22);
+        _tabTitle = [[UILabel alloc] initWithFrame:_tabTitleFrame];
+        _tabTitle.font = [UIFont systemFontOfSize:11];
+        _tabTitle.text = @"New Tab";
+        
 		// append views
-		[self addSubview:tabButton];
-		[self addSubview:closeButton];
+        [_tabButton addSubview:_tabTitle];
+		[self addSubview:_tabButton];
+		[self addSubview:_closeButton];
+        [self addSubview:_activityIndicator];
 	
 		// Set up webview
-        UIWebView *wvTemplate = (UIView *)[viewController webViewTemplate];
+        UIWebView *wvTemplate = (UIWebView *)[_viewController webViewTemplate];
         int minWebViewSize = wvTemplate.frame.size.height;
-        int maxWebViewSize = minWebViewSize + [viewController bottomBar].frame.size.height;
-        int height = [viewController bottomBar].alpha > 0.0 ? minWebViewSize : maxWebViewSize;
+        int maxWebViewSize = minWebViewSize + [_viewController bottomBar].frame.size.height;
+        int height = [_viewController bottomBar].alpha > 0.0 ? minWebViewSize : maxWebViewSize;
         CGRect frame = CGRectMake(wvTemplate.frame.origin.x, wvTemplate.frame.origin.y, wvTemplate.frame.size.width, height);
-		webView = [[UIWebView alloc] initWithFrame:frame];
-		webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-		webView.scalesPageToFit = true;
-        webView.scrollView.scrollEnabled = YES; 
-        webView.scrollView.bounces = YES;
-        webView.backgroundColor = [UIColor whiteColor];
-		[webView sizeToFit];
-		[webView setDelegate:self];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contextualMenuAction:) name:@"TapAndHoldNotification" object:nil];
+		_webView = [[UIWebView alloc] initWithFrame:frame];
+		_webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+		_webView.scalesPageToFit = true;
+        _webView.scrollView.scrollEnabled = YES;
+        _webView.scrollView.bounces = YES;
+        _webView.backgroundColor = [UIColor whiteColor];
+		[_webView sizeToFit];
+		[_webView setDelegate:self];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(contextualMenuAction:)
+                                                     name:@"TapAndHoldNotification"
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(startedLoadingNotification:)
+                                                     name:kStartedLoadingNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(finishedLoadingNotification:)
+                                                     name:kFinishedLoadingNotification
+                                                   object:nil];
         
         // Scroll topbar
-        [[webView scrollView] setDelegate:viewController];
-        [[webView scrollView] setContentInset:UIEdgeInsetsMake([viewController topBar].frame.size.height, 0, 0, 0)];
-        [[webView scrollView] setContentOffset:CGPointMake(0, - [viewController topBar].frame.size.height)];
+        [[_webView scrollView] setDelegate:_viewController];
+        [[_webView scrollView] setContentInset:UIEdgeInsetsMake([_viewController topBar].frame.size.height, 0, 0, 0)];
+        [[_webView scrollView] setContentOffset:CGPointMake(0, - [_viewController topBar].frame.size.height)];
         
-		[[viewController view] addSubview:webView];
-		[[viewController view] sendSubviewToBack:webView];
-        [[viewController view] sendSubviewToBack:[viewController webViewTemplate]];
+		[[_viewController view] addSubview:_webView];
+		[[_viewController view] sendSubviewToBack:_webView];
+        [[_viewController view] sendSubviewToBack:[_viewController webViewTemplate]];
 	
 		// Set up interactions
-		[tabButton addTarget:viewController 
-					action:@selector(selectTab:)
-					forControlEvents:UIControlEventTouchDown];
-		[closeButton addTarget:viewController 
-					action:@selector(removeTab:)
-					forControlEvents:UIControlEventTouchDown];
+		[_tabButton addTarget:_viewController
+                       action:@selector(selectTab:)
+                        forControlEvents:UIControlEventTouchDown];
+		[_closeButton addTarget:_viewController
+                         action:@selector(removeTab:)
+                        forControlEvents:UIControlEventTouchDown];
 		
         //Set history
         [self setHistory:[[NSMutableArray alloc] initWithCapacity:0]];
-        traverse = 0;
-        history_position = 0;
+        _traverse = 0;
+        _history_position = 0;
+        _loadingCount = 0;
 	
 		//Set title
-		[tabButton setTitle:@"New Tab" forState:UIControlStateNormal];
-		[tabButton setTitle:@"New Tab" forState:UIControlStateHighlighted];
+//		[_tabButton setTitle:@"New Tab" forState:UIControlStateNormal];
+//		[_tabButton setTitle:@"New Tab" forState:UIControlStateHighlighted];
         
 
 	}
 	return self;
 }
 
+- (void)startedLoadingNotification:(NSNotification *)notification {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    
+}
+
+- (void)finishedLoadingNotification:(NSNotification *)notification {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    
+}
+
+- (void)incrementLoadingCount {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    BOOL startedAtZero = NO;
+    if (_loadingCount == 0) {
+        startedAtZero = YES;
+    }
+    _loadingCount++;
+    if (startedAtZero) {
+        CGRect newTabButtonFrame = _tabTitle.frame;
+        CGFloat offset = _activityIndicator.frame.size.width + 5;
+        LogDebug(@"offset: %f", offset);
+        newTabButtonFrame.origin.x += offset;
+        newTabButtonFrame.size.width -= offset;
+        _tabTitle.frame = newTabButtonFrame;
+        [_activityIndicator startAnimating];
+    }
+}
+
+- (void)decrementLoadingCount {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    if (_loadingCount > 0) {
+        _loadingCount--;
+    }
+    if (_loadingCount == 0) {
+        [_activityIndicator stopAnimating];
+//        CGRect newTabButtonFrame = _tabTitle.frame;
+//        CGFloat offset = _activityIndicator.frame.size.width + 5;
+//        LogDebug(@"offset: %f", offset);
+//        newTabButtonFrame.origin.x -= offset;
+//        newTabButtonFrame.size.width += offset;
+        _tabTitle.frame = _tabTitleFrame;
+    }
+}
+
 -(void) setTitle:(NSString *)title {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
 	if ([title length] > 11) {
 		title = [[title substringToIndex:11] stringByAppendingString:@".."];
 	}
@@ -112,33 +195,43 @@
 }
 
 -(void) select {
-    current = YES;
-	[tabButton setBackgroundColor:[UIColor whiteColor]];
-	tabButton.selected = YES;
-	tabButton.enabled = NO;
-	[webView.superview bringSubviewToFront:webView];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    _current = YES;
+	[_tabButton setBackgroundColor:[UIColor whiteColor]];
+	_tabButton.selected = YES;
+	_tabButton.enabled = NO;
+	[_webView.superview bringSubviewToFront:_webView];
 	[self.superview bringSubviewToFront:self];
 }
 
 -(void) deselect {
-    current = NO;
-	[tabButton setBackgroundColor:[UIColor lightGrayColor]];
-	tabButton.selected = NO;
-	tabButton.enabled = YES;
-	[webView.superview sendSubviewToBack:webView];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    _current = NO;
+	[_tabButton setBackgroundColor:[UIColor lightGrayColor]];
+	_tabButton.selected = NO;
+	_tabButton.enabled = YES;
+	[_webView.superview sendSubviewToBack:_webView];
 	[self.superview sendSubviewToBack:self];
 }
 
 -(void) incrementOffset {
-	self.frame = CGRectOffset(self.frame, -100.0, 0.0);
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+	self.frame = CGRectOffset(self.frame, -kTabWidth, 0.0);
 }
 
 -(void) hideText {
-    [tabButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [_tabButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 }
 
 -(void) showText {
-    [tabButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [_tabButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
 }
 
 // CONNECTION
@@ -146,6 +239,8 @@
 #pragma mark urlConnection delegate
 
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     self.loading =YES;
     self.urlConnection = connection;
     self.connectionURLString = [[[connection currentRequest] URL] absoluteString];
@@ -166,18 +261,22 @@
 
 - (void)connection: (NSURLConnection*) connection didReceiveResponse: (NSHTTPURLResponse*) response
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     self.currentURL = [response URL];
     self.currentURLString = [[response URL] absoluteString];
     [self setResponse:response];
-    if (current) {
+    if (_current) {
         [[self progressBar] setProgress:0.25 animated:NO];
     }
-    pageData = [[NSMutableData alloc] initWithLength:0];
+    _pageData = [[NSMutableData alloc] initWithLength:0];
 }
 
 - (void) connection: (NSURLConnection*) connection didReceiveData: (NSData*) data
 {
-    [pageData appendData: data];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [_pageData appendData: data];
     if ([[self progressBar] progress] < 0.75) {
         [[self progressBar] setProgress:[[self progressBar] progress] + .05 animated:NO];
     }
@@ -185,61 +284,76 @@
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    NSURLRequest *request = [connection originalRequest];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-    if ([pageData length] == 0) {
+//    NSURLRequest *request = [connection originalRequest];/
+    
+    if ([_pageData length] == 0) {
         [[self history] removeLastObject];
         self.currentURL = [[[self history] lastObject] URL];
         self.currentURLString = [[[[self history] lastObject] URL] absoluteString];
-        if (current && ![currentURLString isEqualToString:@"about:blank"] && [currentURLString rangeOfString:@"https://duckduckgo.com"].location == NSNotFound) {
-            [[viewController addressBar] setText:self.currentURLString];
+        if (_current && ![_currentURLString isEqualToString:@"about:blank"] &&
+            [_currentURLString rangeOfString:@"https://duckduckgo.com"].location == NSNotFound)
+        {
+            [[_viewController addressBar] setText:self.currentURLString];
         }
         
         [[self progressBar] setHidden:YES];
         return;
     }
-    if ([[response MIMEType] isEqualToString:@"text/html"] || [[response MIMEType] isEqualToString:@"application/xhtml+xml"] || [[response MIMEType] isEqualToString:@"text/vnd.wap.wml"]) {
-        NSStringEncoding *enc;
-        if ([response textEncodingName] != nil) {
-            enc = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)[response textEncodingName]));
-        } else {
-            enc = NSUTF8StringEncoding;
+    if ([[_response MIMEType] isEqualToString:@"text/html"] ||
+        [[_response MIMEType] isEqualToString:@"application/xhtml+xml"] ||
+        [[_response MIMEType] isEqualToString:@"text/vnd.wap.wml"])
+    {
+        NSStringEncoding enc = NSUTF8StringEncoding;
+        if ([_response textEncodingName] != nil) {
+            enc = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)[_response textEncodingName]));
         }
-        NSString *page = (NSString *)[[NSString alloc] initWithData:pageData encoding:enc];
+        NSString *page = (NSString *)[[NSString alloc] initWithData:_pageData encoding:enc];
         
         [[self webView] stopLoading];
         [[self webView] loadHTMLString:page baseURL:self.currentURL];
         
     } else {
         [[self webView] stopLoading];
-        [[self webView] loadData:pageData MIMEType:[response MIMEType] textEncodingName:[response textEncodingName] baseURL:self.currentURL];
+        [[self webView] loadData:_pageData MIMEType:[_response MIMEType] textEncodingName:[_response textEncodingName] baseURL:self.currentURL];
         //[whiteView setHidden:YES];
     }
     
     [[self progressBar] setProgress:0.75 animated:NO];
-    pageData = nil;
+    _pageData = nil;
     
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [[self progressBar] setHidden:YES];
     if ([[connection currentRequest] URL] != NULL) {
-        [viewController cannotConnect:webView];
+        [_viewController cannotConnect:_webView];
     } else {
-    NSString *urlAddress = @"";
      [[self webView] loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"launch" ofType:@"html"]isDirectory:NO]]];
-     [[viewController addressBar] setText:@""];
+     [[_viewController addressBar] setText:@""];
     }
 }
 
--(UIProgressView *) progressBar {
-    return current ? [viewController progressBar] : nil;
+- (UIProgressView *)progressBar {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    return _current ? [_viewController progressBar] : nil;
+}
+
+- (void)loadingBegan {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    
 }
 
 #pragma mark -
 #pragma mark webview delegate
 
 -(BOOL) webView:(UIWebView*)webView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
     
     if (request == nil) {
         return NO;
@@ -258,10 +372,10 @@
                 return YES;
             }
             if ([[URL scheme] isEqualToString:@"http"] || [[URL scheme] isEqualToString:@"https"]) {
-                if (current) {
-                    [[viewController addressBar] setText:[URL absoluteString]];
+                if (_current) {
+                    [[_viewController addressBar] setText:[URL absoluteString]];
                 }
-                [viewController gotoAddress:nil withRequestObj:request inTab:self];
+                [_viewController gotoAddress:nil withRequestObj:request inTab:self];
             }
             return NO;
         }
@@ -270,30 +384,50 @@
 }
 
 -(void) webViewDidStartLoad:(UIWebView *)webView {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    if (_loadingCount == 0) {
+        _isLoading = YES;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kStartedLoadingNotification object:self];
+    }
+    [self incrementLoadingCount];
+    LogDebug(@"loading count: %lu", (unsigned long)_loadingCount);
 }
 
 -(void) webViewDidFinishFinalLoad:(UIWebView *)webView {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+//    _loadingCount--;
+//    LogDebug(@"loading count: %lu", (unsigned long)_loadingCount);
     self.loading = NO;
-    if (current) {
-        [viewController currentWebViewDidFinishFinalLoad:webView];
+    if (_current) {
+        [_viewController currentWebViewDidFinishFinalLoad:webView];
     }
     
     NSLog(@"Loaded url: %@", [webView.request mainDocumentURL]);
     
     // set title
     NSString *tabTitle = [webView stringByEvaluatingJavaScriptFromString:@"document.title"];
-    NSString *url = [webView stringByEvaluatingJavaScriptFromString:@"window.location.href"];
+//    NSString *url = [webView stringByEvaluatingJavaScriptFromString:@"window.location.href"];
     if ([tabTitle length] == 0) {
-        [self setTitle:@"Untitled"];
+        _tabTitle.text = @"New Tab";
+//        [self setTitle:@"Untitled"];
     } else {
-        [self setTitle:tabTitle];
+//        [self setTitle:tabTitle];
+        _tabTitle.text = tabTitle;
     }
 }
 
 -(void) webViewDidFinishLoad:(UIWebView *)webView {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
     
-    
-    if (![[[webView request] URL] isFileURL] && currentURL != nil) {
+    [self decrementLoadingCount];
+    LogDebug(@"loading count: %lu", (unsigned long)_loadingCount);
+    if (_loadingCount == 0) {
+        _isLoading = NO;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kFinishedLoadingNotification object:self];
+    }
+    if (![[[webView request] URL] isFileURL] && _currentURL != nil) {
         [webView stringByEvaluatingJavaScriptFromString:@"if (document.getElementById('gh-page-loaded') == null && document.documentElement.innerHTML != '<head></head><body></body>') {"
          "var iframe = document.createElement('IFRAME');"
          "iframe.setAttribute('id','gh-page-loaded');"
@@ -305,9 +439,28 @@
     }
 }
 
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    LogDebug(@"error: %@", error);
+    
+    BOOL wasLoadingBeforeDecrement = NO;
+    if (_loadingCount > 0) {
+        wasLoadingBeforeDecrement = YES;
+    }
+    [self decrementLoadingCount];
+    if (wasLoadingBeforeDecrement && _loadingCount == 0) {
+        _isLoading = NO;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kFinishedLoadingNotification object:self];
+    }
+    LogDebug(@"loading count: %lu", (unsigned long)_loadingCount);
+}
+
 - (void)contextualMenuAction:(NSNotification*)notification
 {
-    if (actionSheetVisible || webView != [viewController webView]) {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    if (_actionSheetVisible || _webView != [_viewController webView] || !(_viewController.isViewLoaded && _viewController.view.window)) {
         return;
     }
     CGPoint pt;
@@ -316,11 +469,11 @@
     pt.y = [[coord objectForKey:@"y"] floatValue];
     
     // convert point from window to view coordinate system
-    pt = [webView convertPoint:pt fromView:nil];
+    pt = [_webView convertPoint:pt fromView:nil];
     
     // convert point from view to HTML coordinate system
-    CGPoint offset  = [self scrollOffset];
-    CGSize viewSize = [webView frame].size;
+//    CGPoint offset  = [self scrollOffset];
+    CGSize viewSize = [_webView frame].size;
     CGSize windowSize = [self windowSize];
     
     CGFloat f = windowSize.width / viewSize.width;
@@ -332,21 +485,23 @@
 
 - (void)openContextualMenuAt:(CGPoint)pt
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     // Load the JavaScript code from the Resources and inject it into the web page
     NSString *path = [[NSBundle mainBundle] pathForResource:@"JSTools" ofType:@"js"];
     NSString *jsCode = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-    [webView stringByEvaluatingJavaScriptFromString: jsCode];
+    [_webView stringByEvaluatingJavaScriptFromString:jsCode];
     
     NSInteger topOffset;
-    if ([viewController isPad]) {
-        topOffset = ((NSInteger)[viewController topBar].frame.size.height) +
-        ((NSInteger)[(UIMainView *)[viewController view] statusBarView].frame.size.height);
+    if ([_viewController isPad]) {
+        topOffset = ((NSInteger)[_viewController topBar].frame.size.height) +
+        ((NSInteger)[(UIMainView *)[_viewController view] statusBarView].frame.size.height);
     } else {
-        topOffset = ((NSInteger)[(UIMainView *)[viewController view] statusBarView].frame.size.height);
+        topOffset = ((NSInteger)[(UIMainView *)[_viewController view] statusBarView].frame.size.height);
     }
     
     // get the Tags at the touch location
-    NSArray *r = [[webView stringByEvaluatingJavaScriptFromString:
+    NSArray *r = [[_webView stringByEvaluatingJavaScriptFromString:
                       [NSString stringWithFormat:@"MyAppGetHTMLElementsAtPoint(%i,%i);",(NSInteger)pt.x,(NSInteger)pt.y - topOffset]] componentsSeparatedByString:@"|"];
     
     NSString *tags = [r objectAtIndex:0];
@@ -357,10 +512,11 @@
         return;
     }
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:[url isEqualToString:@""] ? @"Menu" : url
-                                                       delegate:self cancelButtonTitle:@"Cancel"
-                                         destructiveButtonTitle:nil otherButtonTitles:nil];
-    
-    
+                                                       delegate:self 
+                                              cancelButtonTitle:nil
+                                         destructiveButtonTitle:nil 
+                                              otherButtonTitles:nil];
+
     // If a link was touched, add link-related buttons
     if ([tags rangeOfString:@",A,"].location != NSNotFound) {
         [sheet addButtonWithTitle:@"Open Link"];
@@ -375,32 +531,46 @@
     [sheet addButtonWithTitle:@"Save Page as Bookmark"];
     [sheet addButtonWithTitle:@"Open Page in Safari"];
     
-    [sheet showInView:webView];
+    if ([_viewController isPad]) {
+        sheet.cancelButtonIndex = -1;
+    } else {
+        sheet.cancelButtonIndex = [sheet addButtonWithTitle:@"Cancel"];
+    }
+
+    [sheet showInView:_webView];
 }
 
 - (CGSize)windowSize
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     CGSize size;
-    size.width = [[webView stringByEvaluatingJavaScriptFromString:@"window.innerWidth"] integerValue];
-    size.height = [[webView stringByEvaluatingJavaScriptFromString:@"window.innerHeight"] integerValue];
+    size.width = [[_webView stringByEvaluatingJavaScriptFromString:@"window.innerWidth"] integerValue];
+    size.height = [[_webView stringByEvaluatingJavaScriptFromString:@"window.innerHeight"] integerValue];
     return size;
 }
 
 - (CGPoint)scrollOffset
 {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     CGPoint pt;
-    pt.x = [[webView stringByEvaluatingJavaScriptFromString:@"window.pageXOffset"] integerValue];
-    pt.y = [[webView stringByEvaluatingJavaScriptFromString:@"window.pageYOffset"] integerValue];
+    pt.x = [[_webView stringByEvaluatingJavaScriptFromString:@"window.pageXOffset"] integerValue];
+    pt.y = [[_webView stringByEvaluatingJavaScriptFromString:@"window.pageYOffset"] integerValue];
     return pt;
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    if (buttonIndex == -1) {
+        return;
+    }
     NSURL *url = [NSURL URLWithString:[actionSheet title]];
     NSString *clickedButton = [actionSheet buttonTitleAtIndex:buttonIndex];
     if ([clickedButton isEqualToString:@"Open Link"]) {
-        [viewController gotoAddress:nil withRequestObj:[[NSURLRequest alloc] initWithURL:url] inTab:self];
+        [_viewController gotoAddress:nil withRequestObj:[[NSURLRequest alloc] initWithURL:url] inTab:self];
     } else if ([clickedButton isEqualToString:@"Open Link in New Tab"]) {
-        [viewController addTabWithAddress:[actionSheet title]];
+        [_viewController addTabWithAddress:[actionSheet title]];
     } else if ([clickedButton isEqualToString:@"Copy Link"]) {
         UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
         pasteboard.string = [url absoluteString];
@@ -409,8 +579,8 @@
         UIImage *imageToBeSaved = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:url]];
         UIImageWriteToSavedPhotosAlbum(imageToBeSaved, nil, nil, nil);
     } else if ([clickedButton isEqualToString:@"Save Page as Bookmark"]) {
-        [[viewController bookmarksFormController] setDefaultUrlFieldText:[url absoluteString]];
-        [viewController addBookmarkFromSheet:actionSheet];
+        [[_viewController bookmarksFormController] setDefaultUrlFieldText:[url absoluteString]];
+        [_viewController addBookmarkFromSheet:actionSheet];
         [actionSheet resignFirstResponder];
     } else if ([clickedButton isEqualToString:@"Open Page in Safari"]) {
         [actionSheet dismissWithClickedButtonIndex:buttonIndex animated:YES];
@@ -419,60 +589,82 @@
 }
 
 - (void)didPresentActionSheet:(UIActionSheet *)actionSheet {
-    actionSheetVisible = YES;
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    _actionSheetVisible = YES;
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    actionSheetVisible = NO;
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    _actionSheetVisible = NO;
 }
 
 
 // HISTORY
 
 -(BOOL) canGoBack {
-    return history.count > 0 && history_position > 0;
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    return _history.count > 0 && _history_position > 0;
 }
 
 -(BOOL) canGoForward {
-    return history.count > 0 && history_position < history.count - 1;
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    return _history.count > 0 && _history_position < _history.count - 1;
 }
 
 -(void) goBack {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [self go:-1];
 }
 
 -(void) goForward {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
     [self go:1];
 }
 
 -(void) go:(int)t {
-    NSArray *req;
-    [viewController forwardButton].enabled = FALSE;
-    [viewController backButton].enabled = FALSE;
-    traverse = t;
-    history_position += traverse;
-    if (history_position >= [history count] || history_position < 0) {
-        req = [history lastObject];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    NSURLRequest *req;
+    [_viewController forwardButton].enabled = FALSE;
+    [_viewController backButton].enabled = FALSE;
+    _traverse = t;
+    _history_position += _traverse;
+    if (_history_position >= [_history count] || _history_position < 0) {
+        req = [_history lastObject];
     }
-     req = [history objectAtIndex:history_position];
+     req = [_history objectAtIndex:_history_position];
     
     //[[viewController addressBar] setText:[[req URL] absoluteString]];
     if (req != nil) {
-        [viewController gotoAddress:nil withRequestObj:req inTab:self];
+        [_viewController gotoAddress:nil withRequestObj:req inTab:self];
     }
 }
 
 -(void) updateHistory {
-    if (traverse == 0) {
-        if (history_position + 1 < history.count) {
-            [history removeObjectsInRange:NSMakeRange(history_position + 1, history.count - history_position - 1)];
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    if (_traverse == 0) {
+        if (_history_position + 1 < _history.count) {
+            [_history removeObjectsInRange:NSMakeRange(_history_position + 1, _history.count - _history_position - 1)];
         }
         NSURLRequest *req = [[[self urlConnection] currentRequest] mutableCopy];
         
-        [history addObject:req];
-        history_position = history.count - 1;
+        [_history addObject:req];
+        _history_position = _history.count - 1;
     }
-    traverse = 0;
+    _traverse = 0;
+}
+
+- (void)dealloc {
+    LogTrace(@"%s", __PRETTY_FUNCTION__);
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 

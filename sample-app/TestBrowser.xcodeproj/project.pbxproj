@@ -7,22 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		71ED23B819447163002ACD24 /* BrowserDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 71ED23B5194470B2002ACD24 /* BrowserDelegate.m */; };
 		B572E55718D08D2A005E4834 /* Tab.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E54718D08D2A005E4834 /* Tab.m */; };
 		B572E55818D08D2A005E4834 /* BookmarksController.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E54818D08D2A005E4834 /* BookmarksController.m */; };
 		B572E55918D08D2A005E4834 /* BookmarksFormController.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E54A18D08D2A005E4834 /* BookmarksFormController.m */; };
 		B572E55A18D08D2A005E4834 /* BrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E54C18D08D2A005E4834 /* BrowserViewController.m */; };
 		B572E55B18D08D2A005E4834 /* UIMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E54F18D08D2A005E4834 /* UIMainView.m */; };
 		B572E55C18D08D2A005E4834 /* BookmarkFolderFormController.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E55118D08D2A005E4834 /* BookmarkFolderFormController.m */; };
-		B572E55D18D08D2A005E4834 /* BookmarkImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E55318D08D2A005E4834 /* BookmarkImporter.m */; };
 		B572E55E18D08D2A005E4834 /* BookmarkItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B572E55518D08D2A005E4834 /* BookmarkItem.m */; };
 		B5A210C218D091F700D65141 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A210C118D091F700D65141 /* Reachability.m */; };
+		B5E88BDA19A68C5D0021ED10 /* BrowserMainWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E88BD919A68C5D0021ED10 /* BrowserMainWindow.m */; };
+		B5E88C1F19A697490021ED10 /* JSTools.js in Sources */ = {isa = PBXBuildFile; fileRef = FAF75EE118A17BFD007B317D /* JSTools.js */; };
+		B5E88C2019A698DF0021ED10 /* JSTools.js in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EE118A17BFD007B317D /* JSTools.js */; };
+		FA157C3019941ACB0002C146 /* bookmarks.strings in Resources */ = {isa = PBXBuildFile; fileRef = FA157C2F19941ACB0002C146 /* bookmarks.strings */; };
+		FA3CD2AD1993D98800B3ACF0 /* right.png in Resources */ = {isa = PBXBuildFile; fileRef = FA3CD2AB1993D98800B3ACF0 /* right.png */; };
+		FA3CD2AE1993D98800B3ACF0 /* left.png in Resources */ = {isa = PBXBuildFile; fileRef = FA3CD2AC1993D98800B3ACF0 /* left.png */; };
 		FAA4557418A19A2E00B1BDF4 /* gsearch.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA4557118A19A2E00B1BDF4 /* gsearch.png */; };
 		FAA4557518A19A2E00B1BDF4 /* magglass.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA4557218A19A2E00B1BDF4 /* magglass.png */; };
 		FAA4557618A19A2E00B1BDF4 /* tab_add.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA4557318A19A2E00B1BDF4 /* tab_add.png */; };
 		FAA4557918A19D9500B1BDF4 /* unable_to_connect.html in Resources */ = {isa = PBXBuildFile; fileRef = FAA4557818A19D9500B1BDF4 /* unable_to_connect.html */; };
 		FAA4557B18A19F1E00B1BDF4 /* configure.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA4557A18A19F1E00B1BDF4 /* configure.png */; };
 		FAA4557D18A19F7A00B1BDF4 /* bookmarks.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA4557C18A19F7A00B1BDF4 /* bookmarks.png */; };
+		FAB6B8FF19945091001666A7 /* folder.png in Resources */ = {isa = PBXBuildFile; fileRef = FAB6B8FE19945091001666A7 /* folder.png */; };
 		FAC9B25E16F27BF800E37710 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B25D16F27BF800E37710 /* UIKit.framework */; };
 		FAC9B26016F27BF800E37710 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B25F16F27BF800E37710 /* Foundation.framework */; };
 		FAC9B26216F27BF800E37710 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B26116F27BF800E37710 /* CoreGraphics.framework */; };
@@ -34,7 +39,6 @@
 		FAC9B27416F27BF800E37710 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC9B27316F27BF800E37710 /* Default-568h@2x.png */; };
 		FAC9B27716F27BF800E37710 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC9B27616F27BF800E37710 /* ViewController.m */; };
 		FAC9B3B116F3863500E37710 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B3B016F3863500E37710 /* libxml2.2.dylib */; };
-		FAC9B3B516F38C6500E37710 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B3B416F38C6500E37710 /* CoreData.framework */; };
 		FAC9B3B916F38D3700E37710 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC9B3B816F38D3700E37710 /* SystemConfiguration.framework */; };
 		FAF75E9618A17A77007B317D /* BookmarkFoldersForm.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF75E8118A17A77007B317D /* BookmarkFoldersForm.xib */; };
 		FAF75E9718A17A77007B317D /* BookmarkItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF75E8218A17A77007B317D /* BookmarkItem.xib */; };
@@ -44,48 +48,45 @@
 		FAF75EA518A17A77007B317D /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF75E9118A17A77007B317D /* MainWindow-iPad.xib */; };
 		FAF75EA618A17A77007B317D /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF75E9218A17A77007B317D /* MainWindow.xib */; };
 		FAF75EA718A17A77007B317D /* Bookmarks.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF75E9318A17A77007B317D /* Bookmarks.xib */; };
-		FAF75EA818A17A77007B317D /* BrowserModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FAF75E9418A17A77007B317D /* BrowserModel.xcdatamodeld */; };
-		FAF75EE218A17BFD007B317D /* BrowserModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FAF75ED418A17BFD007B317D /* BrowserModel.xcdatamodeld */; };
-		FAF75EE318A17BFD007B317D /* arrow-left.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75ED718A17BFD007B317D /* arrow-left.png */; };
-		FAF75EE418A17BFD007B317D /* arrow-right.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75ED818A17BFD007B317D /* arrow-right.png */; };
 		FAF75EE518A17BFD007B317D /* bookmark.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75ED918A17BFD007B317D /* bookmark.png */; };
 		FAF75EE618A17BFD007B317D /* cell_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EDA18A17BFD007B317D /* cell_arrow.png */; };
 		FAF75EE718A17BFD007B317D /* delete_circle.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EDB18A17BFD007B317D /* delete_circle.png */; };
-		FAF75EE818A17BFD007B317D /* folder.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EDC18A17BFD007B317D /* folder.png */; };
 		FAF75EE918A17BFD007B317D /* gray-pixel.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EDD18A17BFD007B317D /* gray-pixel.png */; };
 		FAF75EEA18A17BFD007B317D /* iphone_delete_button.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EDE18A17BFD007B317D /* iphone_delete_button.png */; };
 		FAF75EEB18A17BFD007B317D /* refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EDF18A17BFD007B317D /* refresh.png */; };
 		FAF75EEC18A17BFD007B317D /* tabs.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF75EE018A17BFD007B317D /* tabs.png */; };
-		FAF75EED18A17BFD007B317D /* JSTools.js in Sources */ = {isa = PBXBuildFile; fileRef = FAF75EE118A17BFD007B317D /* JSTools.js */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		71ED23B4194470B2002ACD24 /* BrowserDelegate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BrowserDelegate.h; path = ../Browser/BrowserDelegate.h; sourceTree = "<group>"; };
-		71ED23B5194470B2002ACD24 /* BrowserDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserDelegate.m; path = ../Browser/BrowserDelegate.m; sourceTree = "<group>"; };
+		4B1C68B2197DEC050014AB79 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		B572E54718D08D2A005E4834 /* Tab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Tab.m; path = ../Browser/Tab.m; sourceTree = "<group>"; };
-		B572E54818D08D2A005E4834 /* BookmarksController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BookmarksController.m; path = ../Browser/BookmarksController.m; sourceTree = "<group>"; };
-		B572E54918D08D2A005E4834 /* BookmarksFormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BookmarksFormController.h; path = ../Browser/BookmarksFormController.h; sourceTree = "<group>"; };
-		B572E54A18D08D2A005E4834 /* BookmarksFormController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BookmarksFormController.m; path = ../Browser/BookmarksFormController.m; sourceTree = "<group>"; };
+		B572E54818D08D2A005E4834 /* BookmarksController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarksController.m; sourceTree = "<group>"; };
+		B572E54918D08D2A005E4834 /* BookmarksFormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarksFormController.h; sourceTree = "<group>"; };
+		B572E54A18D08D2A005E4834 /* BookmarksFormController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarksFormController.m; sourceTree = "<group>"; };
 		B572E54B18D08D2A005E4834 /* BrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserViewController.h; path = ../Browser/BrowserViewController.h; sourceTree = "<group>"; };
 		B572E54C18D08D2A005E4834 /* BrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserViewController.m; path = ../Browser/BrowserViewController.m; sourceTree = "<group>"; };
 		B572E54D18D08D2A005E4834 /* Tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tab.h; path = ../Browser/Tab.h; sourceTree = "<group>"; };
 		B572E54E18D08D2A005E4834 /* UIMainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIMainView.h; path = ../Browser/UIMainView.h; sourceTree = "<group>"; };
 		B572E54F18D08D2A005E4834 /* UIMainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIMainView.m; path = ../Browser/UIMainView.m; sourceTree = "<group>"; };
-		B572E55018D08D2A005E4834 /* BookmarkFolderFormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BookmarkFolderFormController.h; path = ../Browser/BookmarkFolderFormController.h; sourceTree = "<group>"; };
-		B572E55118D08D2A005E4834 /* BookmarkFolderFormController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BookmarkFolderFormController.m; path = ../Browser/BookmarkFolderFormController.m; sourceTree = "<group>"; };
-		B572E55218D08D2A005E4834 /* BookmarkImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BookmarkImporter.h; path = ../Browser/BookmarkImporter.h; sourceTree = "<group>"; };
-		B572E55318D08D2A005E4834 /* BookmarkImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BookmarkImporter.m; path = ../Browser/BookmarkImporter.m; sourceTree = "<group>"; };
-		B572E55418D08D2A005E4834 /* BookmarkItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BookmarkItem.h; path = ../Browser/BookmarkItem.h; sourceTree = "<group>"; };
-		B572E55518D08D2A005E4834 /* BookmarkItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BookmarkItem.m; path = ../Browser/BookmarkItem.m; sourceTree = "<group>"; };
-		B572E55618D08D2A005E4834 /* BookmarksController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BookmarksController.h; path = ../Browser/BookmarksController.h; sourceTree = "<group>"; };
+		B572E55018D08D2A005E4834 /* BookmarkFolderFormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkFolderFormController.h; sourceTree = "<group>"; };
+		B572E55118D08D2A005E4834 /* BookmarkFolderFormController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkFolderFormController.m; sourceTree = "<group>"; };
+		B572E55418D08D2A005E4834 /* BookmarkItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkItem.h; sourceTree = "<group>"; };
+		B572E55518D08D2A005E4834 /* BookmarkItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkItem.m; sourceTree = "<group>"; };
+		B572E55618D08D2A005E4834 /* BookmarksController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarksController.h; sourceTree = "<group>"; };
 		B5A210C018D091F700D65141 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = ../Browser/Reachability.h; sourceTree = "<group>"; };
 		B5A210C118D091F700D65141 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = ../Browser/Reachability.m; sourceTree = "<group>"; };
+		B5E88BD819A68C5D0021ED10 /* BrowserMainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserMainWindow.h; sourceTree = "<group>"; };
+		B5E88BD919A68C5D0021ED10 /* BrowserMainWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowserMainWindow.m; sourceTree = "<group>"; };
+		FA157C2F19941ACB0002C146 /* bookmarks.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = bookmarks.strings; sourceTree = "<group>"; };
+		FA3CD2AB1993D98800B3ACF0 /* right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = right.png; sourceTree = "<group>"; };
+		FA3CD2AC1993D98800B3ACF0 /* left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = left.png; sourceTree = "<group>"; };
 		FAA4557118A19A2E00B1BDF4 /* gsearch.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gsearch.png; sourceTree = "<group>"; };
 		FAA4557218A19A2E00B1BDF4 /* magglass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = magglass.png; sourceTree = "<group>"; };
 		FAA4557318A19A2E00B1BDF4 /* tab_add.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tab_add.png; sourceTree = "<group>"; };
 		FAA4557818A19D9500B1BDF4 /* unable_to_connect.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = unable_to_connect.html; sourceTree = "<group>"; };
 		FAA4557A18A19F1E00B1BDF4 /* configure.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = configure.png; sourceTree = "<group>"; };
 		FAA4557C18A19F7A00B1BDF4 /* bookmarks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bookmarks.png; sourceTree = "<group>"; };
+		FAB6B8FE19945091001666A7 /* folder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = folder.png; sourceTree = "<group>"; };
 		FAC9B25A16F27BF800E37710 /* TestBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC9B25D16F27BF800E37710 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FAC9B25F16F27BF800E37710 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -102,7 +103,6 @@
 		FAC9B27516F27BF800E37710 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		FAC9B27616F27BF800E37710 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		FAC9B3B016F3863500E37710 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
-		FAC9B3B416F38C6500E37710 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		FAC9B3B816F38D3700E37710 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		FAF75E8118A17A77007B317D /* BookmarkFoldersForm.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BookmarkFoldersForm.xib; sourceTree = "<group>"; };
 		FAF75E8218A17A77007B317D /* BookmarkItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BookmarkItem.xib; sourceTree = "<group>"; };
@@ -112,14 +112,9 @@
 		FAF75E9118A17A77007B317D /* MainWindow-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "MainWindow-iPad.xib"; sourceTree = "<group>"; };
 		FAF75E9218A17A77007B317D /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		FAF75E9318A17A77007B317D /* Bookmarks.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Bookmarks.xib; sourceTree = "<group>"; };
-		FAF75E9518A17A77007B317D /* BrowserModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BrowserModel.xcdatamodel; sourceTree = "<group>"; };
-		FAF75ED518A17BFD007B317D /* BrowserModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BrowserModel.xcdatamodel; sourceTree = "<group>"; };
-		FAF75ED718A17BFD007B317D /* arrow-left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "arrow-left.png"; sourceTree = "<group>"; };
-		FAF75ED818A17BFD007B317D /* arrow-right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "arrow-right.png"; sourceTree = "<group>"; };
 		FAF75ED918A17BFD007B317D /* bookmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bookmark.png; sourceTree = "<group>"; };
 		FAF75EDA18A17BFD007B317D /* cell_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cell_arrow.png; sourceTree = "<group>"; };
 		FAF75EDB18A17BFD007B317D /* delete_circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = delete_circle.png; sourceTree = "<group>"; };
-		FAF75EDC18A17BFD007B317D /* folder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = folder.png; sourceTree = "<group>"; };
 		FAF75EDD18A17BFD007B317D /* gray-pixel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gray-pixel.png"; sourceTree = "<group>"; };
 		FAF75EDE18A17BFD007B317D /* iphone_delete_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iphone_delete_button.png; sourceTree = "<group>"; };
 		FAF75EDF18A17BFD007B317D /* refresh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = refresh.png; sourceTree = "<group>"; };
@@ -133,7 +128,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FAC9B3B916F38D3700E37710 /* SystemConfiguration.framework in Frameworks */,
-				FAC9B3B516F38C6500E37710 /* CoreData.framework in Frameworks */,
 				FAC9B3B116F3863500E37710 /* libxml2.2.dylib in Frameworks */,
 				FAC9B25E16F27BF800E37710 /* UIKit.framework in Frameworks */,
 				FAC9B26016F27BF800E37710 /* Foundation.framework in Frameworks */,
@@ -144,9 +138,66 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0E54DB6D197DAE31005BF033 /* Bookmarks */ = {
+			isa = PBXGroup;
+			children = (
+				B572E55418D08D2A005E4834 /* BookmarkItem.h */,
+				B572E55518D08D2A005E4834 /* BookmarkItem.m */,
+				B572E55618D08D2A005E4834 /* BookmarksController.h */,
+				B572E54818D08D2A005E4834 /* BookmarksController.m */,
+				B572E54918D08D2A005E4834 /* BookmarksFormController.h */,
+				B572E54A18D08D2A005E4834 /* BookmarksFormController.m */,
+				B572E55018D08D2A005E4834 /* BookmarkFolderFormController.h */,
+				B572E55118D08D2A005E4834 /* BookmarkFolderFormController.m */,
+			);
+			name = Bookmarks;
+			sourceTree = "<group>";
+		};
+		0E54DB6E197DAEA7005BF033 /* Web */ = {
+			isa = PBXGroup;
+			children = (
+				FAF75EE118A17BFD007B317D /* JSTools.js */,
+				FAF75E8F18A17A77007B317D /* import_bookmark_howto.html */,
+				FAA4557818A19D9500B1BDF4 /* unable_to_connect.html */,
+				FAF75E9018A17A77007B317D /* launch.html */,
+			);
+			name = Web;
+			sourceTree = "<group>";
+		};
+		0E54DB6F197DAECA005BF033 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FAF75E8118A17A77007B317D /* BookmarkFoldersForm.xib */,
+				FAF75E8218A17A77007B317D /* BookmarkItem.xib */,
+				FAF75E8318A17A77007B317D /* BookmarksForm.xib */,
+				FAF75E9118A17A77007B317D /* MainWindow-iPad.xib */,
+				FAF75E9218A17A77007B317D /* MainWindow.xib */,
+				FAF75E9318A17A77007B317D /* Bookmarks.xib */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		4B1C68B1197DEC050014AB79 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				4B1C68B2197DEC050014AB79 /* Logging.h */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
+		FA157C2E19941AB90002C146 /* Bookmarks */ = {
+			isa = PBXGroup;
+			children = (
+				FA157C2F19941ACB0002C146 /* bookmarks.strings */,
+			);
+			name = Bookmarks;
+			sourceTree = "<group>";
+		};
 		FAA4557718A19B2700B1BDF4 /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
+				FA3CD2AB1993D98800B3ACF0 /* right.png */,
+				FA3CD2AC1993D98800B3ACF0 /* left.png */,
 				FAA4557C18A19F7A00B1BDF4 /* bookmarks.png */,
 				FAA4557A18A19F1E00B1BDF4 /* configure.png */,
 				FAA4557318A19A2E00B1BDF4 /* tab_add.png */,
@@ -159,9 +210,6 @@
 			children = (
 				FAF75E8018A17A59007B317D /* Browser Resources */,
 				FAF75E6A18A179D1007B317D /* Browser */,
-				FAC9B3B816F38D3700E37710 /* SystemConfiguration.framework */,
-				FAC9B3B416F38C6500E37710 /* CoreData.framework */,
-				FAC9B3B016F3863500E37710 /* libxml2.2.dylib */,
 				FAC9B26316F27BF800E37710 /* TestBrowser */,
 				FAC9B25C16F27BF800E37710 /* Frameworks */,
 				FAC9B25B16F27BF800E37710 /* Products */,
@@ -179,6 +227,8 @@
 		FAC9B25C16F27BF800E37710 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FAC9B3B016F3863500E37710 /* libxml2.2.dylib */,
+				FAC9B3B816F38D3700E37710 /* SystemConfiguration.framework */,
 				FAC9B25D16F27BF800E37710 /* UIKit.framework */,
 				FAC9B25F16F27BF800E37710 /* Foundation.framework */,
 				FAC9B26116F27BF800E37710 /* CoreGraphics.framework */,
@@ -215,26 +265,18 @@
 		FAF75E6A18A179D1007B317D /* Browser */ = {
 			isa = PBXGroup;
 			children = (
-				B572E54718D08D2A005E4834 /* Tab.m */,
-				B572E54818D08D2A005E4834 /* BookmarksController.m */,
-				B572E54918D08D2A005E4834 /* BookmarksFormController.h */,
-				B572E54A18D08D2A005E4834 /* BookmarksFormController.m */,
-				B572E54B18D08D2A005E4834 /* BrowserViewController.h */,
-				B572E54C18D08D2A005E4834 /* BrowserViewController.m */,
+				4B1C68B1197DEC050014AB79 /* Logging */,
+				0E54DB6D197DAE31005BF033 /* Bookmarks */,
 				B572E54D18D08D2A005E4834 /* Tab.h */,
+				B572E54718D08D2A005E4834 /* Tab.m */,
 				B572E54E18D08D2A005E4834 /* UIMainView.h */,
 				B572E54F18D08D2A005E4834 /* UIMainView.m */,
-				B572E55018D08D2A005E4834 /* BookmarkFolderFormController.h */,
+				B5E88BD819A68C5D0021ED10 /* BrowserMainWindow.h */,
+				B5E88BD919A68C5D0021ED10 /* BrowserMainWindow.m */,
 				B5A210C018D091F700D65141 /* Reachability.h */,
 				B5A210C118D091F700D65141 /* Reachability.m */,
-				B572E55118D08D2A005E4834 /* BookmarkFolderFormController.m */,
-				B572E55218D08D2A005E4834 /* BookmarkImporter.h */,
-				B572E55318D08D2A005E4834 /* BookmarkImporter.m */,
-				B572E55418D08D2A005E4834 /* BookmarkItem.h */,
-				B572E55518D08D2A005E4834 /* BookmarkItem.m */,
-				71ED23B4194470B2002ACD24 /* BrowserDelegate.h */,
-				71ED23B5194470B2002ACD24 /* BrowserDelegate.m */,
-				B572E55618D08D2A005E4834 /* BookmarksController.h */,
+				B572E54B18D08D2A005E4834 /* BrowserViewController.h */,
+				B572E54C18D08D2A005E4834 /* BrowserViewController.m */,
 			);
 			name = Browser;
 			path = ../Browser;
@@ -243,19 +285,10 @@
 		FAF75E8018A17A59007B317D /* Browser Resources */ = {
 			isa = PBXGroup;
 			children = (
-				FAA4557818A19D9500B1BDF4 /* unable_to_connect.html */,
-				FAF75ED418A17BFD007B317D /* BrowserModel.xcdatamodeld */,
+				FA157C2E19941AB90002C146 /* Bookmarks */,
+				0E54DB6F197DAECA005BF033 /* Views */,
+				0E54DB6E197DAEA7005BF033 /* Web */,
 				FAF75ED618A17BFD007B317D /* Images */,
-				FAF75EE118A17BFD007B317D /* JSTools.js */,
-				FAF75E8118A17A77007B317D /* BookmarkFoldersForm.xib */,
-				FAF75E8218A17A77007B317D /* BookmarkItem.xib */,
-				FAF75E8318A17A77007B317D /* BookmarksForm.xib */,
-				FAF75E8F18A17A77007B317D /* import_bookmark_howto.html */,
-				FAF75E9018A17A77007B317D /* launch.html */,
-				FAF75E9118A17A77007B317D /* MainWindow-iPad.xib */,
-				FAF75E9218A17A77007B317D /* MainWindow.xib */,
-				FAF75E9318A17A77007B317D /* Bookmarks.xib */,
-				FAF75E9418A17A77007B317D /* BrowserModel.xcdatamodeld */,
 			);
 			name = "Browser Resources";
 			path = "../Browser Resources";
@@ -266,13 +299,11 @@
 			children = (
 				FAA4557718A19B2700B1BDF4 /* Buttons */,
 				FAA4557118A19A2E00B1BDF4 /* gsearch.png */,
+				FAB6B8FE19945091001666A7 /* folder.png */,
 				FAF75ED918A17BFD007B317D /* bookmark.png */,
 				FAA4557218A19A2E00B1BDF4 /* magglass.png */,
-				FAF75ED718A17BFD007B317D /* arrow-left.png */,
-				FAF75ED818A17BFD007B317D /* arrow-right.png */,
 				FAF75EDA18A17BFD007B317D /* cell_arrow.png */,
 				FAF75EDB18A17BFD007B317D /* delete_circle.png */,
-				FAF75EDC18A17BFD007B317D /* folder.png */,
 				FAF75EDD18A17BFD007B317D /* gray-pixel.png */,
 				FAF75EDE18A17BFD007B317D /* iphone_delete_button.png */,
 				FAF75EDF18A17BFD007B317D /* refresh.png */,
@@ -332,6 +363,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5E88C2019A698DF0021ED10 /* JSTools.js in Resources */,
 				FAF75EA518A17A77007B317D /* MainWindow-iPad.xib in Resources */,
 				FAA4557D18A19F7A00B1BDF4 /* bookmarks.png in Resources */,
 				FAF75EE918A17BFD007B317D /* gray-pixel.png in Resources */,
@@ -339,24 +371,25 @@
 				FAF75EE718A17BFD007B317D /* delete_circle.png in Resources */,
 				FAF75E9818A17A77007B317D /* BookmarksForm.xib in Resources */,
 				FAF75EEC18A17BFD007B317D /* tabs.png in Resources */,
+				FAB6B8FF19945091001666A7 /* folder.png in Resources */,
 				FAF75EE518A17BFD007B317D /* bookmark.png in Resources */,
 				FAF75EA318A17A77007B317D /* import_bookmark_howto.html in Resources */,
 				FAF75EA718A17A77007B317D /* Bookmarks.xib in Resources */,
 				FAC9B26816F27BF800E37710 /* InfoPlist.strings in Resources */,
 				FAF75EEA18A17BFD007B317D /* iphone_delete_button.png in Resources */,
-				FAF75EE318A17BFD007B317D /* arrow-left.png in Resources */,
+				FA157C3019941ACB0002C146 /* bookmarks.strings in Resources */,
 				FAA4557B18A19F1E00B1BDF4 /* configure.png in Resources */,
 				FAF75EA418A17A77007B317D /* launch.html in Resources */,
-				FAF75EE418A17BFD007B317D /* arrow-right.png in Resources */,
 				FAA4557518A19A2E00B1BDF4 /* magglass.png in Resources */,
 				FAC9B27016F27BF800E37710 /* Default.png in Resources */,
-				FAF75EE818A17BFD007B317D /* folder.png in Resources */,
 				FAA4557418A19A2E00B1BDF4 /* gsearch.png in Resources */,
 				FAA4557618A19A2E00B1BDF4 /* tab_add.png in Resources */,
 				FAF75EEB18A17BFD007B317D /* refresh.png in Resources */,
+				FA3CD2AD1993D98800B3ACF0 /* right.png in Resources */,
 				FAF75E9718A17A77007B317D /* BookmarkItem.xib in Resources */,
 				FAC9B27216F27BF800E37710 /* Default@2x.png in Resources */,
 				FAC9B27416F27BF800E37710 /* Default-568h@2x.png in Resources */,
+				FA3CD2AE1993D98800B3ACF0 /* left.png in Resources */,
 				FAF75EA618A17A77007B317D /* MainWindow.xib in Resources */,
 				FAF75E9618A17A77007B317D /* BookmarkFoldersForm.xib in Resources */,
 				FAA4557918A19D9500B1BDF4 /* unable_to_connect.html in Resources */,
@@ -370,22 +403,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				71ED23B819447163002ACD24 /* BrowserDelegate.m in Sources */,
-				B572E55D18D08D2A005E4834 /* BookmarkImporter.m in Sources */,
 				B572E55918D08D2A005E4834 /* BookmarksFormController.m in Sources */,
 				B572E55E18D08D2A005E4834 /* BookmarkItem.m in Sources */,
-				FAF75EA818A17A77007B317D /* BrowserModel.xcdatamodeld in Sources */,
 				B5A210C218D091F700D65141 /* Reachability.m in Sources */,
 				B572E55718D08D2A005E4834 /* Tab.m in Sources */,
-				FAF75EE218A17BFD007B317D /* BrowserModel.xcdatamodeld in Sources */,
 				FAC9B26A16F27BF800E37710 /* main.m in Sources */,
 				FAC9B26E16F27BF800E37710 /* AppDelegate.m in Sources */,
 				B572E55B18D08D2A005E4834 /* UIMainView.m in Sources */,
 				B572E55818D08D2A005E4834 /* BookmarksController.m in Sources */,
+				B5E88BDA19A68C5D0021ED10 /* BrowserMainWindow.m in Sources */,
 				B572E55A18D08D2A005E4834 /* BrowserViewController.m in Sources */,
 				FAC9B27716F27BF800E37710 /* ViewController.m in Sources */,
-				FAF75EED18A17BFD007B317D /* JSTools.js in Sources */,
 				B572E55C18D08D2A005E4834 /* BookmarkFolderFormController.m in Sources */,
+				B5E88C1F19A697490021ED10 /* JSTools.js in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -469,7 +499,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TestBrowser/TestBrowser-Prefix.pch";
 				INFOPLIST_FILE = "TestBrowser/TestBrowser-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -481,7 +511,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TestBrowser/TestBrowser-Prefix.pch";
 				INFOPLIST_FILE = "TestBrowser/TestBrowser-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -509,29 +539,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		FAF75E9418A17A77007B317D /* BrowserModel.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				FAF75E9518A17A77007B317D /* BrowserModel.xcdatamodel */,
-			);
-			currentVersion = FAF75E9518A17A77007B317D /* BrowserModel.xcdatamodel */;
-			path = BrowserModel.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-		FAF75ED418A17BFD007B317D /* BrowserModel.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				FAF75ED518A17BFD007B317D /* BrowserModel.xcdatamodel */,
-			);
-			currentVersion = FAF75ED518A17BFD007B317D /* BrowserModel.xcdatamodel */;
-			path = BrowserModel.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = FAC9B25216F27BF800E37710 /* Project object */;
 }

@@ -10,11 +10,7 @@
 #import <CoreData/CoreData.h>
 #import <libxml/xpath.h>
 
-@interface BookmarkImporter : NSObject {
-    NSManagedObjectContext *managedObjectContext;
-    NSManagedObject *rootFolder;
-    xmlNodeSetPtr allNodes;
-}
+@interface BookmarkImporter : NSObject
 
 - (void)loadBookmarksFromUrl:(NSURL *) url;
 - (void) loadBookmarksFromNodes:(NSArray *)nodes inFolder:(NSManagedObject *)parentFolder scanDL:(BOOL)scanDL;
